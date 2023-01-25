@@ -11,6 +11,17 @@ def write_to_file(path, lines):
         f.writelines(lines)
 
 """
+Find the location in the file specified.
+If code is an integer, it'll resolve to writing AFTER that line number.
+If code is "end", it'll resolve to the end of that file.
+"""
+def find_write_location(lines, code):
+    if (code == "end"):
+        return len(lines)
+    else:
+        return int(code) - 1
+
+"""
 Apply a single patch file.
 patch_file parameter: The path to the patch file.
 """
@@ -51,7 +62,7 @@ def apply_patch(patch_file):
             # If we have an add command, set the adding location and switch to add mode
             if split_line[0] == "add":
                 line_add_mode = True
-                add_line_no = int(split_line[-1]) - 1
+                add_line_no = find_write_location(current_file, split_line[-1])
 
             # If we have a remove command, remove the specified line numbers (inclusive)
             elif split_line[0] == "remove":
@@ -82,7 +93,7 @@ def apply_patch(patch_file):
     return modified_scripts
 
 def main(inputfile, folder, stagefile, output):
-    print("Riley's SWF Patcher - v1.0.1")
+    print("Riley's SWF Patcher - v1.1.0")
     print("requirements: You must install JPEXS Free Flash Decompiler to run this patcher")
 
     # Decompile the swf into temp folder called ./.Patcher-Temp

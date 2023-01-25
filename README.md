@@ -49,6 +49,7 @@ The second argument is a line number. For the add command, all lines up to (but 
 
 After an add command, add a newline and then enter your code block. At the end of the block, add a newline and `end-patch` to tell the patcher the patch is finished.
 
+Instead of a line number, you can also specify `end` to append to the end of the file. This only applies for add commands.
 
 ## Applying Patches
 
