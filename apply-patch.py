@@ -39,7 +39,7 @@ def apply_patch(patch_file):
             split_line = line_stripped.split()
 
             # Account for spaces in file name by taking everything except the first (command character) and last (line number/s) blocks
-            short_name = ''.join(split_line[1:-1])
+            short_name = ' '.join(split_line[1:-1])
             file_location = ".Patcher-Temp/scripts/" + short_name
             
             # Add the current script to the list of modified ones (ie, keep this in the final output)
@@ -82,7 +82,7 @@ def apply_patch(patch_file):
     return modified_scripts
 
 def main(inputfile, folder, stagefile, output):
-    print("Riley's SWF Patcher - v1.0.0")
+    print("Riley's SWF Patcher - v1.0.1")
     print("requirements: You must install JPEXS Free Flash Decompiler to run this patcher")
 
     # Decompile the swf into temp folder called ./.Patcher-Temp
