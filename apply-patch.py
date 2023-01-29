@@ -51,10 +51,10 @@ def apply_patch(patch_file):
 
             # Account for spaces in file name by taking everything except the first (command character) and last (line number/s) blocks
             short_name = ' '.join(split_line[1:-1])
-            file_location = ".Patcher-Temp/scripts/" + short_name
+            file_location = "./.Patcher-Temp/scripts/" + short_name
             
             # Add the current script to the list of modified ones (ie, keep this in the final output)
-            modified_scripts.add(short_name.split("/")[0])
+            modified_scripts.add(file_location)
 
             with open(file_location) as f:
                 current_file = f.readlines()
@@ -93,7 +93,7 @@ def apply_patch(patch_file):
     return modified_scripts
 
 def main(inputfile, folder, stagefile, output):
-    print("Riley's SWF Patcher - v1.1.0")
+    print("Riley's SWF Patcher - v1.2.0")
     print("requirements: You must install JPEXS Free Flash Decompiler to run this patcher")
 
     # Decompile the swf into temp folder called ./.Patcher-Temp
@@ -116,10 +116,11 @@ def main(inputfile, folder, stagefile, output):
         modified_scripts |= apply_patch(folder + "/" + patch_stripped)
 
     # Delete all non-modified scripts
-    scripts = os.listdir("./.Patcher-Temp/scripts")
+    # Taken from https://stackoverflow.com/questions/19309667/recursive-os-listdir - Make recursive os.listdir
+    scripts = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser("./.Patcher-Temp")) for f in fn]
     for script in scripts:
         if script not in modified_scripts:
-            os.system('rm -r "./.Patcher-Temp/scripts/' + script + '"')
+            os.system('rm -r "' + script + '"')
 
     # Repackage the file as a SWF
     os.system(JPEXS_PATH + "-importScript " + sys.argv[1] + " " + sys.argv[4] + " `pwd`/.Patcher-Temp")
