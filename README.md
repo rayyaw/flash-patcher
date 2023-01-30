@@ -6,7 +6,7 @@ You must install JPEXS Free Flash Decompiler to use this patcher. For more infor
 
 If you do not install via Flatpak, you should go into apply-patch.py and change `JPEXS-PATH` to your JPEXS executable, adding a space at the end of the string. You should also change `JPEXS-ARGS` to be the command line arguments required to launch a blank version of JPEXS (ie, the minimum number of command line arguments).
 
-You must have Python 3 on your system to run this script. If you are running on Windows, you must use WSL to run this script.
+You must have Python 3 on your system to run this script.
 
 ## File Structure
 
