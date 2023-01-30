@@ -1,10 +1,14 @@
 #!/usr/bin/python3
 
+import shutil
+import subprocess
 import sys
 import os
 
-# If you're not using the Flatpak version of JPEXS, you should change this to "ffdec"
-JPEXS_PATH = "/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=ffdec.sh com.jpexs.decompiler.flash " 
+# If you're not using the Flatpak version of JPEXS, you should change this to the absolute path of JPEXS (even if it's in $PATH)
+JPEXS_PATH = "/usr/bin/flatpak"
+# If you're not using the Flatpak version of JPEXS, you should change this to []
+JPEXS_ARGS = ["run", "--branch=stable", "--arch=x86_64", "--command=ffdec.sh", "com.jpexs.decompiler.flash"]
 
 def write_to_file(path, lines):
     with open(path, "w") as f:
@@ -93,12 +97,15 @@ def apply_patch(patch_file):
     return modified_scripts
 
 def main(inputfile, folder, stagefile, output):
-    print("Riley's SWF Patcher - v1.2.0")
+    print("Riley's SWF Patcher - v1.3.0")
     print("requirements: You must install JPEXS Free Flash Decompiler to run this patcher")
 
     # Decompile the swf into temp folder called ./.Patcher-Temp
-    os.system("mkdir .Patcher-Temp")
-    os.system(JPEXS_PATH + "-export script `pwd`/.Patcher-Temp " + sys.argv[1] + " > /dev/null")
+    if not os.path.exists("./.Patcher-Temp"):
+        os.mkdir("./.Patcher-Temp")
+    
+    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-export", "script", "./.Patcher-Temp", sys.argv[1]], \
+            stdout=subprocess.DEVNULL)
 
     # Open the stage file and read list of all patches to apply
     with open(folder + "/" + stagefile) as f:
@@ -120,11 +127,12 @@ def main(inputfile, folder, stagefile, output):
     scripts = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser("./.Patcher-Temp")) for f in fn]
     for script in scripts:
         if script not in modified_scripts:
-            os.system('rm -r "' + script + '"')
+            os.remove(script)
 
     # Repackage the file as a SWF
-    os.system(JPEXS_PATH + "-importScript " + sys.argv[1] + " " + sys.argv[4] + " `pwd`/.Patcher-Temp")
-    os.system("rm -r .Patcher-Temp")
+    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importScript", sys.argv[1], sys.argv[4], "./.Patcher-Temp"], \
+            stdout=subprocess.DEVNULL)
+    shutil.rmtree("./.Patcher-Temp")
 
 if __name__ == "__main__":
     # command line argument checking
