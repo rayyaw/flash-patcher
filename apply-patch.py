@@ -6,9 +6,46 @@ import sys
 import os
 
 # If you're not using the Flatpak version of JPEXS, you should change this to the absolute path of JPEXS (even if it's in $PATH)
-JPEXS_PATH = "/usr/bin/flatpak"
+JPEXS_PATH = ""
 # If you're not using the Flatpak version of JPEXS, you should change this to []
-JPEXS_ARGS = ["run", "--branch=stable", "--arch=x86_64", "--command=ffdec.sh", "com.jpexs.decompiler.flash"]
+JPEXS_ARGS = []
+
+"""
+Set JPEXS_PATH and JPEXS_ARGS to the specified path and (optionally) args if JPEXS exists at the specified location.
+Returns True if successful, and False otherwise.
+"""
+def set_jpexs_if_exists(path, args=[]):
+    global JPEXS_PATH
+    global JPEXS_ARGS
+
+    if (os.path.exists(path)):
+        JPEXS_PATH = path
+        JPEXS_ARGS = args
+        return True
+
+    return False
+
+"""
+Detect JPEXS install location. Returns True if successful.
+"""
+def detect_jpexs():
+    # apt install location
+    if (set_jpexs_if_exists("/usr/bin/ffdec")):
+        return True
+
+
+    # flatpak install location
+    if (set_jpexs_if_exists("/usr/bin/flatpak", ["run", "--branch=stable", "--arch=x86_64", "--command=ffdec.sh", "com.jpexs.decompiler.flash"])):
+        # Detect if JPEXS is installed. The function call can only detect if Flatpak is installed
+        testrun = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-help"], stdout=subprocess.DEVNULL)
+
+        if (testrun.returncode == 0):
+            return True
+
+    return False
+
+
+
 
 def perror(mesg):
     print(mesg, file=sys.stderr)
@@ -152,7 +189,13 @@ def apply_patch(patch_file):
     return modified_scripts
 
 def main(inputfile, folder, stagefile, output):
-    print("Riley's SWF Patcher - v1.4.0")
+    print("Riley's SWF Patcher - v1.5.0")
+
+    if detect_jpexs() == False:
+        perror("Could not locate required dependency: JPEXS Flash Decompiler. Aborting...")
+        exit(1)
+
+    print("Using JPEXS at:", JPEXS_PATH)
 
     # Decompile the swf into temp folder called ./.Patcher-Temp
     if not os.path.exists("./.Patcher-Temp"):
@@ -163,13 +206,9 @@ def main(inputfile, folder, stagefile, output):
         perror("Aborting...")
         exit(1)
    
-    try:
-        decomp = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-export", "script", "./.Patcher-Temp", sys.argv[1]], \
-            stdout=subprocess.DEVNULL, \
-            stderr=subprocess.DEVNULL)
-    except FileNotFoundError:
-        perror("Could not locate required dependency: JPEXS Flash Decompiler. Aborting...")
-        exit(1)
+    decomp = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-export", "script", "./.Patcher-Temp", sys.argv[1]], \
+        stdout=subprocess.DEVNULL, \
+        stderr=subprocess.DEVNULL)
 
     if (decomp.returncode != 0):
         perror("JPEXS was unable to decompile the SWF file: " + sys.argv[1])
@@ -220,7 +259,7 @@ def main(inputfile, folder, stagefile, output):
 if __name__ == "__main__":
     # command line argument checking
     if (len(sys.argv) != 5):
-        perror("Usage:", sys.argv[0], "[SWF to patch] [patch folder] [patch stage file] [output SWF]")
+        perror("Usage: " + sys.argv[0] + " [SWF to patch] [patch folder] [patch stage file] [output SWF]")
         exit(1)
 
     main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
