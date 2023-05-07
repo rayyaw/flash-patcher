@@ -5,9 +5,7 @@ import subprocess
 import sys
 import os
 
-# If you're not using the Flatpak version of JPEXS, you should change this to the absolute path of JPEXS (even if it's in $PATH)
 JPEXS_PATH = ""
-# If you're not using the Flatpak version of JPEXS, you should change this to []
 JPEXS_ARGS = []
 
 """
