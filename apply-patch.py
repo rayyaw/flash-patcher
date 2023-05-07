@@ -40,8 +40,12 @@ def detect_jpexs():
         if (testrun.returncode == 0):
             return True
 
-    # windows install location
+    # windows x64 install location
     if (set_jpexs_if_exists("C:\\Program Files(x86)\\FFDec\\ffdec.exe")):
+        return True
+
+    # windows x32 install location
+    if (set_jpexs_if_exists("C:\\Program Files\\FFDec\\ffdec.exe")):
         return True
 
     return False
@@ -191,7 +195,7 @@ def apply_patch(patch_file):
     return modified_scripts
 
 def main(inputfile, folder, stagefile, output):
-    print("Riley's SWF Patcher - v1.5.1")
+    print("Riley's SWF Patcher - v1.5.2")
 
     if detect_jpexs() == False:
         perror("Could not locate required dependency: JPEXS Flash Decompiler. Aborting...")
