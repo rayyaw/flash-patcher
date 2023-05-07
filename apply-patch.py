@@ -193,7 +193,7 @@ def apply_patch(patch_file):
     return modified_scripts
 
 def main(inputfile, folder, stagefile, output):
-    print("Riley's SWF Patcher - v1.5.0")
+    print("Riley's SWF Patcher - v1.5.1")
 
     if detect_jpexs() == False:
         perror("Could not locate required dependency: JPEXS Flash Decompiler. Aborting...")
