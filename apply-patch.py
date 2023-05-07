@@ -42,6 +42,10 @@ def detect_jpexs():
         if (testrun.returncode == 0):
             return True
 
+    # windows install location
+    if (set_jpexs_if_exists("C:\\Program Files(x86)\\FFDec\\ffdec.exe")):
+        return True
+
     return False
 
 
