@@ -5,8 +5,19 @@ import subprocess
 import sys
 import os
 
+"""
+Riley's SWF patcher
+
+Bug testing: Creyon
+
+Inject arbitrary code, images, and more into existing SWFs!
+See the README for documentation and license.
+"""
+
 JPEXS_PATH = ""
 JPEXS_ARGS = []
+
+CURRENT_VERSION = "2.0.0"
 
 """
 Set JPEXS_PATH and JPEXS_ARGS to the specified path and (optionally) args if JPEXS exists at the specified location.
@@ -173,7 +184,7 @@ def apply_patch(patch_file):
                 print("Unrecognized command: ", split_line[0], "skipping")
             
         # If we're in add mode and encounter the end of the patch, write the modified script back to file
-        elif line == "end-patch\n":
+        elif line_stripped == "end-patch":
             line_add_mode = False
             write_to_file(file_location, current_file)
 
@@ -194,8 +205,44 @@ def apply_patch(patch_file):
     # Return the set of modified scripts, so we can aggregate in main()
     return modified_scripts
 
+def apply_assets(asset_file, folder):
+    modified_files = set()
+    lines = []
+
+    try:
+        with open(asset_file) as f:
+            lines = f.readlines()
+    except FileNotFoundError:
+        perror("Could not open asset pack file at: " + asset_file)
+        perror("Aborting...")
+        exit(1)
+
+    for line in lines:
+        line_stripped = line.strip("\n\r")
+        split_line = line_stripped.split(' ')
+
+        if line.startswith("#"): # Comment
+            continue
+            
+        elif line.startswith("add-asset"):
+            # Local copy of file, then remote
+            local_name = split_line[1]
+            remote_name = ' '.join(split_line[2:])
+            remote_name = line_stripped.split(" ")[2]
+
+            if not os.path.exists(folder + "/" + local_name):
+                perror("Could not find asset: " + local_name)
+                perror("Aborting...")
+                exit(1)
+
+            shutil.copyfile(folder + "/" + local_name, "./.Patcher-Temp/" + remote_name)
+
+            modified_files.add("./.Patcher-Temp/" + remote_name)
+    
+    return modified_files
+
 def main(inputfile, folder, stagefile, output):
-    print("Riley's SWF Patcher - v1.5.2")
+    print("Riley's SWF Patcher - " + CURRENT_VERSION)
 
     if detect_jpexs() == False:
         perror("Could not locate required dependency: JPEXS Flash Decompiler. Aborting...")
@@ -212,7 +259,7 @@ def main(inputfile, folder, stagefile, output):
         perror("Aborting...")
         exit(1)
    
-    decomp = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-export", "script", "./.Patcher-Temp", sys.argv[1]], \
+    decomp = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-export", "all", "./.Patcher-Temp", sys.argv[1]], \
         stdout=subprocess.DEVNULL, \
         stderr=subprocess.DEVNULL)
 
@@ -242,7 +289,16 @@ def main(inputfile, folder, stagefile, output):
         if len(patch_stripped) == 0 or patch_stripped[0] == '#':
             continue
 
-        modified_scripts |= apply_patch(folder + "/" + patch_stripped)
+        # Check file extension of file
+        if patch_stripped.endswith(".patch"): # Patch (code) file
+            modified_scripts |= apply_patch(folder + "/" + patch_stripped)
+        elif patch_stripped.endswith(".assets"): # Asset Pack file
+            modified_scripts |= apply_assets(folder + "/" + patch_stripped, folder)
+        else:
+            perror("The file provided did not have a valid filetype.")
+            perror(patch_stripped)
+            perror("Aborting...")
+            exit(1)
 
     # Delete all non-modified scripts
     # Taken from https://stackoverflow.com/questions/19309667/recursive-os-listdir - Make recursive os.listdir
@@ -257,9 +313,9 @@ def main(inputfile, folder, stagefile, output):
     # Rant: JPEXS should really return an error code if recompilation fails here! Unable to detect if this was successful or not otherwise.
     subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importScript", sys.argv[1], sys.argv[4], "./.Patcher-Temp"], \
             stdout=subprocess.DEVNULL)
+    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importImages", sys.argv[1], sys.argv[4], "./.Patcher-Temp"], \
+            stdout=subprocess.DEVNULL)
     
-    shutil.rmtree("./.Patcher-Temp")
-
     print("Done.")
 
 if __name__ == "__main__":

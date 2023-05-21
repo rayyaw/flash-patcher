@@ -25,13 +25,14 @@ A patch stage file (usually ending in .stage), may look something like this:
 
 patch1.patch
 subfolder/patch2.patch
+subfolder/pack.assets
 ```
 
-You can use \# to comment out certain lines. Each line contains a patch file to run, and each patch file must be in the same top-level patch folder as the stage file. When the patcher runs, it will apply each patch file in order.
+You can use \# to comment out certain lines. Each line contains a patch file to run, and each injected file must be in the same top-level patch folder as the stage file. When the patcher runs, it will apply each patch file in order.
 
 ### Patch Files
 
-A patch file (usually ending in .patch), may look something like this:
+A patch file (which must end in .patch), may look something like this:
 
 ```
 # Comment
@@ -45,11 +46,26 @@ remove frame_1/DoAction.as 789-1111
 
 You can use \# to write comments. There are two types of commands, `add` and `remove`. The first parameter to any command is the file to modify (in this case, "DefineSprite_1058 boss2/DoAction.as" or "frame_1/DoAction.as"). To find the name of this, export all scripts using JPEXS and make a note of the file name you want to modify.
 
-The second argument is a line number. For the add command, all lines up to (but not including) the `end-patch` command will be inserted into the SWF, *after* the specified line. For the remove command, all lines between the two numbers specified will be removed (and this is inclusive).
+The second argument is a line number. For the add command, all lines up to (but not including) the `end-patch` command will be inserted into the SWF, *on* the specified line. For the remove command, all lines between the two numbers specified will be removed (and this is inclusive).
 
 After an add command, add a newline and then enter your code block. At the end of the block, add a newline and `end-patch` to tell the patcher the patch is finished.
 
 Instead of a line number, you can also specify `end` to append to the end of the file. This only applies for add commands.
+
+## Asset Packs
+
+An asset pack file (which must end in .assets), contains instructions on assets to inject into the Flash file. Currently supported types include:
+
+- Images
+
+The file will look something like this:
+
+```
+# Comment
+add-asset localfolder/derp.png images/8.png
+```
+
+This asset pack file takes the local file at `localfolder/derp.png` and copies it to `images/8.png` within the SWF. If there was already a file named `images/8.png`, it will be overwritten with the new file.
 
 ## Applying Patches
 
