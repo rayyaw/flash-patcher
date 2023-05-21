@@ -17,7 +17,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "2.0.0"
+CURRENT_VERSION = "2.0.1"
 
 """
 Set JPEXS_PATH and JPEXS_ARGS to the specified path and (optionally) args if JPEXS exists at the specified location.
@@ -221,7 +221,7 @@ def apply_assets(asset_file, folder):
         line_stripped = line.strip("\n\r")
         split_line = line_stripped.split(' ')
 
-        if line.startswith("#"): # Comment
+        if len(line_stripped == 0) or line_stripped.startswith("#"): # Comment
             continue
             
         elif line.startswith("add-asset"):
