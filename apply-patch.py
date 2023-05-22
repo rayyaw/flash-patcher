@@ -258,7 +258,9 @@ def main(inputfile, folder, stagefile, output):
         perror("Could not locate the SWF file: " + sys.argv[1])
         perror("Aborting...")
         exit(1)
-   
+    
+    print("Beginning decompilation...")
+    
     decomp = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-export", "all", "./.Patcher-Temp", sys.argv[1]], \
         stdout=subprocess.DEVNULL, \
         stderr=subprocess.DEVNULL)
