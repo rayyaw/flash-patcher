@@ -4,7 +4,7 @@
 
 You must install JPEXS Free Flash Decompiler to use this patcher. For more information, check https://github.com/jindrapetrik/jpexs-decompiler .
 
-If you do not install via Flatpak, you should go into apply-patch.py and change `JPEXS-PATH` to your JPEXS executable, adding a space at the end of the string. You should also change `JPEXS-ARGS` to be the command line arguments required to launch a blank version of JPEXS (ie, the minimum number of command line arguments).
+Flash Patcher will automatically detect your JPEXS install location.
 
 You must have Python 3 on your system to run this script.
 
@@ -71,9 +71,11 @@ This asset pack file takes the local file at `localfolder/derp.png` and copies i
 
 To apply a patch, run the following command:
 
-`./apply-patch.py [input SWF] [patch folder] [patch stage file] [output SWF]`
+`./flash-patcher.py [input SWF] [patch folder] [patch stage file] [output SWF]`
 
 The patcher will take the input SWF, apply the patches specified in the stage file (which must be located in the patch folder), and create the output SWF.
+
+You can also install Flash Patcher by running `sudo make install`. After this, you can run Flash Patcher with `flash-patcher [args]`.
 
 ## Licensing
 

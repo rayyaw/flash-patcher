@@ -8,7 +8,14 @@ import os
 """
 Riley's SWF patcher
 
+Development: RileyTech
 Bug testing: Creyon
+
+Download and updates: https://github.com/rayyaw/flash-patcher
+
+License: CC-BY SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)
+
+Dependencies: Python 3, JPEXS Decompiler (https://github.com/jindrapetrik/jpexs-decompiler/releases)
 
 Inject arbitrary code, images, and more into existing SWFs!
 See the README for documentation and license.
