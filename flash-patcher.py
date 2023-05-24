@@ -24,7 +24,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v2.0.1"
+CURRENT_VERSION = "v2.0.2"
 
 """
 Set JPEXS_PATH and JPEXS_ARGS to the specified path and (optionally) args if JPEXS exists at the specified location.
@@ -265,6 +265,8 @@ def main(inputfile, folder, stagefile, output):
         perror("Could not locate the SWF file: " + sys.argv[1])
         perror("Aborting...")
         exit(1)
+
+    print("Beginning decompilation...")
    
     decomp = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-export", "all", "./.Patcher-Temp", sys.argv[1]], \
         stdout=subprocess.DEVNULL, \
