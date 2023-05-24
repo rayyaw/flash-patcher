@@ -8,6 +8,16 @@ Flash Patcher will automatically detect your JPEXS install location.
 
 You must have Python 3 on your system to run this script.
 
+## Installing and running
+
+To apply a patch, run the following command:
+
+`./flash-patcher.py [input SWF] [patch folder] [patch stage file] [output SWF]`
+
+The patcher will take the input SWF, apply the patches specified in the stage file (which must be located in the patch folder), and create the output SWF.
+
+You can also install Flash Patcher by running `sudo make install`. After this, you can run Flash Patcher with `flash-patcher [args]`.
+
 ## File Structure
 
 You should create the following file structure for your patches:
@@ -66,16 +76,6 @@ add-asset localfolder/derp.png images/8.png
 ```
 
 This asset pack file takes the local file at `localfolder/derp.png` and copies it to `images/8.png` within the SWF. If there was already a file named `images/8.png`, it will be overwritten with the new file.
-
-## Applying Patches
-
-To apply a patch, run the following command:
-
-`./flash-patcher.py [input SWF] [patch folder] [patch stage file] [output SWF]`
-
-The patcher will take the input SWF, apply the patches specified in the stage file (which must be located in the patch folder), and create the output SWF.
-
-You can also install Flash Patcher by running `sudo make install`. After this, you can run Flash Patcher with `flash-patcher [args]`.
 
 ## Licensing
 
