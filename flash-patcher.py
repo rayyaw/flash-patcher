@@ -26,7 +26,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v3.1.0"
+CURRENT_VERSION = "v3.2.0"
 
 DECOMP_LOCATION = "./.Patcher-Temp/mod/"
 
@@ -91,6 +91,25 @@ def write_to_file(path, lines):
     with open(path, "w") as f:
         f.writelines(lines)
 
+"""
+Find the location in the file specified.
+If code is an integer, it'll resolve to writing AFTER that line number.
+If code is "end", it'll resolve to the end of that file.
+"""
+def find_write_location(lines, code):
+    if (code == "end"):
+        return len(lines)
+    else:
+        try:
+            return int(code) - 1
+        
+        except ValueError:
+            perror("")
+            perror("Invalid add location: " + code)
+            perror("Expected keyword or integer (got type \"str\")")
+            perror("Aborting...")
+            exit(1)
+
 class FilePosition:
     def __init__(self, file_content, file_name):
         self.fileContent = file_content
@@ -138,33 +157,28 @@ class CodeInjector:
             file_line_no = file.lineNumber
 
             for line in self.injectLines:
-                # line_stripped = line.strip("\n\r ")
-                # FIXME - Add skip cmd here
+                line_stripped = line.strip("\n\r ")
+                split_line = line_stripped.split()
+
+                # Handle internal commands
+                if split_line[0] == "//" and split_line[1] == "cmd:":
+                    if split_line[2] == "skip":
+                        try:
+                            file_line_no += int(split_line[3])
+                            continue
+                        except ValueError:
+                            perror("")
+                            perror("Invalid skip amount: " + split_line[3])
+                            perror("Expected integer (got type \"str\")")
+                            perror("Aborting...")
+                            exit(1)
+
                 file.fileContent.insert(file_line_no, line)
 
                 patch_line_no += 1
                 file_line_no += 1
             
             file.saveOut()
-
-"""
-Find the location in the file specified.
-If code is an integer, it'll resolve to writing AFTER that line number.
-If code is "end", it'll resolve to the end of that file.
-"""
-def find_write_location(lines, code):
-    if (code == "end"):
-        return len(lines)
-    else:
-        try:
-            return int(code) - 1
-        
-        except ValueError:
-            perror("")
-            perror("Invalid add location: " + code)
-            perror("Expected keyword or integer (got type \"str\")")
-            perror("Aborting...")
-            exit(1)
 
 """
 Apply a single patch file.
@@ -200,8 +214,7 @@ def apply_patch(patch_file):
 
         split_line = line_stripped.split()
 
-        # Process add statement
-        # FIXME - Move to separate funtion/logic
+        # HANDLE ADD STATEMENT ----
         # If we have an add command, set the adding location and switch to add mode
         if split_line[0] == "add":
             if injector is None:
@@ -227,17 +240,15 @@ def apply_patch(patch_file):
         elif line_add_mode:
             injector.addInjectionLine(line, current_line_no)
         
-        # If we're not inside a line addition block, run the remove parser
-        elif not line_add_mode:
-            # Account for spaces in file name by taking everything except the first (command character) and last (line number/s) blocks
-            short_name = ' '.join(split_line[1:-1])
-            file_location = DECOMP_LOCATION + "scripts/" + short_name
-            
-            # Add the current script to the list of modified ones (ie, keep this in the final output)
-            modified_scripts.add(file_location)
+        # HANDLE REMOVE STATEMENT ----
+        elif split_line[0] == "remove":
+                # Account for spaces in file name by taking everything except the first (command character) and last (line number/s) blocks
+                short_name = ' '.join(split_line[1:-1])
+                file_location = DECOMP_LOCATION + "scripts/" + short_name
+                
+                # Add the current script to the list of modified ones (ie, keep this in the final output)
+                modified_scripts.add(file_location)
 
-            # If we have a remove command, remove the specified line numbers (inclusive)
-            if split_line[0] == "remove":
                 current_file = read_from_file(file_location, patch_file, current_line_no)
                 line_counts = split_line[-1].split("-")
 
@@ -270,8 +281,9 @@ def apply_patch(patch_file):
 
                 write_to_file(file_location, current_file)
 
-            else:
-                print("Unrecognized command: ", split_line[0], "skipping")
+        # Unrecognized statement
+        else:
+            print("Unrecognized command: ", split_line[0], "skipping")
 
         current_line_no += 1
 
