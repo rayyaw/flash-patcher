@@ -12,11 +12,25 @@ You must have Python 3 on your system to run this script.
 
 To apply a patch, run the following command:
 
-`./flash-patcher.py [input SWF] [patch folder] [patch stage file] [output SWF]`
+`./flash-patcher.py`
 
 The patcher will take the input SWF, apply the patches specified in the stage file (which must be located in the patch folder), and create the output SWF.
 
 You can also install Flash Patcher by running `sudo make install`. After this, you can run Flash Patcher with `flash-patcher [args]`.
+
+The command line arguments are as follows:
+
+### Required arguments
+- `--inputswf`: The input SWF to use. You should create a base hack to avoid issues with Flash deobfuscation.
+- `--folder`: The top-level folder where all your patch, asset, and stage files are located.
+- `--stagefile`: The stage file's path within the top level folder.
+- `--outputswf`: The path to save the output swf (relative to the current path)
+
+Example: `$PATCHER --inputswf $SWF_FILE_PATH/SMF_Base_Hack.swf --folder . --stagefile fullgame.stage --outputswf SMF-Fullgame-Build-$1.swf`
+
+### Optional arguments
+- `--invalidateCache`: Force the patcher to decompile the SWF. If this flag is not set, Flash Patcher may use a cached version of the SWF decompilation to speed up the process.
+- `--all`: Recompile the full SWF. This is required when injecting asset packs but slows down recompilation.
 
 ## File Structure
 
