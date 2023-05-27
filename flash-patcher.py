@@ -24,7 +24,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v2.0.2"
+CURRENT_VERSION = "v2.1.0"
 
 """
 Set JPEXS_PATH and JPEXS_ARGS to the specified path and (optionally) args if JPEXS exists at the specified location.
@@ -228,7 +228,7 @@ def apply_assets(asset_file, folder):
         line_stripped = line.strip("\n\r")
         split_line = line_stripped.split(' ')
 
-        if len(line_stripped == 0) or line_stripped.startswith("#"): # Comment
+        if len(line_stripped) == 0 or line_stripped.startswith("#"): # Comment
             continue
             
         elif line.startswith("add-asset"):
@@ -322,7 +322,13 @@ def main(inputfile, folder, stagefile, output):
     # Rant: JPEXS should really return an error code if recompilation fails here! Unable to detect if this was successful or not otherwise.
     subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importScript", sys.argv[1], sys.argv[4], "./.Patcher-Temp"], \
             stdout=subprocess.DEVNULL)
-    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importImages", sys.argv[1], sys.argv[4], "./.Patcher-Temp"], \
+    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importImages", sys.argv[4], sys.argv[4], "./.Patcher-Temp"], \
+            stdout=subprocess.DEVNULL)
+    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importSounds", sys.argv[4], sys.argv[4], "./.Patcher-Temp"], \
+            stdout=subprocess.DEVNULL)
+    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importShapes", sys.argv[4], sys.argv[4], "./.Patcher-Temp"], \
+            stdout=subprocess.DEVNULL)
+    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importText", sys.argv[4], sys.argv[4], "./.Patcher-Temp"], \
             stdout=subprocess.DEVNULL)
     
     print("Done.")
