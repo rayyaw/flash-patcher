@@ -24,7 +24,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v2.1.0"
+CURRENT_VERSION = "v2.2.0"
 
 """
 Set JPEXS_PATH and JPEXS_ARGS to the specified path and (optionally) args if JPEXS exists at the specified location.
@@ -242,6 +242,12 @@ def apply_assets(asset_file, folder):
                 perror("Aborting...")
                 exit(1)
 
+            # Create folder and copy things over
+            remote_folder = remote_name.split("/")[0]
+            
+            if not os.path.exists("./.Patcher-Temp/" + remote_folder):
+                os.mkdir("./.Patcher-Temp/" + remote_folder)
+
             shutil.copyfile(folder + "/" + local_name, "./.Patcher-Temp/" + remote_name)
 
             modified_files.add("./.Patcher-Temp/" + remote_name)
@@ -268,7 +274,7 @@ def main(inputfile, folder, stagefile, output):
 
     print("Beginning decompilation...")
    
-    decomp = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-export", "all", "./.Patcher-Temp", sys.argv[1]], \
+    decomp = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-export", "script", "./.Patcher-Temp", sys.argv[1]], \
         stdout=subprocess.DEVNULL, \
         stderr=subprocess.DEVNULL)
 
