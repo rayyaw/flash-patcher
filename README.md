@@ -70,6 +70,8 @@ remove frame_1/DoAction.as 789-1111
 
 You can use \# to write comments. There are two types of commands, `add` and `remove`. The first parameter to any command is the file to modify (in this case, "DefineSprite_1058 boss2/DoAction.as" or "frame_1/DoAction.as"). To find the name of this, export all scripts using JPEXS and make a note of the file name you want to modify.
 
+You are allowed to put multiple `add` statements before a code block you wish to inject.
+
 The second argument is a line number. For the add command, all lines up to (but not including) the `end-patch` command will be inserted into the SWF, *on* the specified line. For the remove command, all lines between the two numbers specified will be removed (and this is inclusive).
 
 After an add command, add a newline and then enter your code block. At the end of the block, add a newline and `end-patch` to tell the patcher the patch is finished.
