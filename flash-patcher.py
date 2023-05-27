@@ -26,7 +26,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v3.0.1"
+CURRENT_VERSION = "v3.1.0"
 
 DECOMP_LOCATION = "./.Patcher-Temp/mod/"
 
@@ -75,9 +75,77 @@ def detect_jpexs():
 def perror(mesg):
     print(mesg, file=sys.stderr)
 
+def read_from_file(file_location, patch_file, current_line_no):
+    try:
+        with open(file_location) as f:
+            current_file = f.readlines()
+            return current_file
+    except (FileNotFoundError, IsADirectoryError) as e:
+        perror("")
+        perror(patch_file + ", line " + str(current_line_no) + ": Invalid injection location")
+        perror("Could not find or load SWF decompiled file at: " + file_location)
+        perror("Aborting...")
+        exit(1)
+
 def write_to_file(path, lines):
     with open(path, "w") as f:
         f.writelines(lines)
+
+class FilePosition:
+    def __init__(self, file_content, file_name):
+        self.fileContent = file_content
+        self.fileName = file_name
+        self.lineNumber = 0
+
+    def saveOut(self):
+        write_to_file(self.fileName, self.fileContent)
+
+class CodeInjector:
+    def __init__(self):
+        self.files = []
+        self.injectLines = []
+        self.startingLineNo = -1
+
+    # Return the file name of the script being modified
+    def addInjectionTarget(self, injection_info, patch_file, current_line_no):
+        split_line = injection_info.split()
+        short_name = ' '.join(split_line[1:-1])
+        file_name = DECOMP_LOCATION + "scripts/" + short_name
+
+        file_content = read_from_file(file_name, patch_file, current_line_no)
+        current_file = FilePosition(file_content, file_name)
+
+        split_line = injection_info.split()
+
+        current_file.lineNumber = find_write_location(file_content, split_line[-1])
+        self.files.append(current_file)
+        return file_name
+
+    def addInjectionLine(self, line, current_line_no):
+        self.injectLines.append(line)
+
+        if self.startingLineNo == -1:
+            self.startingLineNo = current_line_no
+
+    # FIXME - This will have incorrect behavior if we inject into the same file twice in the same block
+    def inject(self):
+        if len(self.injectLines) == 0:
+            return
+        
+        # Inject into every file
+        for file in self.files:
+            patch_line_no = self.startingLineNo
+            file_line_no = file.lineNumber
+
+            for line in self.injectLines:
+                # line_stripped = line.strip("\n\r ")
+                # FIXME - Add skip cmd here
+                file.fileContent.insert(file_line_no, line)
+
+                patch_line_no += 1
+                file_line_no += 1
+            
+            file.saveOut()
 
 """
 Find the location in the file specified.
@@ -117,22 +185,50 @@ def apply_patch(patch_file):
 
     line_add_mode = False
     file_location = ""
-    current_file = []
 
-    add_line_no = 0
     current_line_no = 1
+
+    injector = None
     
     for line in lines:
         line_stripped = line.strip("\n\r ")
 
         # Ignore comments and blank lines 
         if len(line_stripped) == 0 or line[0] == '#':
+            current_line_no += 1
             continue
-       
-        # If we're not inside a line addition block, run the full parser
-        if not line_add_mode:
-            split_line = line_stripped.split()
 
+        split_line = line_stripped.split()
+
+        # Process add statement
+        # FIXME - Move to separate funtion/logic
+        # If we have an add command, set the adding location and switch to add mode
+        if split_line[0] == "add":
+            if injector is None:
+                injector = CodeInjector()
+
+            line_add_mode = True
+            script = injector.addInjectionTarget(line_stripped, patch_file, current_line_no)
+            modified_scripts.add(script)
+
+        # If we're in add mode and encounter the end of the patch, write the modified script back to file
+        elif line_stripped == "end-patch" and line_add_mode:
+            line_add_mode = False
+
+            if injector is None:
+                perror("")
+                perror(patch_file + ", line " + str(current_line_no) + ": Invalid syntax")
+                perror("end-patch is not matched by any 'add' statements")
+                exit(1)
+            
+            injector.inject()
+            injector = None
+
+        elif line_add_mode:
+            injector.addInjectionLine(line, current_line_no)
+        
+        # If we're not inside a line addition block, run the remove parser
+        elif not line_add_mode:
             # Account for spaces in file name by taking everything except the first (command character) and last (line number/s) blocks
             short_name = ' '.join(split_line[1:-1])
             file_location = DECOMP_LOCATION + "scripts/" + short_name
@@ -140,23 +236,9 @@ def apply_patch(patch_file):
             # Add the current script to the list of modified ones (ie, keep this in the final output)
             modified_scripts.add(file_location)
 
-            try:
-                with open(file_location) as f:
-                    current_file = f.readlines()
-            except (FileNotFoundError, IsADirectoryError) as e:
-                perror("")
-                perror(patch_file + ", line " + str(current_line_no) + ": Invalid injection location")
-                perror("Could not find or load SWF decompiled file at: " + file_location)
-                perror("Aborting...")
-                exit(1)
-
-            # If we have an add command, set the adding location and switch to add mode
-            if split_line[0] == "add":
-                line_add_mode = True
-                add_line_no = find_write_location(current_file, split_line[-1])
-
             # If we have a remove command, remove the specified line numbers (inclusive)
-            elif split_line[0] == "remove":
+            if split_line[0] == "remove":
+                current_file = read_from_file(file_location, patch_file, current_line_no)
                 line_counts = split_line[-1].split("-")
 
                 if len(line_counts) != 2:
@@ -190,23 +272,13 @@ def apply_patch(patch_file):
 
             else:
                 print("Unrecognized command: ", split_line[0], "skipping")
-            
-        # If we're in add mode and encounter the end of the patch, write the modified script back to file
-        elif line_stripped == "end-patch":
-            line_add_mode = False
-            write_to_file(file_location, current_file)
-
-        # If we're in add mode, insert the script into the line buffer
-        else:
-            current_file.insert(add_line_no, line)
-            add_line_no += 1
 
         current_line_no += 1
 
     if line_add_mode:
         perror("")
-        perror(file_location + ": Syntax error")
-        perror("Missing end-patch for \"add\"")
+        perror(patch_file + ": Syntax error")
+        perror("Missing end-patch for \"add\" on line " + str(injector.startingLineNo - 1))
         perror("Aborting...")
         exit(1)
 
@@ -365,8 +437,7 @@ def main(inputfile, folder, stagefile, output, invalidate_cache, recompile_all):
         elif patch_stripped.endswith(".assets"): # Asset Pack file
             modified_scripts |= apply_assets(folder + "/" + patch_stripped, folder)
         else:
-            perror("The file provided did not have a valid filetype.")
-            perror(patch_stripped)
+            perror("The file provided ('" + patch_stripped + "') did not have a valid filetype.")
             perror("Aborting...")
             exit(1)
 
