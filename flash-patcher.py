@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import base64
 import shutil
 import subprocess
 import sys
@@ -24,7 +25,9 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v2.2.0"
+CURRENT_VERSION = "v2.2.1"
+
+DECOMP_LOCATION = "./.Patcher-Temp/mod/"
 
 """
 Set JPEXS_PATH and JPEXS_ARGS to the specified path and (optionally) args if JPEXS exists at the specified location.
@@ -67,9 +70,6 @@ def detect_jpexs():
         return True
 
     return False
-
-
-
 
 def perror(mesg):
     print(mesg, file=sys.stderr)
@@ -134,7 +134,7 @@ def apply_patch(patch_file):
 
             # Account for spaces in file name by taking everything except the first (command character) and last (line number/s) blocks
             short_name = ' '.join(split_line[1:-1])
-            file_location = "./.Patcher-Temp/scripts/" + short_name
+            file_location = DECOMP_LOCATION + "scripts/" + short_name
             
             # Add the current script to the list of modified ones (ie, keep this in the final output)
             modified_scripts.add(file_location)
@@ -245,16 +245,16 @@ def apply_assets(asset_file, folder):
             # Create folder and copy things over
             remote_folder = remote_name.split("/")[0]
             
-            if not os.path.exists("./.Patcher-Temp/" + remote_folder):
-                os.mkdir("./.Patcher-Temp/" + remote_folder)
+            if not os.path.exists(DECOMP_LOCATION + remote_folder):
+                os.mkdir(DECOMP_LOCATION + remote_folder)
 
-            shutil.copyfile(folder + "/" + local_name, "./.Patcher-Temp/" + remote_name)
+            shutil.copyfile(folder + "/" + local_name, DECOMP_LOCATION + remote_name)
 
-            modified_files.add("./.Patcher-Temp/" + remote_name)
+            modified_files.add(DECOMP_LOCATION + remote_name)
     
     return modified_files
 
-def main(inputfile, folder, stagefile, output):
+def main(inputfile, folder, stagefile, output, invalidate_cache):
     print("Riley's SWF Patcher - " + CURRENT_VERSION)
 
     if detect_jpexs() == False:
@@ -263,25 +263,40 @@ def main(inputfile, folder, stagefile, output):
 
     print("Using JPEXS at:", JPEXS_PATH)
 
-    # Decompile the swf into temp folder called ./.Patcher-Temp
+    # Decompile the swf into temp folder called ./.Patcher-Temp/[swf name]
     if not os.path.exists("./.Patcher-Temp"):
         os.mkdir("./.Patcher-Temp")
 
-    if not os.path.exists(sys.argv[1]):
-        perror("Could not locate the SWF file: " + sys.argv[1])
+    if not os.path.exists(inputfile):
+        perror("Could not locate the SWF file: " + inputfile)
         perror("Aborting...")
         exit(1)
 
-    print("Beginning decompilation...")
-   
-    decomp = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-export", "script", "./.Patcher-Temp", sys.argv[1]], \
-        stdout=subprocess.DEVNULL, \
-        stderr=subprocess.DEVNULL)
+    cache_location = "./.Patcher-Temp/" + base64.b32encode(bytes(inputfile, "utf-8")).decode("ascii")
 
-    if (decomp.returncode != 0):
-        perror("JPEXS was unable to decompile the SWF file: " + sys.argv[1])
-        perror("Aborting...")
-        exit(1)
+    # Mkdir / check for cache
+    if invalidate_cache or (not os.path.exists(cache_location)):
+        if (not os.path.exists(cache_location)):
+            os.mkdir(cache_location)
+
+        print("Beginning decompilation...")
+
+        decomp = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-export", "script", cache_location, inputfile], \
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+        if (decomp.returncode != 0):
+            perror("JPEXS was unable to decompile the SWF file: " + inputfile)
+            perror("Aborting...")
+            exit(1)
+
+    else:
+        print("Detected cached decompilation. Skipping...")
+
+    # Copy the cache to a different location so we can reuse it
+    if (os.path.exists(DECOMP_LOCATION)):
+        shutil.rmtree(DECOMP_LOCATION)
+
+    shutil.copytree(cache_location, DECOMP_LOCATION)
 
     print("Decompilation finished. Beginning injection...")
 
@@ -317,7 +332,7 @@ def main(inputfile, folder, stagefile, output):
 
     # Delete all non-modified scripts
     # Taken from https://stackoverflow.com/questions/19309667/recursive-os-listdir - Make recursive os.listdir
-    scripts = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser("./.Patcher-Temp")) for f in fn]
+    scripts = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(DECOMP_LOCATION)) for f in fn]
     for script in scripts:
         if script not in modified_scripts:
             os.remove(script)
@@ -326,23 +341,29 @@ def main(inputfile, folder, stagefile, output):
 
     # Repackage the file as a SWF
     # Rant: JPEXS should really return an error code if recompilation fails here! Unable to detect if this was successful or not otherwise.
-    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importScript", sys.argv[1], sys.argv[4], "./.Patcher-Temp"], \
+    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importScript", inputfile, output, DECOMP_LOCATION], \
             stdout=subprocess.DEVNULL)
-    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importImages", sys.argv[4], sys.argv[4], "./.Patcher-Temp"], \
+    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importImages", output, output, DECOMP_LOCATION], \
             stdout=subprocess.DEVNULL)
-    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importSounds", sys.argv[4], sys.argv[4], "./.Patcher-Temp"], \
+    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importSounds", output, output, DECOMP_LOCATION], \
             stdout=subprocess.DEVNULL)
-    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importShapes", sys.argv[4], sys.argv[4], "./.Patcher-Temp"], \
+    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importShapes", output, output, DECOMP_LOCATION], \
             stdout=subprocess.DEVNULL)
-    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importText", sys.argv[4], sys.argv[4], "./.Patcher-Temp"], \
+    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importText", output, output, DECOMP_LOCATION], \
             stdout=subprocess.DEVNULL)
     
     print("Done.")
 
 if __name__ == "__main__":
     # command line argument checking
-    if (len(sys.argv) != 5):
-        perror("Usage: " + sys.argv[0] + " [SWF to patch] [patch folder] [patch stage file] [output SWF]")
+    if (len(sys.argv) < 5 or len(sys.argv) > 6):
+        perror("Usage: " + sys.argv[0] + " [SWF to patch] [patch folder] [patch stage file] [output SWF] [--invalidateCache - optional]")
         exit(1)
 
-    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    invalidate_cache = False
+
+    if (len(sys.argv) > 5 and sys.argv[5] == "--invalidateCache"):
+        invalidate_cache = True
+
+    # FIXME - Support invalidating the cache
+    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], invalidate_cache)
