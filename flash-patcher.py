@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import argparse
 import base64
 import shutil
 import subprocess
@@ -25,7 +26,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v2.2.1"
+CURRENT_VERSION = "v3.0.0 BETA"
 
 DECOMP_LOCATION = "./.Patcher-Temp/mod/"
 
@@ -254,7 +255,7 @@ def apply_assets(asset_file, folder):
     
     return modified_files
 
-def main(inputfile, folder, stagefile, output, invalidate_cache):
+def main(inputfile, folder, stagefile, output, invalidate_cache, recompile_all):
     print("Riley's SWF Patcher - " + CURRENT_VERSION)
 
     if detect_jpexs() == False:
@@ -343,27 +344,29 @@ def main(inputfile, folder, stagefile, output, invalidate_cache):
     # Rant: JPEXS should really return an error code if recompilation fails here! Unable to detect if this was successful or not otherwise.
     subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importScript", inputfile, output, DECOMP_LOCATION], \
             stdout=subprocess.DEVNULL)
-    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importImages", output, output, DECOMP_LOCATION], \
+    
+    if recompile_all:
+        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importImages", output, output, DECOMP_LOCATION], \
             stdout=subprocess.DEVNULL)
-    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importSounds", output, output, DECOMP_LOCATION], \
+        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importSounds", output, output, DECOMP_LOCATION], \
             stdout=subprocess.DEVNULL)
-    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importShapes", output, output, DECOMP_LOCATION], \
+        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importShapes", output, output, DECOMP_LOCATION], \
             stdout=subprocess.DEVNULL)
-    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importText", output, output, DECOMP_LOCATION], \
+        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importText", output, output, DECOMP_LOCATION], \
             stdout=subprocess.DEVNULL)
     
     print("Done.")
 
 if __name__ == "__main__":
-    # command line argument checking
-    if (len(sys.argv) < 5 or len(sys.argv) > 6):
-        perror("Usage: " + sys.argv[0] + " [SWF to patch] [patch folder] [patch stage file] [output SWF] [--invalidateCache - optional]")
-        exit(1)
+    parser = argparse.ArgumentParser()
 
-    invalidate_cache = False
+    parser.add_argument("--inputswf", dest="input_swf", type=str, required=True, help="Input SWF file")
+    parser.add_argument("--folder", dest="folder", type=str, required=True, help="Folder with pacth files")
+    parser.add_argument("--stagefile", dest="stage_file", type=str, required=True, help="Stage file name")
+    parser.add_argument("--outputswf", dest="output_swf", type=str, required=True, help="Output SWF file")
+    parser.add_argument("--invalidateCache", dest="invalidate_cache", default=False, action="store_true", help="Invalidate cached decompilation files")
+    parser.add_argument("--all", dest="recompile_all", default=False, action="store_true", help="Recompile the whole SWF (if this is off, only scripts will recompile)")
 
-    if (len(sys.argv) > 5 and sys.argv[5] == "--invalidateCache"):
-        invalidate_cache = True
+    args = parser.parse_args()
 
-    # FIXME - Support invalidating the cache
-    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], invalidate_cache)
+    main(args.input_swf, args.folder, args.stage_file, args.output_swf, args.invalidate_cache, args.recompile_all)
