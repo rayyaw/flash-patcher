@@ -26,7 +26,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v3.0.0 BETA"
+CURRENT_VERSION = "v3.0.1"
 
 DECOMP_LOCATION = "./.Patcher-Temp/mod/"
 
@@ -252,19 +252,22 @@ def apply_assets(asset_file, folder):
             shutil.copyfile(folder + "/" + local_name, DECOMP_LOCATION + remote_name)
 
             modified_files.add(DECOMP_LOCATION + remote_name)
+        
+        else:
+            print("Unrecognized command: ", line, "skipping")
     
     return modified_files
 
-def main(inputfile, folder, stagefile, output, invalidate_cache, recompile_all):
-    print("Riley's SWF Patcher - " + CURRENT_VERSION)
+"""
+Decompile the SWF and return the decompilation location.
 
-    if detect_jpexs() == False:
-        perror("Could not locate required dependency: JPEXS Flash Decompiler. Aborting...")
-        exit(1)
+This uses caching to save time.
 
-    print("Using JPEXS at:", JPEXS_PATH)
-
-    # Decompile the swf into temp folder called ./.Patcher-Temp/[swf name]
+inputfile: the SWF to decompile
+invalidate_cache: if set to True, will force decompilation instead of using cached files
+"""
+def decompile_swf(inputfile, invalidate_cache):
+    # Decompile the swf into temp folder called ./.Patcher-Temp/[swf name, base32 encoded]
     if not os.path.exists("./.Patcher-Temp"):
         os.mkdir("./.Patcher-Temp")
 
@@ -292,6 +295,42 @@ def main(inputfile, folder, stagefile, output, invalidate_cache, recompile_all):
 
     else:
         print("Detected cached decompilation. Skipping...")
+
+    return cache_location
+
+"""
+Recompile the SWF after injection is complete.
+
+inputfile: The base SWF to use for missing files
+outputfile: The location to save the output
+recompile_all: If this is set to False, will only recompile scripts
+"""
+def recompile_swf(inputfile, output, recompile_all):
+    # Repackage the file as a SWF
+    # Rant: JPEXS should really return an error code if recompilation fails here! Unable to detect if this was successful or not otherwise.
+    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importScript", inputfile, output, DECOMP_LOCATION], \
+            stdout=subprocess.DEVNULL)
+    
+    if recompile_all:
+        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importImages", output, output, DECOMP_LOCATION], \
+            stdout=subprocess.DEVNULL)
+        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importSounds", output, output, DECOMP_LOCATION], \
+            stdout=subprocess.DEVNULL)
+        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importShapes", output, output, DECOMP_LOCATION], \
+            stdout=subprocess.DEVNULL)
+        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importText", output, output, DECOMP_LOCATION], \
+            stdout=subprocess.DEVNULL)
+
+def main(inputfile, folder, stagefile, output, invalidate_cache, recompile_all):
+    print("Riley's SWF Patcher - " + CURRENT_VERSION)
+
+    if detect_jpexs() == False:
+        perror("Could not locate required dependency: JPEXS Flash Decompiler. Aborting...")
+        exit(1)
+
+    print("Using JPEXS at:", JPEXS_PATH)
+
+    cache_location = decompile_swf(inputfile, invalidate_cache)
 
     # Copy the cache to a different location so we can reuse it
     if (os.path.exists(DECOMP_LOCATION)):
@@ -340,20 +379,7 @@ def main(inputfile, folder, stagefile, output, invalidate_cache, recompile_all):
 
     print("Injection complete, recompiling...")
 
-    # Repackage the file as a SWF
-    # Rant: JPEXS should really return an error code if recompilation fails here! Unable to detect if this was successful or not otherwise.
-    subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importScript", inputfile, output, DECOMP_LOCATION], \
-            stdout=subprocess.DEVNULL)
-    
-    if recompile_all:
-        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importImages", output, output, DECOMP_LOCATION], \
-            stdout=subprocess.DEVNULL)
-        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importSounds", output, output, DECOMP_LOCATION], \
-            stdout=subprocess.DEVNULL)
-        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importShapes", output, output, DECOMP_LOCATION], \
-            stdout=subprocess.DEVNULL)
-        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importText", output, output, DECOMP_LOCATION], \
-            stdout=subprocess.DEVNULL)
+    recompile_swf(inputfile, output, recompile_all)
     
     print("Done.")
 
