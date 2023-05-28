@@ -26,7 +26,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v4.1.2"
+CURRENT_VERSION = "v4.1.3"
 
 DECOMP_LOCATION = "./.Patcher-Temp/mod/"
 DECOMP_LOCATION_WITH_SCRIPTS = DECOMP_LOCATION + "scripts/"
@@ -409,7 +409,7 @@ def recompile_swf(inputfile, output, recompile_all, xml_mode):
     # Repackage the file as a SWF
     # Rant: JPEXS should really return an error code if recompilation fails here! Unable to detect if this was successful or not otherwise.
     if xml_mode:
-        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-xml2swf", "./.Patcher-Temp/swf.xml", output, xml_mode], \
+        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-xml2swf", "./.Patcher-Temp/swf.xml", output], \
             stdout=subprocess.DEVNULL)
         return
     
