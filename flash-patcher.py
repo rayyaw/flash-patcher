@@ -26,7 +26,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v4.0.0"
+CURRENT_VERSION = "v4.0.1"
 
 DECOMP_LOCATION = "./.Patcher-Temp/mod/"
 
@@ -111,17 +111,14 @@ def find_write_location(lines, code):
             exit(1)
 
 class FilePosition:
-    def __init__(self, file_content, file_name):
-        self.fileContent = file_content
+    def __init__(self, file_name):
         self.fileName = file_name
         self.lineNumber = 0
-
-    def saveOut(self):
-        write_to_file(self.fileName, self.fileContent)
 
 class CodeInjector:
     def __init__(self):
         self.files = []
+        self.fileContents = {}
         self.injectLines = []
         self.startingLineNo = -1
 
@@ -132,12 +129,13 @@ class CodeInjector:
         file_name = DECOMP_LOCATION + "scripts/" + short_name
 
         file_content = read_from_file(file_name, patch_file, current_line_no)
-        current_file = FilePosition(file_content, file_name)
+        current_file = FilePosition(file_name)
 
         split_line = injection_info.split()
 
         current_file.lineNumber = find_write_location(file_content, split_line[-1])
         self.files.append(current_file)
+        self.fileContents[file_name] = file_content
         return file_name
 
     def addInjectionLine(self, line, current_line_no):
@@ -146,7 +144,6 @@ class CodeInjector:
         if self.startingLineNo == -1:
             self.startingLineNo = current_line_no
 
-    # FIXME - This will have incorrect behavior if we inject into the same file twice in the same block
     def inject(self):
         if len(self.injectLines) == 0:
             return
@@ -173,12 +170,13 @@ class CodeInjector:
                             perror("Aborting...")
                             exit(1)
 
-                file.fileContent.insert(file_line_no, line)
+                self.fileContents[file.fileName].insert(file_line_no, line)
 
                 patch_line_no += 1
                 file_line_no += 1
             
-            file.saveOut()
+        for file, fileContent in self.fileContents.items():
+            write_to_file(file, fileContent)
 
 """
 Apply a single patch file.
