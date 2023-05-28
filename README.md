@@ -31,6 +31,7 @@ Example: `$PATCHER --inputswf $SWF_FILE_PATH/SMF_Base_Hack.swf --folder . --stag
 ### Optional arguments
 - `--invalidateCache`: Force the patcher to decompile the SWF. If this flag is not set, Flash Patcher may use a cached version of the SWF decompilation to speed up the process.
 - `--all`: Recompile the full SWF. This is required when injecting asset packs but slows down recompilation.
+- `--xml`: Inject in xml mode. This decompiles the .swf to .xml and allows you to modify the xml file.
 
 ## File Structure
 
@@ -86,6 +87,8 @@ Within a code block, you can also use the following syntax to skip ahead within 
 ```
 
 Type `// cmd: skip ` (with spaces as shown), then the number of lines you wish to skip without modifying.
+
+To inject while in XML mode, use normal `.patch` files, but the add location will be the hardcoded string `swf.xml`.
 
 ## Asset Packs
 

@@ -26,7 +26,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v4.0.1"
+CURRENT_VERSION = "v4.1.0"
 
 DECOMP_LOCATION = "./.Patcher-Temp/mod/"
 
@@ -350,7 +350,7 @@ This uses caching to save time.
 inputfile: the SWF to decompile
 invalidate_cache: if set to True, will force decompilation instead of using cached files
 """
-def decompile_swf(inputfile, invalidate_cache):
+def decompile_swf(inputfile, invalidate_cache, xml_mode):
     # Decompile the swf into temp folder called ./.Patcher-Temp/[swf name, base32 encoded]
     if not os.path.exists("./.Patcher-Temp"):
         os.mkdir("./.Patcher-Temp")
@@ -361,6 +361,8 @@ def decompile_swf(inputfile, invalidate_cache):
         exit(1)
 
     cache_location = "./.Patcher-Temp/" + base64.b32encode(bytes(inputfile, "utf-8")).decode("ascii")
+    if xml_mode:
+        cache_location = "./.Patcher-Temp/scripts"
 
     # Mkdir / check for cache
     if invalidate_cache or (not os.path.exists(cache_location)):
@@ -369,8 +371,16 @@ def decompile_swf(inputfile, invalidate_cache):
 
         print("Beginning decompilation...")
 
-        decomp = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-export", "script", cache_location, inputfile], \
-            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        decomp = None
+
+        if xml_mode:
+            cache_location += "/swf.xml"
+            decomp = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-swf2xml", cache_location, inputfile], \
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            
+        else:
+            decomp = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-export", "script", cache_location, inputfile], \
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         
         if (decomp.returncode != 0):
             perror("JPEXS was unable to decompile the SWF file: " + inputfile)
@@ -389,9 +399,14 @@ inputfile: The base SWF to use for missing files
 outputfile: The location to save the output
 recompile_all: If this is set to False, will only recompile scripts
 """
-def recompile_swf(inputfile, output, recompile_all):
+def recompile_swf(inputfile, output, recompile_all, xml_mode):
     # Repackage the file as a SWF
     # Rant: JPEXS should really return an error code if recompilation fails here! Unable to detect if this was successful or not otherwise.
+    if xml_mode:
+        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-xml2swf", "./.Patcher-Temp/scripts/swf.xml", output, DECOMP_LOCATION], \
+            stdout=subprocess.DEVNULL)
+        return
+    
     subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importScript", inputfile, output, DECOMP_LOCATION], \
             stdout=subprocess.DEVNULL)
     
@@ -405,7 +420,7 @@ def recompile_swf(inputfile, output, recompile_all):
         subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-importText", output, output, DECOMP_LOCATION], \
             stdout=subprocess.DEVNULL)
 
-def main(inputfile, folder, stagefile, output, invalidate_cache, recompile_all):
+def main(inputfile, folder, stagefile, output, invalidate_cache, recompile_all, xml_mode):
     print("Riley's SWF Patcher - " + CURRENT_VERSION)
 
     if detect_jpexs() == False:
@@ -414,7 +429,7 @@ def main(inputfile, folder, stagefile, output, invalidate_cache, recompile_all):
 
     print("Using JPEXS at:", JPEXS_PATH)
 
-    cache_location = decompile_swf(inputfile, invalidate_cache)
+    cache_location = decompile_swf(inputfile, invalidate_cache, xml_mode)
 
     # Copy the cache to a different location so we can reuse it
     if (os.path.exists(DECOMP_LOCATION)):
@@ -462,7 +477,7 @@ def main(inputfile, folder, stagefile, output, invalidate_cache, recompile_all):
 
     print("Injection complete, recompiling...")
 
-    recompile_swf(inputfile, output, recompile_all)
+    recompile_swf(inputfile, output, recompile_all, xml_mode)
     
     print("Done.")
 
@@ -473,9 +488,11 @@ if __name__ == "__main__":
     parser.add_argument("--folder", dest="folder", type=str, required=True, help="Folder with patch files")
     parser.add_argument("--stagefile", dest="stage_file", type=str, required=True, help="Stage file name")
     parser.add_argument("--outputswf", dest="output_swf", type=str, required=True, help="Output SWF file")
+    
     parser.add_argument("--invalidateCache", dest="invalidate_cache", default=False, action="store_true", help="Invalidate cached decompilation files")
     parser.add_argument("--all", dest="recompile_all", default=False, action="store_true", help="Recompile the whole SWF (if this is off, only scripts will recompile)")
+    parser.add_argument("--xml", dest="xml_mode", default=False, action="store_true", help="Inject into an XML decompilation instead of standard syntax")
 
     args = parser.parse_args()
 
-    main(args.input_swf, args.folder, args.stage_file, args.output_swf, args.invalidate_cache, args.recompile_all)
+    main(args.input_swf, args.folder, args.stage_file, args.output_swf, args.invalidate_cache, args.recompile_all, args.xml_mode)
