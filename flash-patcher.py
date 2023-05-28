@@ -26,9 +26,10 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v4.1.0"
+CURRENT_VERSION = "v4.1.1"
 
 DECOMP_LOCATION = "./.Patcher-Temp/mod/"
+DECOMP_LOCATION_WITH_SCRIPTS = DECOMP_LOCATION + "scripts/"
 
 """
 Set JPEXS_PATH and JPEXS_ARGS to the specified path and (optionally) args if JPEXS exists at the specified location.
@@ -126,7 +127,7 @@ class CodeInjector:
     def addInjectionTarget(self, injection_info, patch_file, current_line_no):
         split_line = injection_info.split()
         short_name = ' '.join(split_line[1:-1])
-        file_name = DECOMP_LOCATION + "scripts/" + short_name
+        file_name = DECOMP_LOCATION_WITH_SCRIPTS + short_name
 
         file_content = read_from_file(file_name, patch_file, current_line_no)
         current_file = FilePosition(file_name)
@@ -244,7 +245,7 @@ def apply_patch(patch_file):
         elif split_line[0] == "remove":
                 # Account for spaces in file name by taking everything except the first (command character) and last (line number/s) blocks
                 short_name = ' '.join(split_line[1:-1])
-                file_location = DECOMP_LOCATION + "scripts/" + short_name
+                file_location = DECOMP_LOCATION_WITH_SCRIPTS + short_name
                 
                 # Add the current script to the list of modified ones (ie, keep this in the final output)
                 modified_scripts.add(file_location)
@@ -362,7 +363,9 @@ def decompile_swf(inputfile, invalidate_cache, xml_mode):
 
     cache_location = "./.Patcher-Temp/" + base64.b32encode(bytes(inputfile, "utf-8")).decode("ascii")
     if xml_mode:
-        cache_location = "./.Patcher-Temp/scripts"
+        global DECOMP_LOCATION_WITH_SCRIPTS
+        cache_location = "./.Patcher-Temp"
+        DECOMP_LOCATION_WITH_SCRIPTS = "./.Patcher-Temp/"
 
     # Mkdir / check for cache
     if invalidate_cache or (not os.path.exists(cache_location)):
@@ -403,7 +406,7 @@ def recompile_swf(inputfile, output, recompile_all, xml_mode):
     # Repackage the file as a SWF
     # Rant: JPEXS should really return an error code if recompilation fails here! Unable to detect if this was successful or not otherwise.
     if xml_mode:
-        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-xml2swf", "./.Patcher-Temp/scripts/swf.xml", output, DECOMP_LOCATION], \
+        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-xml2swf", "./.Patcher-Temp/swf.xml", output, DECOMP_LOCATION], \
             stdout=subprocess.DEVNULL)
         return
     
