@@ -26,7 +26,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v3.2.0"
+CURRENT_VERSION = "v4.0.0"
 
 DECOMP_LOCATION = "./.Patcher-Temp/mod/"
 
@@ -220,9 +220,11 @@ def apply_patch(patch_file):
             if injector is None:
                 injector = CodeInjector()
 
-            line_add_mode = True
             script = injector.addInjectionTarget(line_stripped, patch_file, current_line_no)
             modified_scripts.add(script)
+
+        elif split_line[0] == "begin-patch":
+            line_add_mode = True
 
         # If we're in add mode and encounter the end of the patch, write the modified script back to file
         elif line_stripped == "end-patch" and line_add_mode:
@@ -283,7 +285,7 @@ def apply_patch(patch_file):
 
         # Unrecognized statement
         else:
-            print("Unrecognized command: ", split_line[0], "skipping")
+            perror("Unrecognized command: '" + split_line[0] + "', skipping (at " + patch_file + ", line " + str(current_line_no) + ")")
 
         current_line_no += 1
 
