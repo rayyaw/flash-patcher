@@ -74,9 +74,16 @@ You are allowed to put multiple `add` statements before a code block you wish to
 
 The second argument is a line number. For the add command, all lines up to (but not including) the `end-patch` command will be inserted into the SWF, *on* the specified line. For the remove command, all lines between the two numbers specified will be removed (and this is inclusive).
 
-After an add command, add a newline and then enter your code block. At the end of the block, add a newline and `end-patch` to tell the patcher the patch is finished.
+After one or more add commands, add a newline, a `begin-patch\n` and then enter your code block. At the end of the block, add a newline and `end-patch` to tell the patcher the patch is finished.
 
 Instead of a line number, you can also specify `end` to append to the end of the file. This only applies for add commands.
+
+Within a code block, you can also use the following syntax to skip ahead within the file:
+```
+// cmd: skip N
+```
+
+Type `// cmd: skip ` (with spaces as shown), then the number of lines you wish to skip without modifying.
 
 ## Asset Packs
 
