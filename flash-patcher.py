@@ -26,7 +26,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v4.1.1"
+CURRENT_VERSION = "v4.1.2"
 
 DECOMP_LOCATION = "./.Patcher-Temp/mod/"
 DECOMP_LOCATION_WITH_SCRIPTS = DECOMP_LOCATION + "scripts/"
@@ -363,13 +363,17 @@ def decompile_swf(inputfile, invalidate_cache, xml_mode):
 
     cache_location = "./.Patcher-Temp/" + base64.b32encode(bytes(inputfile, "utf-8")).decode("ascii")
     if xml_mode:
+        global DECOMP_LOCATION
         global DECOMP_LOCATION_WITH_SCRIPTS
-        cache_location = "./.Patcher-Temp"
+
+        cache_location = "./.Patcher-Temp/swf2.xml"
+
+        DECOMP_LOCATION = "./.Patcher-Temp/swf.xml"
         DECOMP_LOCATION_WITH_SCRIPTS = "./.Patcher-Temp/"
 
     # Mkdir / check for cache
     if invalidate_cache or (not os.path.exists(cache_location)):
-        if (not os.path.exists(cache_location)):
+        if (not os.path.exists(cache_location) and not xml_mode):
             os.mkdir(cache_location)
 
         print("Beginning decompilation...")
@@ -377,8 +381,7 @@ def decompile_swf(inputfile, invalidate_cache, xml_mode):
         decomp = None
 
         if xml_mode:
-            cache_location += "/swf.xml"
-            decomp = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-swf2xml", cache_location, inputfile], \
+            decomp = subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-swf2xml", inputfile, cache_location], \
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             
         else:
@@ -406,7 +409,7 @@ def recompile_swf(inputfile, output, recompile_all, xml_mode):
     # Repackage the file as a SWF
     # Rant: JPEXS should really return an error code if recompilation fails here! Unable to detect if this was successful or not otherwise.
     if xml_mode:
-        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-xml2swf", "./.Patcher-Temp/swf.xml", output, DECOMP_LOCATION], \
+        subprocess.run([JPEXS_PATH] + JPEXS_ARGS + ["-xml2swf", "./.Patcher-Temp/swf.xml", output, xml_mode], \
             stdout=subprocess.DEVNULL)
         return
     
@@ -436,9 +439,15 @@ def main(inputfile, folder, stagefile, output, invalidate_cache, recompile_all, 
 
     # Copy the cache to a different location so we can reuse it
     if (os.path.exists(DECOMP_LOCATION)):
-        shutil.rmtree(DECOMP_LOCATION)
+        try:
+            shutil.rmtree(DECOMP_LOCATION)
+        except NotADirectoryError:
+            os.remove(DECOMP_LOCATION)
 
-    shutil.copytree(cache_location, DECOMP_LOCATION)
+    try:
+        shutil.copytree(cache_location, DECOMP_LOCATION)
+    except NotADirectoryError:
+        shutil.copy(cache_location, DECOMP_LOCATION)
 
     print("Decompilation finished. Beginning injection...")
 
