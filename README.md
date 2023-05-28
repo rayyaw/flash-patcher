@@ -62,7 +62,9 @@ A patch file (which must end in .patch), may look something like this:
 # Comment
 
 add DefineSprite_1058 boss2/DoAction.as 789
+begin-patch
 _root.gotoAndStop(15);
+// cmd: skip 15
 end-patch
 
 remove frame_1/DoAction.as 789-1111
