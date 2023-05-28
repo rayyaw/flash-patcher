@@ -470,7 +470,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--inputswf", dest="input_swf", type=str, required=True, help="Input SWF file")
-    parser.add_argument("--folder", dest="folder", type=str, required=True, help="Folder with pacth files")
+    parser.add_argument("--folder", dest="folder", type=str, required=True, help="Folder with patch files")
     parser.add_argument("--stagefile", dest="stage_file", type=str, required=True, help="Stage file name")
     parser.add_argument("--outputswf", dest="output_swf", type=str, required=True, help="Output SWF file")
     parser.add_argument("--invalidateCache", dest="invalidate_cache", default=False, action="store_true", help="Invalidate cached decompilation files")
