@@ -12,6 +12,7 @@ Riley's SWF patcher
 
 Development: RileyTech
 Bug testing: Creyon
+Windows path fix: Jhynjhiruu
 
 Download and updates: https://github.com/rayyaw/flash-patcher
 
@@ -26,7 +27,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v4.1.3"
+CURRENT_VERSION = "v4.1.4"
 
 DECOMP_LOCATION = "./.Patcher-Temp/mod/"
 DECOMP_LOCATION_WITH_SCRIPTS = DECOMP_LOCATION + "scripts/"
