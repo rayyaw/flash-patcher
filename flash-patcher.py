@@ -12,6 +12,7 @@ Riley's SWF patcher
 
 Development: RileyTech
 Bug testing: Creyon
+Windows path fix: Jhynjhiruu
 
 Download and updates: https://github.com/rayyaw/flash-patcher
 
@@ -26,7 +27,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v4.1.3"
+CURRENT_VERSION = "v4.1.4"
 
 DECOMP_LOCATION = "./.Patcher-Temp/mod/"
 DECOMP_LOCATION_WITH_SCRIPTS = DECOMP_LOCATION + "scripts/"
@@ -63,12 +64,12 @@ def detect_jpexs():
         if (testrun.returncode == 0):
             return True
 
-    # windows x32 install location
-    if (set_jpexs_if_exists("C:\\Program Files(x86)\\FFDec\\ffdec.exe")):
+    # windows default install location
+    if (set_jpexs_if_exists(f"{os.getenv('ProgramFiles')}\\FFDec\\ffdec.exe")):
         return True
 
-    # windows x64 install location
-    if (set_jpexs_if_exists("C:\\Program Files\\FFDec\\ffdec.exe")):
+    # wow64 install location
+    if (set_jpexs_if_exists(f"{os.getenv('ProgramFiles(x86)')}\\FFDec\\ffdec.exe")):
         return True
 
     return False
