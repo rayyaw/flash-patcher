@@ -63,13 +63,14 @@ def detect_jpexs():
         if (testrun.returncode == 0):
             return True
 
-    # windows x32 install location
-    if (set_jpexs_if_exists("C:\\Program Files(x86)\\FFDec\\ffdec.exe")):
+    # windows default install location
+    if (set_jpexs_if_exists(f"{os.getenv('ProgramFiles')}\\FFDec\\ffdec.exe")):
         return True
 
-    # windows x64 install location
-    if (set_jpexs_if_exists("C:\\Program Files\\FFDec\\ffdec.exe")):
-        return True
+    # wow64 install location
+    if (x86 := os.getenv('ProgramFiles(x86)')) is not None:
+        if (set_jpexs_if_exists(f"{x86}\\FFDec\\ffdec.exe")):
+            return True
 
     return False
 
