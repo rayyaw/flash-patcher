@@ -69,9 +69,8 @@ def detect_jpexs():
         return True
 
     # wow64 install location
-    if (x86 := os.getenv('ProgramFiles(x86)')) is not None:
-        if (set_jpexs_if_exists(f"{x86}\\FFDec\\ffdec.exe")):
-            return True
+    if (set_jpexs_if_exists(f"{os.getenv('ProgramFiles(x86)')}\\FFDec\\ffdec.exe")):
+        return True
 
     return False
 
