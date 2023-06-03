@@ -27,7 +27,7 @@ See the README for documentation and license.
 JPEXS_PATH = ""
 JPEXS_ARGS = []
 
-CURRENT_VERSION = "v4.1.4"
+CURRENT_VERSION = "v4.1.5"
 
 DECOMP_LOCATION = "./.Patcher-Temp/mod/"
 DECOMP_LOCATION_WITH_SCRIPTS = DECOMP_LOCATION + "scripts/"
@@ -205,7 +205,7 @@ def apply_patch(patch_file):
     injector = None
     
     for line in lines:
-        line_stripped = line.strip("\n\r ")
+        line_stripped = line.strip(" \n\r ")
 
         # Ignore comments and blank lines 
         if len(line_stripped) == 0 or line[0] == '#':
@@ -312,13 +312,13 @@ def apply_assets(asset_file, folder):
         exit(1)
 
     for line in lines:
-        line_stripped = line.strip("\n\r")
+        line_stripped = line.strip(" \n\r")
         split_line = line_stripped.split(' ')
 
         if len(line_stripped) == 0 or line_stripped.startswith("#"): # Comment
             continue
             
-        elif line.startswith("add-asset"):
+        elif line_stripped.startswith("add-asset"):
             # Local copy of file, then remote
             local_name = split_line[1]
             remote_name = ' '.join(split_line[2:])
@@ -439,6 +439,7 @@ def main(inputfile, folder, stagefile, output, invalidate_cache, recompile_all, 
     cache_location = decompile_swf(inputfile, invalidate_cache, xml_mode)
 
     # Copy the cache to a different location so we can reuse it
+    # os.path.isdir doesn't work on Linux for some reason, so we have to use a try-catch block
     if (os.path.exists(DECOMP_LOCATION)):
         try:
             shutil.rmtree(DECOMP_LOCATION)

@@ -90,7 +90,7 @@ Type `// cmd: skip ` (with spaces as shown), then the number of lines you wish t
 
 To inject while in XML mode, use normal `.patch` files, but the add location will be the hardcoded string `swf.xml`.
 
-## Asset Packs
+### Asset Packs
 
 An asset pack file (which must end in .assets), contains instructions on assets to inject into the Flash file. Currently supported types include:
 
