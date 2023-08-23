@@ -8,6 +8,8 @@ Flash Patcher will automatically detect your JPEXS install location.
 
 You must have Python 3 on your system to run this script.
 
+You must have `gh-update` installed to receive automatic updates. For more info, see https://github.com/rayyaw/gh-update.
+
 ## Installing and running
 
 To apply a patch, run the following command:
@@ -17,6 +19,8 @@ To apply a patch, run the following command:
 The patcher will take the input SWF, apply the patches specified in the stage file (which must be located in the patch folder), and create the output SWF.
 
 You can also install Flash Patcher by running `sudo make install`. After this, you can run Flash Patcher with `flash-patcher [args]`.
+
+To install without automatic updates, you can run `sudo make install-lite` instead.
 
 The command line arguments are as follows:
 
