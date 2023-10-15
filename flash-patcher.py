@@ -113,7 +113,15 @@ class JPEXSInterface:
         output: Path,
     ) -> int:
         """Recompile data of a given type into the SWF file."""
-        info("Reimporting %ss...", part)
+        # - Part types:
+        # SymbolClass
+        # Movies
+        # Sounds
+        # Shapes
+        # Images
+        # Text
+        # Script
+        info("Reimporting %s...", part)
         return subprocess.run(
             [
                 self.path,
@@ -239,8 +247,10 @@ def detect_jpexs() -> JPEXSInterface:
 
     # flatpak install location
     if check_jpexs_exists(LOCATION_FLATPAK):
-        # Detect if JPEXS is installed.
-        # The function call can only detect if Flatpak is installed.
+        # The above conditional returns True if Flatpak is installed.
+        # However, it cannot tell whether JPEXS is actually installed via Flatpak.
+        # If JPEXS is installed, `flatpak run [args] -help` will be successful.
+        # So, we can ensure JPEXS is indeed installed via Flatpak using this command.
         testrun = subprocess.run(
             [LOCATION_FLATPAK, *ARGS_FLATPAK, "-help"],
             stdout=subprocess.DEVNULL,
@@ -422,7 +432,7 @@ def apply_patch(patch_file: Path) -> set:
                 sys.exit(1)
 
             try:
-                for _i in range(line_start, line_end + 1):
+                for _ in range(line_start, line_end + 1):
                     del current_file[line_start - 1]
             except IndexError:
                 exception(
@@ -743,6 +753,7 @@ if __name__ == "__main__":
         required=True,
         help="Input SWF file",
     )
+
     parser.add_argument(
         "--folder",
         dest="folder",
@@ -750,6 +761,7 @@ if __name__ == "__main__":
         required=True,
         help="Folder with patch files",
     )
+
     parser.add_argument(
         "--stagefile",
         dest="stage_file",
@@ -757,6 +769,7 @@ if __name__ == "__main__":
         required=True,
         help="Stage file name",
     )
+
     parser.add_argument(
         "--outputswf",
         dest="output_swf",
@@ -772,6 +785,7 @@ if __name__ == "__main__":
         action="store_true",
         help="Invalidate cached decompilation files",
     )
+
     parser.add_argument(
         "--all",
         dest="recompile_all",
@@ -779,6 +793,7 @@ if __name__ == "__main__":
         action="store_true",
         help="Recompile the whole SWF (if this is off, only scripts will recompile)",
     )
+
     parser.add_argument(
         "--xml",
         dest="xml_mode",
