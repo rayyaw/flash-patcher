@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """Riley's SWF patcher - a tool to patch content into SWF files.
 
-Development: RileyTech, Kito
-Bug testing: Creyon
+Development: RileyTech, qtkito
+Bug testing: GTcreyon
 Windows path fix: Jhynjhiruu
 
 Download and updates: https://github.com/rayyaw/flash-patcher
