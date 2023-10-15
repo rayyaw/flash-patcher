@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 """Riley's SWF patcher - a tool to patch content into SWF files.
 
-Development: RileyTech, qtkito
-Bug testing: GTcreyon
+Development: RileyTech, qtkito, GTcreyon
 Windows path fix: Jhynjhiruu
 
 Download and updates: https://github.com/rayyaw/flash-patcher
@@ -28,7 +27,7 @@ from pathlib import Path
 
 basicConfig(level=1, format="%(levelname)s: %(message)s")
 
-CURRENT_VERSION = "v4.1.5"
+CURRENT_VERSION = "v4.1.6"
 
 DECOMP_LOCATION = Path("./.Patcher-Temp/mod/")
 DECOMP_LOCATION_WITH_SCRIPTS = Path(DECOMP_LOCATION, "scripts/")
@@ -113,14 +112,7 @@ class JPEXSInterface:
         output: Path,
     ) -> int:
         """Recompile data of a given type into the SWF file."""
-        # - Part types:
-        # SymbolClass
-        # Movies
-        # Sounds
-        # Shapes
-        # Images
-        # Text
-        # Script
+        # Part types: SymbolClass, Movies, Sounds, Shapes, Images, Text, Script
         info("Reimporting %s...", part)
         return subprocess.run(
             [
@@ -180,7 +172,11 @@ class CodeInjector:
         line: str,
         current_line_no: int,
     ) -> None:
-        """Add a line to be injected."""
+        """Queue a line to be injected.
+
+        The line will not be injected immediately.
+        It will be injected once inject() is called.
+        """
         self.injectLines.append(line)
 
         if self.startingLineNo == -1:
@@ -208,11 +204,10 @@ class CodeInjector:
                         continue
                     except ValueError:
                         exception(
-                            "Invalid skip amount: ",
-                            n,
-                            "\n",
-                            "Expected integer.\n",
-                            "Aborting...",
+                            """Invalid skip amount: %s.
+                            Expected integer.
+                            Aborting...""",
+                            n_str,
                         )
                         sys.exit(1)
 
@@ -490,7 +485,7 @@ def apply_assets(asset_file: Path, folder: Path) -> set:
         sys.exit(1)
 
     for line in lines:
-        line_stripped = line.strip(" \n\r")
+        line_stripped = line.strip("\n\r ")
         split_line = line_stripped.split(" ")
 
         if len(line_stripped) == 0 or line_stripped.startswith("#"):  # Comment
@@ -504,10 +499,9 @@ def apply_assets(asset_file: Path, folder: Path) -> set:
 
             if not Path(folder / local_name).exists():
                 exception(
-                    "Could not find asset: ",
+                    """Could not find asset: %s
+                    Aborting...""",
                     local_name,
-                    "\n",
-                    "Aborting...",
                 )
                 sys.exit(1)
 
@@ -647,7 +641,7 @@ def apply_patches(patches: list, folder: Path) -> set:
     """Apply every patch, ignoring comments and empty lines."""
     modified_scripts = set()
     for patch in patches:
-        patch_stripped = patch.strip("\r\n ")
+        patch_stripped = patch.strip("\n\r ")
         if len(patch_stripped) == 0 or patch_stripped[0] == "#":
             continue
 
@@ -658,10 +652,9 @@ def apply_patches(patches: list, folder: Path) -> set:
             modified_scripts |= apply_assets(folder / patch_stripped, folder)
         else:
             exception(
-                "The file provided ('",
+                """The file provided ('%s') did not have a valid filetype.
+                Aborting...""",
                 patch_stripped,
-                "') did not have a valid filetype.\n",
-                "Aborting...",
             )
             sys.exit(1)
 
