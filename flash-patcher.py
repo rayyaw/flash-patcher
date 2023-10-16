@@ -22,7 +22,7 @@ import os
 import shutil
 import subprocess
 import sys
-from logging import basicConfig, critical, error, exception, info
+from logging import basicConfig, error, exception, info, warning
 from pathlib import Path
 
 basicConfig(level=1, format="%(levelname)s: %(message)s")
@@ -445,7 +445,7 @@ def apply_patch(patch_file: Path) -> set:
 
         # Unrecognized statement
         else:
-            error(
+            warning(
                 "Unrecognized command: '%s', skipping (at %s, line %d)",
                 split_line[0],
                 patch_file,
@@ -455,7 +455,7 @@ def apply_patch(patch_file: Path) -> set:
         current_line_no += 1
 
     if line_add_mode:
-        critical(
+        error(
             """%s: Syntax error.
             Missing end-patch for "add" on line %d.
             Aborting...""",
@@ -516,7 +516,7 @@ def apply_assets(asset_file: Path, folder: Path) -> set:
             modified_files.add(DECOMP_LOCATION / remote_name)
 
         else:
-            error("Unrecognized command: %s, skipping", line)
+            warning("Unrecognized command: %s, skipping", line)
 
     return modified_files
 
