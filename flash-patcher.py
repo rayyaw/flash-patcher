@@ -34,8 +34,8 @@ DECOMP_LOCATION_WITH_SCRIPTS = Path(DECOMP_LOCATION, "scripts/")
 
 LOCATION_APT = Path("/usr/bin/ffdec")
 LOCATION_FLATPAK = Path("/usr/bin/flatpak")
-LOCATION_WINDOWS = Path(f"{os.getenv('PROGRAMFILES')}\\FFDec\\ffdec.exe")
-LOCATION_WOW64 = Path(f"{os.getenv('PROGRAMFILES(X86)')}\\FFDec\\ffdec.exe")
+LOCATION_WINDOWS = Path(f"{os.getenv('PROGRAMFILES')}\\FFDec\\ffdec.bat")
+LOCATION_WOW64 = Path(f"{os.getenv('PROGRAMFILES(X86)')}\\FFDec\\ffdec.bat")
 
 ARGS_FLATPAK = [
     "run",
