@@ -1,4 +1,13 @@
-#!/usr/bin/python3
+from __future__ import annotations
+
+import os
+import shutil
+import sys
+from logging import basicConfig, error, exception, info, warning
+from pathlib import Path
+
+from compile.compilation import CompilationManager
+
 """Riley's SWF patcher - a tool to patch content into SWF files.
 
 Development: RileyTech, qtkito, GTcreyon
@@ -14,17 +23,6 @@ Inject arbitrary code, images, and more into existing SWFs!
 See the README for documentation and license.
 """
 
-from __future__ import annotations
-
-import argparse
-import base64
-import os
-import shutil
-import subprocess
-import sys
-from logging import basicConfig, error, exception, info, warning
-from pathlib import Path
-
 basicConfig(level=1, format="%(levelname)s: %(message)s")
 
 CURRENT_VERSION = "v4.1.6"
@@ -32,109 +30,12 @@ CURRENT_VERSION = "v4.1.6"
 DECOMP_LOCATION = Path("./.Patcher-Temp/mod/")
 DECOMP_LOCATION_WITH_SCRIPTS = Path(DECOMP_LOCATION, "scripts/")
 
-LOCATION_APT = Path("/usr/bin/ffdec")
-LOCATION_FLATPAK = Path("/usr/bin/flatpak")
-LOCATION_WINDOWS = Path(f"{os.getenv('PROGRAMFILES')}\\FFDec\\ffdec.bat")
-LOCATION_WOW64 = Path(f"{os.getenv('PROGRAMFILES(X86)')}\\FFDec\\ffdec.bat")
-
-ARGS_FLATPAK = [
-    "run",
-    "--branch=stable",
-    "--arch=x86_64",
-    "--command=ffdec.sh",
-    "com.jpexs.decompiler.flash",
-]
-
-
-class JPEXSInterface:
-    """An interface to interact with JPEXS via the shell."""
-
-    path: Path
-    args: list
-
-    def __init__(self: JPEXSInterface, path: Path, args: list | None = None) -> None:
-        self.path = path
-        if args is None:
-            self.args = []
-        else:
-            self.args = args
-
-    def dump_xml(
-        self: JPEXSInterface,
-        inputfile: Path,
-        output_dir: Path,
-    ) -> subprocess.CompletedProcess:
-        """Dump XML data of the input file into the output location."""
-        return subprocess.run(
-            [self.path, *self.args, "-swf2xml", inputfile, output_dir],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            check=True,
-        )
-
-    def rebuild_xml(
-        self: JPEXSInterface,
-        input_dir: Path,
-        output_file: Path,
-    ) -> subprocess.CompletedProcess:
-        """Rebuild XML data from a directory into an output SWF file."""
-        return subprocess.run(
-            [self.path, *self.args, "-xml2swf", input_dir, output_file],
-            stdout=subprocess.DEVNULL,
-            check=True,
-        )
-
-    def export_scripts(
-        self: JPEXSInterface,
-        inputfile: Path,
-        output_dir: Path,
-    ) -> subprocess.CompletedProcess:
-        """Export scripts from a SWF file into a directory."""
-        info("Exporting scripts into %s...", output_dir)
-        return subprocess.run(
-            [
-                self.path,
-                *self.args,
-                "-export",
-                "script",
-                output_dir,
-                inputfile,
-            ],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            check=True,
-        )
-
-    def recompile_data(
-        self: JPEXSInterface,
-        part: str,
-        swf: Path,
-        output: Path,
-    ) -> int:
-        """Recompile data of a given type into the SWF file."""
-        # Part types: SymbolClass, Movies, Sounds, Shapes, Images, Text, Script
-        info("Reimporting %s...", part)
-        return subprocess.run(
-            [
-                self.path,
-                *self.args,
-                f"-import{part}",
-                swf,
-                output,
-                DECOMP_LOCATION,
-            ],
-            stdout=subprocess.DEVNULL,
-            check=True,
-        )
-
-
 class FilePosition:
     """A position in a named file."""
 
     def __init__(self: FilePosition, file_name: str) -> None:
         self.fileName = file_name
         self.lineNumber = 0
-
 
 class CodeInjector:
     """Handles injection of code into script files."""
@@ -229,43 +130,6 @@ def check_jpexs_exists(path: str) -> bool:
     """
     return path.exists()
 
-
-def detect_jpexs() -> JPEXSInterface:
-    """Detect and record JPEXS install location.
-
-    Checks various common JPEXS paths
-    Returns True if successful.
-    """
-    # apt install location
-    if check_jpexs_exists(LOCATION_APT):
-        return JPEXSInterface(LOCATION_APT)
-
-    # flatpak install location
-    if check_jpexs_exists(LOCATION_FLATPAK):
-        # The above conditional returns True if Flatpak is installed.
-        # However, it cannot tell whether JPEXS is actually installed via Flatpak.
-        # If JPEXS is installed, `flatpak run [args] -help` will be successful.
-        # So, we can ensure JPEXS is indeed installed via Flatpak using this command.
-        testrun = subprocess.run(
-            [LOCATION_FLATPAK, *ARGS_FLATPAK, "-help"],
-            stdout=subprocess.DEVNULL,
-            check=True,
-        )
-
-        if testrun.returncode == 0:
-            return JPEXSInterface(LOCATION_FLATPAK, ARGS_FLATPAK)
-
-    # windows default install location
-    if check_jpexs_exists(LOCATION_WINDOWS):
-        return JPEXSInterface(LOCATION_WINDOWS)
-
-    # wow64 install location
-    if check_jpexs_exists(LOCATION_WOW64):
-        return JPEXSInterface(LOCATION_WOW64)
-
-    return None
-
-
 def read_from_file(file_location: Path, patch_file: Path, current_line_no: int) -> list:
     """Read all lines from a file.
 
@@ -285,12 +149,10 @@ def read_from_file(file_location: Path, patch_file: Path, current_line_no: int) 
         )
         sys.exit(1)
 
-
 def write_to_file(path: Path, lines: list) -> None:
     """Write a list of lines to a file."""
     with Path.open(path, "w") as f:
         f.writelines(lines)
-
 
 def find_write_location(lines: list, code: str) -> None:
     """Find the location in the file specified.
@@ -311,7 +173,6 @@ def find_write_location(lines: list, code: str) -> None:
             code,
         )
         sys.exit(1)
-
 
 def apply_patch(patch_file: Path) -> set:
     """Apply a single patch file.
@@ -488,7 +349,8 @@ def apply_assets(asset_file: Path, folder: Path) -> set:
         line_stripped = line.strip("\n\r ")
         split_line = line_stripped.split(" ")
 
-        if len(line_stripped) == 0 or line_stripped.startswith("#"):  # Comment
+        if len(line_stripped) == 0 or line_stripped.startswith("#"):  
+            # Lines that start with # are comments
             continue
 
         if line_stripped.startswith("add-asset"):
@@ -519,109 +381,6 @@ def apply_assets(asset_file: Path, folder: Path) -> set:
             warning("Unrecognized command: %s, skipping", line)
 
     return modified_files
-
-
-def decompile_swf(
-    iface: JPEXSInterface,
-    inputfile: str,
-    *,
-    drop_cache: bool = False,
-    xml_mode: bool = False,
-) -> Path:
-    """Decompile the SWF and return the decompilation location.
-
-    This uses caching to save time.
-
-    inputfile: the SWF to decompile
-    drop_cache: if True, will force decompilation instead of using cached files
-    """
-    # Decompile swf into temp folder called ./.Patcher-Temp/[swf name, base32 encoded]
-    if not Path("./.Patcher-Temp").exists():
-        Path("./.Patcher-Temp").mkdir()
-
-    if not inputfile.exists():
-        error(
-            """Could not locate the SWF file: %s.
-            Aborting...""",
-            inputfile,
-        )
-        sys.exit(1)
-
-    cache_location = Path(
-        "./.Patcher-Temp/",
-        base64.b32encode(
-            bytes(inputfile.name, "utf-8"),
-        ).decode("ascii"),
-    )
-
-    if xml_mode:
-        info("XML decompilation mode.")
-        global DECOMP_LOCATION
-        global DECOMP_LOCATION_WITH_SCRIPTS
-
-        cache_location = Path("./.Patcher-Temp/swf2.xml")
-
-        DECOMP_LOCATION = Path("./.Patcher-Temp/swf.xml")
-        DECOMP_LOCATION_WITH_SCRIPTS = Path("./.Patcher-Temp/")
-
-    # Mkdir / check for cache
-    if drop_cache or (not Path(cache_location).exists()):
-        if not Path(cache_location).exists() and not xml_mode:
-            Path(cache_location).mkdir()
-
-        info("Beginning decompilation...")
-
-        decomp = None
-
-        if xml_mode:
-            decomp = iface.dump_xml(inputfile, cache_location)
-            info("XML decompilation mode.")
-        else:
-            decomp = iface.export_scripts(inputfile, cache_location)
-
-        if decomp.returncode != 0:
-            error(
-                """JPEXS couldn't decompile the SWF file: %s.
-                Aborting...""",
-                inputfile,
-            )
-            sys.exit(1)
-
-    else:
-        info("Detected cached decompilation. Skipping...")
-
-    return cache_location
-
-
-def recompile_swf(
-    iface: JPEXSInterface,
-    inputfile: Path,
-    output: Path,
-    *,
-    recompile_all: bool,
-    xml_mode: bool,
-) -> None:
-    """Recompile the SWF after injection is complete.
-
-    inputfile: The base SWF to use for missing files
-    outputfile: The location to save the output
-    recompile_all: If this is set to False, will only recompile scripts
-    """
-    # Repackage the file as a SWF
-    # Rant: JPEXS should really return an error code if recompilation fails here!
-    # Unable to detect if this was successful or not otherwise.
-    if xml_mode:
-        iface.rebuild_xml(DECOMP_LOCATION, output)
-        return
-
-    iface.recompile_data("Script", inputfile, output)
-
-    if recompile_all:
-        for part in ("Images", "Sounds", "Shapes", "Text"):
-            # JPEXS doesn't have a way to import everything at once.
-            # We re-import iteratively.
-            iface.recompile_data(part, output, output)
-
 
 def clean_scripts(modified_scripts: set) -> None:
     """Delete all non-modified scripts.
@@ -660,13 +419,11 @@ def apply_patches(patches: list, folder: Path) -> set:
 
     return modified_scripts
 
-
 def main(
     inputfile: Path,
     folder: Path,
     stagefile: Path,
     output: Path,
-    *,
     drop_cache: bool,
     recompile_all: bool,
     xml_mode: bool,
@@ -674,17 +431,23 @@ def main(
     """Run the patcher."""
     info("Riley's SWF Patcher - %s", CURRENT_VERSION)
 
-    jpexs_iface = detect_jpexs()
-    if jpexs_iface is None:
-        error(
+    try:
+        compiler = CompilationManager()
+    except ModuleNotFoundError:
+        exception(
             "Could not locate required dependency: JPEXS Flash Decompiler. Aborting...",
         )
         sys.exit(1)
 
-    info("Using JPEXS at: %s", jpexs_iface.path)
+    if xml_mode:
+        info("XML decompilation mode.")
+        global DECOMP_LOCATION
+        global DECOMP_LOCATION_WITH_SCRIPTS
 
-    cache_location = decompile_swf(
-        jpexs_iface,
+        DECOMP_LOCATION = Path("./.Patcher-Temp/swf.xml")
+        DECOMP_LOCATION_WITH_SCRIPTS = Path("./.Patcher-Temp/")
+
+    cache_location = compiler.decompile(
         inputfile,
         drop_cache=drop_cache,
         xml_mode=xml_mode,
@@ -725,8 +488,8 @@ def main(
 
     info("Recompiling...")
 
-    recompile_swf(
-        jpexs_iface,
+    compiler.recompile(
+        DECOMP_LOCATION,
         inputfile,
         output,
         recompile_all=recompile_all,
@@ -734,75 +497,3 @@ def main(
     )
 
     info("Done.")
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        "--inputswf",
-        dest="input_swf",
-        type=str,
-        required=True,
-        help="Input SWF file",
-    )
-
-    parser.add_argument(
-        "--folder",
-        dest="folder",
-        type=str,
-        required=True,
-        help="Folder with patch files",
-    )
-
-    parser.add_argument(
-        "--stagefile",
-        dest="stage_file",
-        type=str,
-        required=True,
-        help="Stage file name",
-    )
-
-    parser.add_argument(
-        "--outputswf",
-        dest="output_swf",
-        type=str,
-        required=True,
-        help="Output SWF file",
-    )
-
-    parser.add_argument(
-        "--invalidateCache",
-        dest="drop_cache",
-        default=False,
-        action="store_true",
-        help="Invalidate cached decompilation files",
-    )
-
-    parser.add_argument(
-        "--all",
-        dest="recompile_all",
-        default=False,
-        action="store_true",
-        help="Recompile the whole SWF (if this is off, only scripts will recompile)",
-    )
-
-    parser.add_argument(
-        "--xml",
-        dest="xml_mode",
-        default=False,
-        action="store_true",
-        help="Inject into an XML decompilation instead of standard syntax",
-    )
-
-    args = parser.parse_args()
-
-    main(
-        Path(args.input_swf),
-        Path(args.folder),
-        Path(args.stage_file),
-        Path(args.output_swf),
-        drop_cache=args.drop_cache,
-        recompile_all=args.recompile_all,
-        xml_mode=args.xml_mode,
-    )
