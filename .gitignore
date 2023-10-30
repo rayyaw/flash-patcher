@@ -3,3 +3,4 @@
 build/*.py
 build/compile/*
 flash-patcher.zip
+flash-patcher

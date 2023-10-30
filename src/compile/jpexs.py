@@ -57,6 +57,7 @@ class JPEXSInterface:
         if path.exists() and args is None:
             # Normal JPEXS install, we're just running ffdec.sh directly
             self.path = path
+            self.args = []
             return True
         elif path.exists():
             # We're running JPEXS through a sandbox or proxy (like Flatpak)
