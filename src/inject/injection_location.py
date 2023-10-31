@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..util.exception import InjectionErrorManager
+from util.exception import InjectionErrorManager
 
 class InjectionLocation:
     """

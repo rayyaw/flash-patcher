@@ -3,7 +3,9 @@ import sys
 from logging import exception
 from pathlib import Path
 
-def read_from_file(file_location: Path, patch_file: Path, current_line_no: int) -> list:
+from util.exception import InjectionErrorManager
+
+def read_from_file(file_location: Path, error_manager: InjectionErrorManager) -> list:
     """
     Read all lines from a file.
     Returns a list, with one entry for each line.
@@ -12,15 +14,11 @@ def read_from_file(file_location: Path, patch_file: Path, current_line_no: int) 
         with Path.open(file_location) as f:
             return f.readlines()
     except (FileNotFoundError, IsADirectoryError):
-        exception(
-            """%s, line %d: Invalid injection location.
-            Could not find or load SWF decompiled file at: %s
-            Aborting...""",
-            patch_file,
-            current_line_no,
-            file_location,
+        error_manager.extraInfo = file_location.as_posix()
+        error_manager.throw(
+            """Invalid injection location.
+            Could not find or load SWF decompiled file."""
         )
-        sys.exit(1)
 
 def write_to_file(path: Path, lines: list) -> None:
     """Write a list of lines to a file."""

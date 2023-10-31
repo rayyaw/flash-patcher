@@ -4,8 +4,8 @@ import sys
 from pathlib import Path
 
 from .injection_location import InjectionLocation
-from ..util.exception import InjectionErrorManager
-from ..util.file_io import read_from_file, write_to_file
+from util.exception import InjectionErrorManager
+from util.file_io import read_from_file, write_to_file
 
 class SingleInjectionManager:
     """A position in a named file."""
@@ -15,14 +15,16 @@ class SingleInjectionManager:
             file_name: Path,
             file_location: InjectionLocation,
             patch_file: Path,
+            patch_line_no: int,
         ) -> None:
         self.fileName = file_name         # file to inject into
         self.fileLocation = file_location # location to inject at
 
         self.patchFile = patch_file       # name of the patch file
+        self.patchLineNo = patch_line_no  # line number within the patch file
 
-        self.fileContent = read_from_file(self.fileName, self.patchFile, self.patchLineNo)
         self.errorManager = InjectionErrorManager(self.patchFile.as_posix(), 0, None)
+        self.fileContent = read_from_file(self.fileName, self.errorManager)
     
     def inject(self: SingleInjectionManager, content: list, patch_file_line: int) -> None:
         """
@@ -36,6 +38,7 @@ class SingleInjectionManager:
             line_stripped = line.strip("\n\r ")
 
             # setup error information for the current line
+            self.errorManager.patchFile = self.patchFile
             self.errorManager.lineNo = patch_line_no
             self.errorManager.extraInfo = line_stripped
 
@@ -44,12 +47,12 @@ class SingleInjectionManager:
 
             # No internal command, just a normal line
             if not was_secondary:
-                self.file_content.insert(file_line_no, line)
+                self.fileContent.insert(file_line_no, line)
                 file_line_no += 1
             
             patch_line_no += 1
 
-        write_to_file(self.fileName, self.file_content)
+        write_to_file(self.fileName, self.fileContent)
 
     def handle_secondary_command(
         self: SingleInjectionManager, 

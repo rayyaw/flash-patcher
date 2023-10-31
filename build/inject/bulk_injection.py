@@ -44,7 +44,7 @@ class BulkInjectionManager:
 
     def inject(self: BulkInjectionManager) -> None:
         """Perform loaded injections."""
-        if len(self.injectedContentj) == 0:
+        if len(self.injectedContent) == 0:
             return
         
         for injector in self.injectors:

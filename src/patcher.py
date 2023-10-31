@@ -10,6 +10,7 @@ from compile.compilation import CompilationManager
 from inject.bulk_injection import BulkInjectionManager
 from inject.injection_location import InjectionLocation
 from inject.single_injection import SingleInjectionManager
+from util.exception import InjectionErrorManager
 from util.file_io import read_from_file, write_to_file
 
 """
@@ -79,8 +80,13 @@ def apply_patch(patch_file: Path) -> set:
             if injector is None:
                 injector = BulkInjectionManager()
 
-            inject_location = InjectionLocation(split_line[2])
-            single_injector = SingleInjectionManager(split_line[1], inject_location, patch_file)
+            inject_location = InjectionLocation(split_line[-1])
+            single_injector = SingleInjectionManager(
+                DECOMP_LOCATION_WITH_SCRIPTS / ' '.join(split_line[1:-1]),
+                inject_location,
+                patch_file,
+                current_line_no
+            )
             
             script = injector.add_injection_target(single_injector)
             modified_scripts.add(script)
@@ -121,7 +127,9 @@ def apply_patch(patch_file: Path) -> set:
             # i.e. keep this in the final output.
             modified_scripts.add(file_location)
 
-            current_file = read_from_file(file_location, patch_file, current_line_no)
+            error_manager = InjectionErrorManager(patch_file, current_line_no)
+
+            current_file = read_from_file(file_location, error_manager)
             line_counts = split_line[-1].split("-")
 
             if len(line_counts) != 2:

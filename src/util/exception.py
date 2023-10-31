@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from logging import exception
 
 class InjectionErrorManager:
@@ -8,7 +9,7 @@ class InjectionErrorManager:
         self: InjectionErrorManager, 
         patch_file: str,
         line_no: int,
-        extra_info: str | None
+        extra_info: str | None = None,
     ) -> None:
         self.patchFile = patch_file
         self.lineNo = line_no
@@ -25,3 +26,4 @@ class InjectionErrorManager:
             Aborting...""",
             self.patchFile, self.lineNo, self.extraInfo, mesg
         )
+        sys.exit(1)
