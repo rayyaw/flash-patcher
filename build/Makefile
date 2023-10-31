@@ -2,7 +2,7 @@
 # https://stackoverflow.com/questions/9002275/how-to-build-a-single-python-file-from-multiple-scripts
 
 bundle:
-	cp -r ../src/__main__.py ../src/patcher.py ../src/compile/ .
+	cp -r ../src/__main__.py ../src/patcher.py ../src/compile/ ../src/injector/ ../src/util/ .
 	zip -r -D ../flash-patcher.zip .
 	echo "#!/usr/bin/python3" | /usr/bin/cat - ../flash-patcher.zip > ../flash-patcher
 	rm ../flash-patcher.zip

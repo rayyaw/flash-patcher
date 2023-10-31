@@ -8,8 +8,10 @@ from pathlib import Path
 from .jpexs import JPEXSInterface
 
 class CompilationManager:
-    """Manage Flash compilation and decompilation, including caching.
-    This class should not call JPEXS directly, instead it should use the JPEXSInterface."""
+    """
+    Manage Flash compilation and decompilation, including caching.
+    This class should not call JPEXS directly, instead it should use the JPEXSInterface.
+    """
 
     decompiler: JPEXSInterface
 
@@ -22,7 +24,8 @@ class CompilationManager:
         drop_cache: bool = False, 
         xml_mode: bool = False
     ) -> Path:
-        """Decompile the SWF and return the decompilation location.
+        """
+        Decompile the SWF and return the decompilation location.
 
         This uses caching to save time.
 
@@ -86,7 +89,8 @@ class CompilationManager:
         recompile_all: bool = False,
         xml_mode: bool = False,
     ) -> None:
-        """Recompile the SWF after injection is complete.
+        """
+        Recompile the SWF after injection is complete.
 
         inputfile: The base SWF to use for missing files
         outputfile: The location to save the output
