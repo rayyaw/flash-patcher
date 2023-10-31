@@ -99,6 +99,9 @@ To inject while in XML mode, use normal `.patch` files, but the add location wil
 An asset pack file (which must end in .assets), contains instructions on assets to inject into the Flash file. Currently supported types include:
 
 - Images
+- Sounds
+- Shapes
+- Text
 
 The file will look something like this:
 
