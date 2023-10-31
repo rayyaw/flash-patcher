@@ -23,7 +23,7 @@ class BulkInjectionManager:
     def add_injection_target(
         self: BulkInjectionManager,
         target: SingleInjectionManager,
-    ) -> str:
+    ) -> None:
         """Add an injection target to this injector."""
         self.injectors.append(target)
 

@@ -81,15 +81,16 @@ def apply_patch(patch_file: Path) -> set:
                 injector = BulkInjectionManager()
 
             inject_location = InjectionLocation(split_line[-1])
+            add_file_location = DECOMP_LOCATION_WITH_SCRIPTS / ' '.join(split_line[1:-1])
             single_injector = SingleInjectionManager(
-                DECOMP_LOCATION_WITH_SCRIPTS / ' '.join(split_line[1:-1]),
+                add_file_location,
                 inject_location,
                 patch_file,
                 current_line_no
             )
             
-            script = injector.add_injection_target(single_injector)
-            modified_scripts.add(script)
+            injector.add_injection_target(single_injector)
+            modified_scripts.add(add_file_location)
 
         elif split_line[0] == "begin-patch":
             line_add_mode = True

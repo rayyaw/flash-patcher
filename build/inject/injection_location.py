@@ -34,8 +34,7 @@ class InjectionLocation:
         
         elif self.symbolicLocation == "end":
             # Injecting at the end of a file
-            # No separate function as no additional processing is required
-            return len(file_content)
+            return self.resolve_end(file_content, exception)
         
         else:
             # Unknown injection location
@@ -58,3 +57,10 @@ class InjectionLocation:
             )
 
         return self.lineNo
+    
+    def resolve_end(
+        self: InjectionLocation,
+        file_content: list,
+        exception: InjectionErrorManager
+    ) -> int:
+        return len(file_content)
