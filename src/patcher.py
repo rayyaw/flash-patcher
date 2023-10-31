@@ -25,7 +25,7 @@ See the README for documentation and license.
 
 basicConfig(level=1, format="%(levelname)s: %(message)s")
 
-CURRENT_VERSION = "v4.1.6"
+CURRENT_VERSION = "v4.1.7"
 
 DECOMP_LOCATION = Path("./.Patcher-Temp/mod/")
 DECOMP_LOCATION_WITH_SCRIPTS = Path(DECOMP_LOCATION, "scripts/")
