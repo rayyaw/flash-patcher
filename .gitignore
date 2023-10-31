@@ -2,5 +2,7 @@
 */__pycache__/*
 build/*.py
 build/compile/*
+buid/inject/*
+build/util/*
 flash-patcher.zip
 flash-patcher
