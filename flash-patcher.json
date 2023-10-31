@@ -1,11 +1,11 @@
 {
     "local": {
-        "version": "4.1.6",
+        "version": "4.1.7",
         "location": "/usr/local/bin/flash-patcher"
     },
 
     "remote": {
         "url": "/rayyaw/flash-patcher",
-        "assetName": "flash-patcher.zip"
+        "assetName": "flash-patcher"
     }
 }
