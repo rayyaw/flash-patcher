@@ -18,9 +18,9 @@ To apply a patch, run the following command:
 
 The patcher will take the input SWF, apply the patches specified in the stage file (which must be located in the patch folder), and create the output SWF.
 
-You can also install Flash Patcher by running `sudo make install`. After this, you can run Flash Patcher with `flash-patcher [args]`.
+You can also install Flash Patcher by running `cd build && sudo make install`. After this, you can run Flash Patcher with `flash-patcher [args]`.
 
-To install without automatic updates, you can run `sudo make install-lite` instead.
+To install without automatic updates, you can run `cd build && sudo make install-lite` instead.
 
 The command line arguments are as follows:
 

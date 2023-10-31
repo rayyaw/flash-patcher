@@ -1,1 +1,6 @@
 .Patcher-Temp/* 
+*/__pycache__/*
+build/*.py
+build/compile/*
+flash-patcher.zip
+flash-patcher
