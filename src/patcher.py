@@ -10,6 +10,7 @@ from compile.compilation import CompilationManager
 from inject.bulk_injection import BulkInjectionManager
 from inject.injection_location import InjectionLocation
 from inject.single_injection import SingleInjectionManager
+from parse.asset import AssetFileParser
 from util.exception import InjectionErrorManager
 from util.file_io import read_from_file, write_to_file
 
@@ -198,59 +199,6 @@ def apply_patch(patch_file: Path) -> set:
     # Return the set of modified scripts, so we can aggregate in main()
     return modified_scripts
 
-def apply_assets(asset_file: Path, folder: Path) -> set:
-    """Apply asset packs to files in a folder."""
-    modified_files = set()
-    lines = []
-
-    try:
-        with Path.open(asset_file) as f:
-            lines = f.readlines()
-    except FileNotFoundError:
-        exception(
-            """Could not open asset pack file at: %s.
-            Aborting...""",
-            asset_file,
-        )
-        sys.exit(1)
-
-    for line in lines:
-        line_stripped = line.strip("\n\r ")
-        split_line = line_stripped.split(" ")
-
-        if len(line_stripped) == 0 or line_stripped.startswith("#"):  
-            # Lines that start with # are comments
-            continue
-
-        if line_stripped.startswith("add-asset"):
-            # Local copy of file, then remote
-            local_name = split_line[1]
-            remote_name = " ".join(split_line[2:])
-            remote_name = line_stripped.split(" ")[2]
-
-            if not Path(folder / local_name).exists():
-                exception(
-                    """Could not find asset: %s
-                    Aborting...""",
-                    local_name,
-                )
-                sys.exit(1)
-
-            # Create folder and copy things over
-            remote_folder = remote_name.split("/")[0]
-
-            if not (DECOMP_LOCATION / remote_folder).exists():
-                Path.mkdir(DECOMP_LOCATION / remote_folder)
-
-            shutil.copyfile(folder / local_name, DECOMP_LOCATION / remote_name)
-
-            modified_files.add(DECOMP_LOCATION / remote_name)
-
-        else:
-            warning("Unrecognized command: %s, skipping", line)
-
-    return modified_files
-
 def clean_scripts(modified_scripts: set) -> None:
     """Delete all non-modified scripts.
 
@@ -258,8 +206,9 @@ def clean_scripts(modified_scripts: set) -> None:
     - Make recursive os.listdir.
     """
     scripts = [
-        Path(dp, f) for dp, dn, fn in os.walk(DECOMP_LOCATION.expanduser()) for f in fn
+        Path(dp, f) for dp, _, fn in os.walk(DECOMP_LOCATION.expanduser()) for f in fn
     ]
+    
     for script in scripts:
         if script not in modified_scripts:
             script.unlink()
@@ -276,7 +225,8 @@ def apply_patches(patches: list, folder: Path) -> set:
         if patch_stripped.endswith(".patch"):  # Patch (code) file
             modified_scripts |= apply_patch(folder / patch_stripped)
         elif patch_stripped.endswith(".assets"):  # Asset Pack file
-            modified_scripts |= apply_assets(folder / patch_stripped, folder)
+            modified_scripts |= \
+                AssetFileParser(folder / patch_stripped, folder, DECOMP_LOCATION).parse()
         else:
             exception(
                 """The file provided ('%s') did not have a valid filetype.
