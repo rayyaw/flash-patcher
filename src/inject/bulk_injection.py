@@ -14,6 +14,10 @@ class BulkInjectionManager:
     This will only handle scripts.
     """
 
+    injectors: list
+    injectedContent: list
+    startingLineNo: int
+
     def __init__(self: BulkInjectionManager) -> None:
         self.injectors = []         # List of single injectors that are primed
         self.injectedContent = []   # List of lines to inject

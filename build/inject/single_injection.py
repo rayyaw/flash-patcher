@@ -40,7 +40,7 @@ class SingleInjectionManager:
             # setup error information for the current line
             self.errorManager.patchFile = self.patchFile
             self.errorManager.lineNo = patch_line_no
-            self.errorManager.extraInfo = line_stripped
+            self.errorManager.context = line_stripped
 
             # Handle internal commands
             patch_line_no, was_secondary = self.handle_secondary_command(patch_line_no, line_stripped)

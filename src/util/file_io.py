@@ -14,7 +14,7 @@ def read_from_file(file_location: Path, error_manager: InjectionErrorManager) ->
         with Path.open(file_location) as f:
             return f.readlines()
     except (FileNotFoundError, IsADirectoryError):
-        error_manager.extraInfo = file_location.as_posix()
+        error_manager.context = file_location.as_posix()
         error_manager.throw(
             """Invalid injection location.
             Could not find or load SWF decompiled file."""

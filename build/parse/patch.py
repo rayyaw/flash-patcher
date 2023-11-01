@@ -11,12 +11,6 @@ from util.exception import InjectionErrorManager
 from util.file_io import read_from_file, write_to_file
 
 class PatchFileParser:
-    patchFile: Path
-    decompLocationWithScripts: Path
-
-    modifiedScripts: set
-    lineNo: int
-
     def __init__(
         self: PatchFileParser,
         patch_file: Path,

@@ -8,6 +8,10 @@ from pathlib import Path
 from util.parse import strip_line
 
 class AssetFileParser:
+    assetFile: Path
+    assetFolder: Path
+    decompLocation: Path
+
     def __init__(
         self: AssetFileParser,
         asset_file: Path,

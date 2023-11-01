@@ -10,6 +10,15 @@ from util.file_io import read_from_file, write_to_file
 class SingleInjectionManager:
     """A position in a named file."""
 
+    fileName: Path
+    fileLocation: InjectionLocation
+
+    patchFile: Path
+    patchLineNo: int
+
+    errorManager: InjectionErrorManager
+    fileContent: list
+
     def __init__(
             self: SingleInjectionManager, 
             file_name: Path,
@@ -40,7 +49,7 @@ class SingleInjectionManager:
             # setup error information for the current line
             self.errorManager.patchFile = self.patchFile
             self.errorManager.lineNo = patch_line_no
-            self.errorManager.extraInfo = line_stripped
+            self.errorManager.context = line_stripped
 
             # Handle internal commands
             patch_line_no, was_secondary = self.handle_secondary_command(patch_line_no, line_stripped)
