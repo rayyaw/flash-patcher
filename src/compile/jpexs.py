@@ -19,8 +19,8 @@ ARGS_FLATPAK = [
 ]
 
 class JPEXSInterface:
-    """
-    An interface to interact with JPEXS via the shell.
+    """An interface to interact with JPEXS via the shell.
+
     This class should only be used for functions that have a one-to-one correspondence
     with JPEXS CLI commands.
     For anything more sophisticated, you should use the CompilationManager class instead.
@@ -83,8 +83,8 @@ class JPEXSInterface:
         inputfile: Path,
         output_dir: Path,
     ) -> bool:
-        """
-        Dump XML data of the input file into the output location.
+        """Dump XML data of the input file into the output location.
+
         Returns True if dump was successful.
         """
         process =  subprocess.run(
@@ -100,8 +100,8 @@ class JPEXSInterface:
         input_dir: Path,
         output_file: Path,
     ) -> bool:
-        """
-        Rebuild XML data from a directory into an output SWF file.
+        """Rebuild XML data from a directory into an output SWF file.
+
         Return True on success.
         """
         process = subprocess.run(
@@ -116,8 +116,8 @@ class JPEXSInterface:
         inputfile: Path,
         output_dir: Path,
     ) -> bool:
-        """
-        Export scripts from a SWF file into a directory.
+        """Export scripts from a SWF file into a directory.
+        
         Returns True on success.
         """
         info("Exporting scripts into %s...", output_dir)

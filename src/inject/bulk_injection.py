@@ -6,8 +6,8 @@ from .single_injection import SingleInjectionManager
 
 # the FilePosition should have an injectAt fn which takes lineno and lines to add and injects there
 class BulkInjectionManager:
-    """
-    Handles injection of code into script files.
+    """Handles injection of code into script files.
+    
     This class will take in a list of injections and execute them.
     It should be used to parse blocks of multiple add statements, as it only supports one file position per output file.
     Its contents are built as the input is parsed.

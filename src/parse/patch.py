@@ -41,9 +41,7 @@ class PatchFileParser:
             sys.exit(1)
 
     def parse(self: PatchFileParser) -> set:
-        """
-        Apply a single patch file.
-        """
+        """Apply a single patch file."""
         line_add_mode = False
         self.lineNo = 1
         injector = None

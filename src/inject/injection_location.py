@@ -3,8 +3,8 @@ from __future__ import annotations
 from util.exception import InjectionErrorManager
 
 class InjectionLocation:
-    """
-    Store the location within a file to inject at.
+    """Store the location within a file to inject at.
+
     This will resolve a symbolic location (like "end") into a line number,
     which can then be injected.
     """
@@ -24,8 +24,8 @@ class InjectionLocation:
         file_content: list,
         exception: InjectionErrorManager
     ) -> int:
-        """
-        Resolve the injection location in the given file.
+        """Resolve the injection location in the given file.
+        
         If it was unable to resolve, use error_line_no to throw and exception.
         """
         if self.lineNo is not None:

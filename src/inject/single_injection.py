@@ -36,10 +36,7 @@ class SingleInjectionManager:
         self.fileContent = read_from_file(self.fileName, self.errorManager)
     
     def inject(self: SingleInjectionManager, content: list, patch_file_line: int) -> None:
-        """
-        Inject the content into the file.
-        """
-        # Inject into every file
+        """Inject the content into every file."""
         patch_line_no = patch_file_line
         file_line_no = self.fileLocation.resolve(self.fileContent, self.patchLineNo)
 
@@ -68,8 +65,9 @@ class SingleInjectionManager:
         old_line_no: int,
         command: str,
     ) -> (int, bool):
-        """
-        Handle a secondary command within the patch file itself, for example:
+        """Handle a secondary command within the patch file itself.
+        
+        For example:
         // cmd: skip 10
         This takes in the current line no. we're injecting at and the command.
         Returns the new line no. after the command, and a boolean on whether any command was executed.
@@ -94,9 +92,8 @@ class SingleInjectionManager:
         old_line_no: int,
         command: str,
     ) -> (int, bool):
-        """
-        Handle a secondary skip command of the form:
-        // cmd: skip 10
+        """Handle a secondary skip command of the form: // cmd: skip 10
+        
         This will skip 10 lines ahead within the file.
         Returns True if the command is a valid skip command, and updates the line no. accordingly.
         """

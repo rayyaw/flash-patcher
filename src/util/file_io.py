@@ -6,8 +6,8 @@ from pathlib import Path
 from util.exception import InjectionErrorManager
 
 def read_from_file(file_location: Path, error_manager: InjectionErrorManager) -> list:
-    """
-    Read all lines from a file.
+    """Read all lines from a file.
+    
     Returns a list, with one entry for each line.
     """
     try:
