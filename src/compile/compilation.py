@@ -9,7 +9,9 @@ from .jpexs import JPEXSInterface
 
 class CompilationManager:
     """Manage Flash compilation and decompilation, including caching.
-    This class should not call JPEXS directly, instead it should use the JPEXSInterface."""
+
+    This class should not call JPEXS directly, instead it should use the JPEXSInterface.
+    """
 
     decompiler: JPEXSInterface
 
