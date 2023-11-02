@@ -1,16 +1,18 @@
-grammar Stagefile;
+lexer grammar PatchfileLexer;
 
-// PARSER RULES ----
-patchFile       : PATCH_FILE;
-assetPackFile   : ASSET_PACK_FILE;
-root            : (PATCH_FILE | ASSET_PACK_FILE)*;
+ADD             : A D D;
+REMOVE          : R E M O V E;
 
+// file names should always start with DefineSprite or frame
+// XML files should be named swf.xml
+// (we need this to avoid ADD and REMOVE being matched in the filename)
+// FIXME - split the filename into many tokens and use + in the grammar file
+FILENAME        : (D E F I N E S P R I T E | F R A M E) .+? '.as' | S W F .+? '.xml';
 
-// LEXER RULES ----
-PATCH_FILE          : FILE_NAME_CHARACTER+ '.patch';
-ASSET_PACK_FILE     : FILE_NAME_CHARACTER+ '.assets';
+BEGIN_PATCH     : B E G I N '-' P A T C H -> mode(ADD_BLOCK_MODE);
+NUMBER_RANGE    : INTEGER '-' INTEGER;
+FILE_ADD_TOKEN  : INTEGER | E N D;
 
-// FIXME - Move this to a common lexer section
 fragment A : [aA];
 fragment B : [bB];
 fragment C : [cC];
@@ -41,11 +43,14 @@ fragment Z : [zZ];
 fragment LETTER     : [A-Za-z];
 fragment NUMBER     : [0-9];
 fragment SPACE      : ' ';
-fragment SLASH      : '/' | '\\';
-fragment DASH       : '-' | '_';
+fragment SLASH      : '/'|'\\';
 
-fragment FILE_NAME_CHARACTER : LETTER | NUMBER | SPACE | SLASH | DASH;
+INTEGER : NUMBER+;
 
 // Stuff to ignore, like comments or whitespace
 WHITESPACE  : [ \t\r\n\f]+         -> skip;
 COMMENT     : '#' ~( '\r' | '\n')* -> skip;
+
+mode ADD_BLOCK_MODE;
+END_PATCH   : E N D '-' P A T C H -> mode(DEFAULT_MODE);
+AS_TEXT     : .+?;

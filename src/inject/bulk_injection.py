@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 from .single_injection import SingleInjectionManager
 
 # the FilePosition should have an injectAt fn which takes lineno and lines to add and injects there
@@ -53,3 +51,7 @@ class BulkInjectionManager:
         
         for injector in self.injectors:
             injector.inject(self.injectedContent, self.startingLineNo)
+
+    def injectContent(self: BulkInjectionManager, content: str) -> None:
+        self.injectedContent = content
+        self.inject()

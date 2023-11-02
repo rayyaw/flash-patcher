@@ -7,8 +7,7 @@ from logging import basicConfig, exception, info
 from pathlib import Path
 
 from compile.compilation import CompilationManager
-from parse.asset import AssetFileParser
-from parse.patch import PatchFileParser
+from parse.stage import StagefileManager
 
 """
 Riley's SWF patcher - a tool to patch content into SWF files.
@@ -46,31 +45,6 @@ def clean_scripts(modified_scripts: set) -> None:
     for script in scripts:
         if script not in modified_scripts:
             script.unlink()
-
-def apply_patches(patches: list, folder: Path) -> set:
-    """Apply every patch, ignoring comments and empty lines."""
-    modified_scripts = set()
-    for patch in patches:
-        patch_stripped = patch.strip("\n\r ")
-        if len(patch_stripped) == 0 or patch_stripped[0] == "#":
-            continue
-
-        # Check file extension of file
-        if patch_stripped.endswith(".patch"):  # Patch (code) file
-            modified_scripts |= \
-                PatchFileParser(folder / patch_stripped, DECOMP_LOCATION_WITH_SCRIPTS).parse()
-        elif patch_stripped.endswith(".assets"):  # Asset Pack file
-            modified_scripts |= \
-                AssetFileParser(folder / patch_stripped, folder, DECOMP_LOCATION).parse()
-        else:
-            exception(
-                """The file provided ('%s') did not have a valid filetype.
-                Aborting...""",
-                patch_stripped,
-            )
-            sys.exit(1)
-
-    return modified_scripts
 
 def main(
     inputfile: Path,
@@ -133,7 +107,12 @@ def main(
         )
         sys.exit(1)
 
-    modified_scripts = apply_patches(patches_to_apply, folder)
+    modified_scripts = StagefileManager.parse(
+        folder,
+        stagefile,
+        DECOMP_LOCATION,
+        DECOMP_LOCATION_WITH_SCRIPTS
+    )
 
     info("Injection complete, cleaning up...")
 

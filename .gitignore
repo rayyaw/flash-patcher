@@ -2,8 +2,11 @@
 */__pycache__/*
 
 build/*.py
+build/antlr/*
+build/antlr_source
 build/compile/*
 buid/inject/*
+build/parse/*
 build/util/*
 
 src/antlr/.antlr/*

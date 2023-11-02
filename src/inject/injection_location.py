@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from util.exception import InjectionErrorManager
+from util.exception import ErrorManager
 
 class InjectionLocation:
     """Store the location within a file to inject at.
@@ -22,7 +22,7 @@ class InjectionLocation:
     def resolve(
         self: InjectionLocation,
         file_content: list,
-        exception: InjectionErrorManager
+        exception: ErrorManager
     ) -> int:
         """Resolve the injection location in the given file.
         
@@ -48,7 +48,7 @@ class InjectionLocation:
     def resolve_line_no(
         self: InjectionLocation,
         file_content: list,
-        exception: InjectionErrorManager
+        exception: ErrorManager
     ) -> int:
         if self.lineNo > len(file_content):
             exception.throw(
@@ -61,6 +61,6 @@ class InjectionLocation:
     def resolve_end(
         self: InjectionLocation,
         file_content: list,
-        exception: InjectionErrorManager
+        exception: ErrorManager
     ) -> int:
         return len(file_content)

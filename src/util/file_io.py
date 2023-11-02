@@ -3,9 +3,9 @@ import sys
 from logging import exception
 from pathlib import Path
 
-from util.exception import InjectionErrorManager
+from util.exception import ErrorManager
 
-def read_from_file(file_location: Path, error_manager: InjectionErrorManager) -> list:
+def read_from_file(file_location: Path, error_manager: ErrorManager) -> list:
     """Read all lines from a file.
     
     Returns a list, with one entry for each line.
