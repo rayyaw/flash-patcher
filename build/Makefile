@@ -12,6 +12,9 @@ all: antlr
 antlr:
 	cp ../src/antlr/*.g4 ../src/antlr_source
 
+	cat ../src/antlr/AssetPack.g4 ../src/antlr/Common.g4 > ../src/antlr_source/AssetPack.g4
+	cat ../src/antlr/Stagefile.g4 ../src/antlr/Common.g4 > ../src/antlr_source/Stagefile.g4
+
 	antlr4 -Dlanguage=Python3 -visitor ../src/antlr_source/PatchfileLexer.g4
 	antlr4 -Dlanguage=Python3 -visitor ../src/antlr_source/PatchfileParser.g4
 	antlr4 -Dlanguage=Python3 -visitor ../src/antlr_source/AssetPack.g4

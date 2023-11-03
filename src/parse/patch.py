@@ -4,14 +4,19 @@ import sys
 from antlr4 import CommonTokenStream, InputStream
 from antlr_source.PatchfileLexer import PatchfileLexer
 from antlr_source.PatchfileParser import PatchfileParser
-from logging import error, exception
+from logging import error, exception, info
 from pathlib import Path
 
 from parse.visitor.patch_visitor import PatchfileProcessor
+from util.error_suppression import run_without_antlr_errors
 from util.exception import ErrorManager
 from util.file_io import read_from_file
 
 class PatchfileManager:
+    def parseInput(file_content: str) -> PatchfileParser:
+        lexer = PatchfileLexer(InputStream(file_content))
+        return PatchfileParser(CommonTokenStream(lexer))
+
     def parse(folder_location: Path, file_location: Path) -> set:
         """Parse a single patch file.
 
@@ -28,13 +33,10 @@ class PatchfileManager:
         # FIXME - file read should be all in one go instead of using readlines
         file_content = ''.join(read_from_file(file, error_manager))
 
-        # FIXME - this prints an error but doesn't error out
-        # FIXME - delete error message about incompatible ANTLR versions
-        lexer = PatchfileLexer(InputStream(file_content))
-        parser = PatchfileParser(CommonTokenStream(lexer))
+        info("Processing file: %s", file.as_posix())
+        parser = run_without_antlr_errors(lambda: PatchfileManager.parseInput(file_content))
 
         try:
-            print(file.as_posix())
             stagefile = parser.root()
 
         except Exception as e:

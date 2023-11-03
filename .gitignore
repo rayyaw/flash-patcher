@@ -5,7 +5,7 @@ build/*.py
 build/antlr/*
 build/antlr_source
 build/compile/*
-buid/inject/*
+build/inject/*
 build/parse/*
 build/util/*
 

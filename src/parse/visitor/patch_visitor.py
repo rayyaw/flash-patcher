@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from antlr_source.PatchfileParser import PatchfileParser
-from antlr_source.PatchfileVisitor import PatchfileVisitor
+from antlr_source.PatchfileParserVisitor import PatchfileParserVisitor
 from logging import exception
 from pathlib import Path
 
@@ -12,7 +12,7 @@ from inject.single_injection import SingleInjectionManager
 from util.exception import ErrorManager
 from util.file_io import read_from_file, write_to_file
 
-class PatchfileProcessor (PatchfileVisitor):
+class PatchfileProcessor (PatchfileParserVisitor):
 
     injector: BulkInjectionManager
     modifiedScripts: set

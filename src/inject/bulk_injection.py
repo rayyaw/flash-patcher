@@ -29,21 +29,6 @@ class BulkInjectionManager:
         """Add an injection target to this injector."""
         self.injectors.append(target)
 
-    def add_injection_line(
-        self: BulkInjectionManager,
-        line: str,
-        current_line_no: int,
-    ) -> None:
-        """Queue a line to be injected.
-
-        The line will not be injected immediately.
-        It will be injected once inject() is called.
-        """
-        self.injectedContent.append(line)
-
-        if self.startingLineNo == -1:
-            self.startingLineNo = current_line_no
-
     def inject(self: BulkInjectionManager) -> None:
         """Perform loaded injections."""
         if len(self.injectedContent) == 0:

@@ -6,13 +6,14 @@ REMOVE          : R E M O V E;
 // file names should always start with DefineSprite or frame
 // XML files should be named swf.xml
 // (we need this to avoid ADD and REMOVE being matched in the filename)
-// FIXME - split the filename into many tokens and use + in the grammar file
 FILENAME        : (D E F I N E S P R I T E | F R A M E) .+? '.as' | S W F .+? '.xml';
 
 BEGIN_PATCH     : B E G I N '-' P A T C H -> mode(ADD_BLOCK_MODE);
 NUMBER_RANGE    : INTEGER '-' INTEGER;
 FILE_ADD_TOKEN  : INTEGER | E N D;
 
+// We cannot use the common.g4 file, since modes don't play nice with it
+// (This is also why Patchfile needs a separate lexer file)
 fragment A : [aA];
 fragment B : [bB];
 fragment C : [cC];

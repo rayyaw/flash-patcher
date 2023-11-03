@@ -33,12 +33,11 @@ class StagefileProcessor (StagefileVisitor):
         )
 
     def visitAssetPackFile(self: StagefileProcessor, ctx: StagefileParser.AssetPackFileContext) -> None:
-         # TODO once asset packs are completed
         self.modifiedScripts |= AssetPackManager.parse(
             self.decompLocation,
             self.folder / ctx.getText()
         )
     
-    def visitRoot(self, ctx: StagefileParser.RootContext) -> set:
+    def visitRoot(self: StagefileProcessor, ctx: StagefileParser.RootContext) -> set:
         super().visitRoot(ctx)
         return self.modifiedScripts

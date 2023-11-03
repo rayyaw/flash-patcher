@@ -95,18 +95,6 @@ def main(
 
     info("Decompilation finished. Beginning injection...")
 
-    try:
-        # Open the stage file and read list of all patches to apply
-        with Path.open(folder / stagefile) as f:
-            patches_to_apply = f.readlines()
-    except FileNotFoundError:
-        exception(
-            """Could not open stage file: %s.
-            Aborting...""",
-            Path(folder / stagefile),
-        )
-        sys.exit(1)
-
     modified_scripts = StagefileManager.parse(
         folder,
         stagefile,
