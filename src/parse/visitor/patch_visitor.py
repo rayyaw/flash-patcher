@@ -10,7 +10,7 @@ from inject.bulk_injection import BulkInjectionManager
 from inject.injection_location import InjectionLocation
 from inject.single_injection import SingleInjectionManager
 from util.exception import ErrorManager
-from util.file_io import read_from_file, write_to_file
+from util.file_io import readlines_safe, writelines_safe
 
 class PatchfileProcessor (PatchfileParserVisitor):
 
@@ -55,7 +55,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
 
         # Open file, delete lines, and close it
         error_manager = ErrorManager(self.patchFileName, ctx.start.line)
-        current_file = read_from_file(full_path, error_manager)
+        current_file = readlines_safe(full_path, error_manager)
 
         try:
             for _ in range(line_start, line_end + 1):
@@ -72,7 +72,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
             )
             sys.exit(1)
 
-        write_to_file(full_path, current_file)
+        writelines_safe(full_path, current_file)
 
         self.modifiedScripts.add(full_path)
 

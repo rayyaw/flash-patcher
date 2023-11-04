@@ -12,23 +12,28 @@ def run_without_antlr_errors(fn: Callable[..., any]) -> any:
 
     # Ignore stdout, ANTLR only uses it for warnings of version mismatch
     sys_stdout_backup = sys.stdout
+    sys_stderr_backup = sys.stderr
     sys.stdout = io.StringIO()
+    sys.stderr = io.StringIO()
 
     output = fn()
 
-    # Restore stdout and parse the captured output
+    captured_output = sys.stderr.getvalue()
+
+    # Restore stdout
+    sys.stderr = sys_stderr_backup
     sys.stdout = sys_stdout_backup
+
+    process_captured_output(captured_output)
 
     return output
 
 def process_captured_output(captured_output = str) -> None:
     """Process the output from stderr, and error out if an error occurred."""
     if (captured_output != ""):
-        print("ERROR DETECTED!")
         exception(
             """Processing halted due to lex and parse errors.
-            More info:
-            %s""",
+            More info:\n%s""",
             captured_output
         )
         sys.exit(1)
