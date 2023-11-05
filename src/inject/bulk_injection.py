@@ -41,7 +41,6 @@ class BulkInjectionManager:
         self.injectedContent = content
         self.inject()
 
-    
     def clear(self: BulkInjectionManager) -> None:
         self.injectors = []
         self.injectedContent = []

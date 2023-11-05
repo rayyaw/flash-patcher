@@ -16,6 +16,10 @@ class InjectionLocation:
         if symbolic_location.isdigit():
             # the -1 is required to ensure we're injecting in the right location
             self.lineNo = int(symbolic_location) - 1
+
+            # edge case of injecting at line 0
+            if (self.lineNo < 0):
+                self.lineNo = 0
         
         self.symbolicLocation = symbolic_location
 

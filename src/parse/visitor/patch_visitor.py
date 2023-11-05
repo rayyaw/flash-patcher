@@ -44,7 +44,12 @@ class PatchfileProcessor (PatchfileParserVisitor):
         for header in ctx.addBlockHeader():
             self.visitAddBlockHeader(header)
 
-        self.injector.injectContent(ctx.addBlockText().getText())
+        stripped_text = ctx.addBlockText().getText()
+
+        if stripped_text[0] == "\n":
+            stripped_text = stripped_text[1:]
+
+        self.injector.injectContent(stripped_text)
         self.injector.clear()
 
     def visitRemoveBlock(self, ctx: PatchfileParser.RemoveBlockContext) -> None:
