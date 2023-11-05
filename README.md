@@ -4,7 +4,7 @@
 
 ### Build Dependencies
 
-To compile this project yourself, you must install ANTLR. You can view more information at https://www.antlr.org/.
+To compile this project yourself, you must install ANTLR. You can view more information at https://www.antlr.org/. For most linux distributions, this will be available as `antlr4` through your package manager.
 
 You must have `gh-update` installed to receive automatic updates. For more info, see https://github.com/rayyaw/gh-update.
 

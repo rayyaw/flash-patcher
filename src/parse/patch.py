@@ -8,7 +8,7 @@ from parse.common import CommonParseManager
 from parse.visitor.patch_visitor import PatchfileProcessor
 
 class PatchfileManager:
-    def parse(folder: Path, file: Path) -> set:
+    def parse(decomp_location: Path, file: Path) -> set:
         """Parse a single patch file.
 
         folder_location: The location of the decompiled scripts from the SWF.
@@ -20,4 +20,4 @@ class PatchfileManager:
         """
         patchfile = CommonParseManager.getRoot(PatchfileLexer, PatchfileParser, file)
         
-        return PatchfileProcessor(file, folder).visitRoot(patchfile)
+        return PatchfileProcessor(file, decomp_location).visitRoot(patchfile)

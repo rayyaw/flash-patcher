@@ -28,7 +28,7 @@ class StagefileProcessor (StagefileVisitor):
 
     def visitPatchFile(self: StagefileProcessor, ctx: StagefileParser.PatchFileContext) -> None:
         self.modifiedScripts |= PatchfileManager.parse(
-            self.decompLocationWithScripts, 
+            self.decompLocationWithScripts,
             self.folder / ctx.getText()
         )
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from antlr4 import CommonTokenStream, InputStream
 from antlr4.Lexer import Lexer
-from antlr4.Parser import Parser
+from antlr4.Parser import Parser, ParserRuleContext
 from logging import error, exception, info
 from pathlib import Path
 from typing import Type
@@ -17,7 +17,7 @@ class CommonParseManager:
         file_content: str,
         lexer: Type[Lexer],
         parser: Type[Parser],
-    ):
+    ) -> Parser:
         lexer = lexer(InputStream(file_content))
         return parser(CommonTokenStream(lexer))
 
@@ -26,7 +26,7 @@ class CommonParseManager:
         parser: Type[Parser],
 
         file: Path,
-    ) -> any:
+    ) -> ParserRuleContext:
         """Get the root node of the syntax tree from the given file.
         
         This will automatically process all errors.

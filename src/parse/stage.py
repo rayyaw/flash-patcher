@@ -20,7 +20,7 @@ class StagefileManager:
         Everything within the file will be handled by the StagefileProcessor
         """
         
-        stagefile = CommonParseManager.getRoot(StagefileLexer, StagefileParser, file)
+        stagefile = CommonParseManager.getRoot(StagefileLexer, StagefileParser, folder / file)
 
         return StagefileProcessor(
             folder,
