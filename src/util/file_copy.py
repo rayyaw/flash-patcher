@@ -16,7 +16,7 @@ def clean_scripts(decomp_location: Path, modified_scripts: set) -> None:
         if script not in modified_scripts:
             script.unlink()
 
-def copy_file(source: Path, dest: Path):
+def copy_file(source: Path, dest: Path) -> None:
     """Copy a file or folder."""
     isdir = source.is_dir()
     if dest.exists():
@@ -30,7 +30,7 @@ def copy_file(source: Path, dest: Path):
     else:
         shutil.copy(source, dest)
 
-def get_decomp_locations(xml_mode: str):
+def get_decomp_locations(xml_mode: str) -> (Path, Path):
     """Return (DECOMP_LOCATION, DECOMP_LOCATION_WITH_SCRIPTS)"""
     if (xml_mode):
         return Path("./.Patcher-Temp/swf.xml"), Path("./.Patcher-Temp/")
