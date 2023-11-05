@@ -3,14 +3,14 @@ from __future__ import annotations
 import sys
 from logging import exception
 
-class InjectionErrorManager:
+class ErrorManager:
     """Handle exceptions thrown by Flash Patcher during the injection stage."""
     patchFile: str
     lineNo: int
     context: str
 
     def __init__(
-        self: InjectionErrorManager, 
+        self: ErrorManager, 
         patch_file: str,
         line_no: int,
         context: str | None = None,
@@ -21,7 +21,7 @@ class InjectionErrorManager:
         # extra info is usually the content of the offending line
         self.context = context
 
-    def throw(self: InjectionErrorManager, mesg: str) -> None:
+    def throw(self: ErrorManager, mesg: str) -> None:
         """Throw the specified error message with the given context."""
         exception(
             """InjectionError at %s, line %d

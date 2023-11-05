@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from util.exception import InjectionErrorManager
+from util.exception import ErrorManager
 
 class InjectionLocation:
     """Store the location within a file to inject at.
@@ -16,13 +16,17 @@ class InjectionLocation:
         if symbolic_location.isdigit():
             # the -1 is required to ensure we're injecting in the right location
             self.lineNo = int(symbolic_location) - 1
+
+            # edge case of injecting at line 0
+            if (self.lineNo < 0):
+                self.lineNo = 0
         
         self.symbolicLocation = symbolic_location
 
     def resolve(
         self: InjectionLocation,
         file_content: list,
-        exception: InjectionErrorManager
+        exception: ErrorManager
     ) -> int:
         """Resolve the injection location in the given file.
         
@@ -48,7 +52,7 @@ class InjectionLocation:
     def resolve_line_no(
         self: InjectionLocation,
         file_content: list,
-        exception: InjectionErrorManager
+        exception: ErrorManager
     ) -> int:
         if self.lineNo > len(file_content):
             exception.throw(
@@ -61,6 +65,6 @@ class InjectionLocation:
     def resolve_end(
         self: InjectionLocation,
         file_content: list,
-        exception: InjectionErrorManager
+        exception: ErrorManager
     ) -> int:
         return len(file_content)

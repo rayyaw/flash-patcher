@@ -4,8 +4,8 @@ import sys
 from pathlib import Path
 
 from .injection_location import InjectionLocation
-from util.exception import InjectionErrorManager
-from util.file_io import read_from_file, write_to_file
+from util.exception import ErrorManager
+from util.file_io import readlines_safe, writelines_safe
 
 class SingleInjectionManager:
     """A position in a named file."""
@@ -16,7 +16,7 @@ class SingleInjectionManager:
     patchFile: Path
     patchLineNo: int
 
-    errorManager: InjectionErrorManager
+    errorManager: ErrorManager
     fileContent: list
 
     def __init__(
@@ -32,8 +32,8 @@ class SingleInjectionManager:
         self.patchFile = patch_file       # name of the patch file
         self.patchLineNo = patch_line_no  # line number within the patch file
 
-        self.errorManager = InjectionErrorManager(self.patchFile.as_posix(), 0, None)
-        self.fileContent = read_from_file(self.fileName, self.errorManager)
+        self.errorManager = ErrorManager(self.patchFile.as_posix(), 0, None)
+        self.fileContent = readlines_safe(self.fileName, self.errorManager)
     
     def inject(self: SingleInjectionManager, content: list, patch_file_line: int) -> None:
         """Inject the content into every file."""
@@ -58,7 +58,7 @@ class SingleInjectionManager:
             
             patch_line_no += 1
 
-        write_to_file(self.fileName, self.fileContent)
+        writelines_safe(self.fileName, self.fileContent)
 
     def handle_secondary_command(
         self: SingleInjectionManager, 

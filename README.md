@@ -2,13 +2,19 @@
 
 ## Requirements
 
-You must install JPEXS Free Flash Decompiler to use this patcher. For more information, check https://github.com/jindrapetrik/jpexs-decompiler .
+### Build Dependencies
+
+To compile this project yourself, you must install ANTLR. You can view more information at https://www.antlr.org/. For most linux distributions, this will be available as `antlr4` through your package manager.
+
+You must have `gh-update` installed to receive automatic updates. For more info, see https://github.com/rayyaw/gh-update.
+
+### Runtime Dependencies
+
+You must install JPEXS Free Flash Decompiler to use this patcher. For more information, check https://github.com/jindrapetrik/jpexs-decompiler.
 
 Flash Patcher will automatically detect your JPEXS install location.
 
-You must have Python 3 on your system to run this script.
-
-You must have `gh-update` installed to receive automatic updates. For more info, see https://github.com/rayyaw/gh-update.
+You must have Python 3 on your system to run this script, including the `antlr4` pip package.
 
 ## Installing and running
 
@@ -17,6 +23,8 @@ To apply a patch, run the following command:
 `./flash-patcher.py`
 
 The patcher will take the input SWF, apply the patches specified in the stage file (which must be located in the patch folder), and create the output SWF.
+
+To build the project yourself, simply run `cd build && make` before running `sudo make install`.
 
 You can also install Flash Patcher by running `cd build && sudo make install`. After this, you can run Flash Patcher with `flash-patcher [args]`.
 
