@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import os
-import shutil
 import sys
 from logging import basicConfig, exception, info
 from pathlib import Path
 
 from compile.compilation import CompilationManager
 from parse.stage import StagefileManager
+from util.file_copy import clean_scripts, copy_file, get_decomp_locations
 
 """
 Riley's SWF patcher - a tool to patch content into SWF files.
@@ -29,23 +28,6 @@ basicConfig(level=1, format="%(levelname)s: %(message)s")
 
 CURRENT_VERSION = "v4.1.8"
 
-DECOMP_LOCATION = Path("./.Patcher-Temp/mod/")
-DECOMP_LOCATION_WITH_SCRIPTS = Path(DECOMP_LOCATION, "scripts/")
-
-def clean_scripts(modified_scripts: set) -> None:
-    """Delete all non-modified scripts.
-
-    Taken from https://stackoverflow.com/questions/19309667/recursive-os-listdir
-    - Make recursive os.listdir.
-    """
-    scripts = [
-        Path(dp, f) for dp, _, fn in os.walk(DECOMP_LOCATION.expanduser()) for f in fn
-    ]
-    
-    for script in scripts:
-        if script not in modified_scripts:
-            script.unlink()
-
 def main(
     inputfile: Path,
     folder: Path,
@@ -66,13 +48,7 @@ def main(
         )
         sys.exit(1)
 
-    if xml_mode:
-        info("XML decompilation mode.")
-        global DECOMP_LOCATION
-        global DECOMP_LOCATION_WITH_SCRIPTS
-
-        DECOMP_LOCATION = Path("./.Patcher-Temp/swf.xml")
-        DECOMP_LOCATION_WITH_SCRIPTS = Path("./.Patcher-Temp/")
+    decomp_location, decomp_location_with_scripts = get_decomp_locations(xml_mode)
 
     cache_location = compiler.decompile(
         inputfile,
@@ -81,35 +57,25 @@ def main(
     )
 
     # Copy the cache to a different location so we can reuse it
-    isdir = cache_location.is_dir()
-    if DECOMP_LOCATION.exists():
-        if isdir:
-            shutil.rmtree(DECOMP_LOCATION)
-        else:
-            Path.unlink(DECOMP_LOCATION)
-
-    if isdir:
-        shutil.copytree(cache_location, DECOMP_LOCATION)
-    else:
-        shutil.copy(cache_location, DECOMP_LOCATION)
+    copy_file(cache_location, decomp_location)
 
     info("Decompilation finished. Beginning injection...")
 
     modified_scripts = StagefileManager.parse(
         folder,
         stagefile,
-        DECOMP_LOCATION,
-        DECOMP_LOCATION_WITH_SCRIPTS
+        decomp_location,
+        decomp_location_with_scripts
     )
 
     info("Injection complete, cleaning up...")
 
-    clean_scripts(modified_scripts)
+    clean_scripts(decomp_location, modified_scripts)
 
     info("Recompiling...")
 
     compiler.recompile(
-        DECOMP_LOCATION,
+        decomp_location,
         inputfile,
         output,
         recompile_all=recompile_all,
