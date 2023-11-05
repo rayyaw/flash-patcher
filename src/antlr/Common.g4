@@ -30,8 +30,10 @@ fragment NUMBER     : [0-9];
 fragment SPACE      : ' ';
 fragment SLASH      : '/' | '\\';
 fragment DASH       : '-' | '_';
+fragment DOT        : '.';
 
-fragment FILE_NAME_CHARACTER : LETTER | NUMBER | SPACE | SLASH | DASH;
+fragment FILE_NAME_CHARACTER          : LETTER | NUMBER | SPACE | SLASH | DASH | DOT;
+fragment FILE_NAME_CHARACTER_NO_SPACE : LETTER | NUMBER | SLASH | DASH | DOT;
 
 // Stuff to ignore, like comments or whitespace
 WHITESPACE  : [ \t\r\n\f]+         -> skip;

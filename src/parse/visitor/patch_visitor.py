@@ -41,12 +41,11 @@ class PatchfileProcessor (PatchfileParserVisitor):
         self.modifiedScripts.add(full_path)
 
     def visitAddBlock(self, ctx: PatchfileParser.AddBlockContext) -> None:
-        self.injector = BulkInjectionManager()
-        
         for header in ctx.addBlockHeader():
             self.visitAddBlockHeader(header)
 
         self.injector.injectContent(ctx.addBlockText().getText())
+        self.injector.clear()
 
     def visitRemoveBlock(self, ctx: PatchfileParser.RemoveBlockContext) -> None:
         full_path = self.decompLocationWithScripts / ctx.FILENAME().getText()

@@ -35,6 +35,7 @@ class StagefileProcessor (StagefileVisitor):
     def visitAssetPackFile(self: StagefileProcessor, ctx: StagefileParser.AssetPackFileContext) -> None:
         self.modifiedScripts |= AssetPackManager.parse(
             self.decompLocation,
+            self.folder,
             self.folder / ctx.getText()
         )
     

@@ -10,6 +10,7 @@ from parse.visitor.asset_visitor import AssetPackProcessor
 class AssetPackManager:
     def parse(
         decomp_location: Path,
+        folder: Path,
         file: Path
     ) -> set:
         """Parse a single asset pack.
@@ -19,4 +20,4 @@ class AssetPackManager:
         """
         asset_pack = CommonParseManager.getRoot(AssetPackLexer, AssetPackParser, file)
 
-        return AssetPackProcessor(decomp_location).visitRoot(asset_pack)
+        return AssetPackProcessor(folder, decomp_location).visitRoot(asset_pack)

@@ -40,3 +40,9 @@ class BulkInjectionManager:
     def injectContent(self: BulkInjectionManager, content: str) -> None:
         self.injectedContent = content
         self.inject()
+
+    
+    def clear(self: BulkInjectionManager) -> None:
+        self.injectors = []
+        self.injectedContent = []
+        self.startingLineNo = -1
