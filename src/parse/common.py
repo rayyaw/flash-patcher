@@ -43,8 +43,7 @@ class CommonParseManager:
         try:
             tree = run_without_antlr_errors(parser.root)
 
-        except Exception as e:
-            error(e)
+        except Exception:
             exception(
                 "Error while parsing file %s. There is likely additional logging output above.",
                 file.as_posix(),

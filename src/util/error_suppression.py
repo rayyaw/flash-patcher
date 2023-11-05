@@ -1,6 +1,6 @@
 import io
 import sys
-from logging import exception
+from logging import error
 from typing import Callable
 
 def run_without_antlr_errors(fn: Callable[..., any]) -> any:
@@ -31,7 +31,7 @@ def run_without_antlr_errors(fn: Callable[..., any]) -> any:
 def process_captured_output(captured_output = str) -> None:
     """Process the output from stderr, and error out if an error occurred."""
     if (captured_output != ""):
-        exception(
+        error(
             """Processing halted due to lex and parse errors.
             More info:\n%s""",
             captured_output
