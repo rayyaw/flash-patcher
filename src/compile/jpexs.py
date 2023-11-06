@@ -67,12 +67,12 @@ class JPEXSInterface:
             # path.exists() checks that the path exists, but not that JPEXS is installed
             # so we need to run jpexs -help to verify it's installed correctly
             testrun = subprocess.run(
-                    [path, *args, "-help"],
-                    stdout=subprocess.DEVNULL,
-                    check=True,
-                )
+                [path, *args, "-help"],
+                stdout=subprocess.DEVNULL,
+                check=True,
+            )
 
-            if testrun.returncode != 0:
+            if testrun.returncode == 0:
                 self.path = path
                 self.args = args
                 return True
