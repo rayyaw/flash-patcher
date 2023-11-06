@@ -16,7 +16,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        sudo apt-get install antlr4
+        sudo apt-get -y install antlr4
         python -m pip install --upgrade pip
         pip install antlr4 pylint
         cd build && make antlr
