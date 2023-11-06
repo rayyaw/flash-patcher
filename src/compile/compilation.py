@@ -21,7 +21,7 @@ class CompilationManager:
     def decompile(
         self: CompilationManager,
         inputfile: Path,
-        drop_cache: bool = False, 
+        drop_cache: bool = False,
         xml_mode: bool = False
     ) -> Path:
         """Decompile the SWF and return the decompilation location.
@@ -79,7 +79,7 @@ class CompilationManager:
             info("Detected cached decompilation. Skipping...")
 
         return cache_location
-    
+
     def recompile(
         self: CompilationManager,
         injection: Path,

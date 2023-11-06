@@ -48,11 +48,11 @@ class JPEXSInterface:
                 self.install_jpexs(LOCATION_WINDOWS),
                 self.install_jpexs(LOCATION_WOW64),
             ])
-            
-            if not jpexs_installed:
-                raise ModuleNotFoundError("Failed to locate dependency: JPEXS Flash Decompiler") 
 
-            info("Using JPEXS at: %s", self.path) 
+            if not jpexs_installed:
+                raise ModuleNotFoundError("Failed to locate dependency: JPEXS Flash Decompiler")
+
+            info("Using JPEXS at: %s", self.path)
 
     def install_jpexs(self, path: Path, args: list | None = None) -> bool:
         """Install JPEXS from a path. Return true if the installation was successful."""
@@ -61,7 +61,8 @@ class JPEXSInterface:
             self.path = path
             self.args = []
             return True
-        elif path.exists():
+
+        if path.exists():
             # We're running JPEXS through a sandbox or proxy (like Flatpak)
             # path.exists() checks that the path exists, but not that JPEXS is installed
             # so we need to run jpexs -help to verify it's installed correctly
@@ -71,11 +72,11 @@ class JPEXSInterface:
                     check=True,
                 )
 
-            if testrun.returncode == 0:
+            if testrun.returncode != 0:
                 self.path = path
                 self.args = args
                 return True
-            
+
         return False
 
     def dump_xml(

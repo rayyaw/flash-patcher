@@ -2,7 +2,6 @@ import sys
 
 from logging import exception
 from pathlib import Path
-from typing import Callable
 
 from util.exception import ErrorManager
 
@@ -13,8 +12,8 @@ def read_safe(file_location: Path, error_manager: ErrorManager) -> str:
     Returns a string containing the entire file.
     """
     try:
-        with Path.open(file_location) as f:
-            return f.read()
+        with Path.open(file_location) as file:
+            return file.read()
     except (FileNotFoundError, IsADirectoryError):
         error_manager.context = file_location.as_posix()
         error_manager.throw(
@@ -28,8 +27,8 @@ def readlines_safe(file_location: Path, error_manager: ErrorManager) -> list:
     Returns a list, with one entry for each line.
     """
     try:
-        with Path.open(file_location) as f:
-            return f.readlines()
+        with Path.open(file_location) as file:
+            return file.readlines()
     except (FileNotFoundError, IsADirectoryError):
         error_manager.context = file_location.as_posix()
         error_manager.throw(
@@ -40,8 +39,8 @@ def readlines_safe(file_location: Path, error_manager: ErrorManager) -> list:
 def writelines_safe(path: Path, lines: list) -> None:
     """Write a list of lines to a file."""
     try:
-        with Path.open(path, "w") as f:
-            f.writelines(lines)
+        with Path.open(path, "w") as file:
+            file.writelines(lines)
     except (FileNotFoundError, IsADirectoryError):
         exception(
             """The provided decompilation is not in a writable location. 

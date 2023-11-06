@@ -3,7 +3,7 @@ import sys
 from logging import error
 from typing import Callable
 
-def run_without_antlr_errors(fn: Callable[..., any]) -> any:
+def run_without_antlr_errors(function: Callable[..., any]) -> any:
     """Run a command while suppressing ANTLR version mismatch warnings.
     We also want to call sys.exit() if there is a parse error, which ANTLR doesn't do.
 
@@ -16,7 +16,7 @@ def run_without_antlr_errors(fn: Callable[..., any]) -> any:
     sys.stdout = io.StringIO()
     sys.stderr = io.StringIO()
 
-    output = fn()
+    output = function()
 
     captured_output = sys.stderr.getvalue()
 
@@ -30,7 +30,7 @@ def run_without_antlr_errors(fn: Callable[..., any]) -> any:
 
 def process_captured_output(captured_output = str) -> None:
     """Process the output from stderr, and error out if an error occurred."""
-    if (captured_output != ""):
+    if captured_output != "":
         error(
             """Processing halted due to lex and parse errors.
             More info:\n%s""",
