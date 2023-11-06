@@ -28,7 +28,10 @@ jobs:
         pip install antlr4-python3-runtime pylint
     - name: Build ANTLR files
       run: |
-        cd build && make antlr
+        cd build
+        which antlr4
+        ls ..
+        make antlr
         cd ..
     - name: Analysing the code with pylint
       run: |
