@@ -16,8 +16,11 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        sudo apt-get install antlr4
         python -m pip install --upgrade pip
-        pip install pylint
+        pip install antlr4 pylint
+        cd build && make antlr
+        cd ..
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py') \
@@ -27,4 +30,4 @@ jobs:
         --disable=inconsistent-return-statements \
         --disable=too-many-arguments \
         --disable=pointless-string-statement \
-        --disable=unspecified-encoding
+        --disable=unspecified-encoding \
