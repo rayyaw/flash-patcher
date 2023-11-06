@@ -21,11 +21,15 @@ jobs:
       run: |
         wget https://www.antlr.org/download/antlr-4.13.1-complete.jar
         echo 'export CLASSPATH=".:$GITHUB_WORKSPACE/antlr-4.13.1-complete.jar:$CLASSPATH"' >> $GITHUB_ENV
+        which java
+        ls
         'alias antlr4="java -jar $GITHUB_WORKSPACE/antlr-4.13.1-complete.jar"' >> $GITHUB_ENV
     - name: Install pip dependencies
       run: |
         python -m pip install --upgrade pip
         pip install antlr4 pylint
+    - name: Build ANTLR files
+      run: |
         cd build && make antlr
         cd ..
     - name: Analysing the code with pylint
