@@ -20,16 +20,17 @@ antlr:
 	antlr4 -Dlanguage=Python3 -visitor ../src/antlr_source/AssetPack.g4
 	antlr4 -Dlanguage=Python3 -visitor ../src/antlr_source/Stagefile.g4
 
+# Required since github can't install ANTLR properly
 antlr-java:
 	cp ../src/antlr/*.g4 ../src/antlr_source
 
 	cat ../src/antlr/AssetPack.g4 ../src/antlr/Common.g4 > ../src/antlr_source/AssetPack.g4
 	cat ../src/antlr/Stagefile.g4 ../src/antlr/Common.g4 > ../src/antlr_source/Stagefile.g4
 
-	java -jar antlr-4.13.1-complete.jar -Dlanguage=Python3 -visitor ../src/antlr_source/PatchfileLexer.g4
-	java -jar antlr-4.13.1-complete.jar -Dlanguage=Python3 -visitor ../src/antlr_source/PatchfileParser.g4
-	java -jar antlr-4.13.1-complete.jar -Dlanguage=Python3 -visitor ../src/antlr_source/AssetPack.g4
-	java -jar antlr-4.13.1-complete.jar -Dlanguage=Python3 -visitor ../src/antlr_source/Stagefile.g4
+	java -jar $GITHUB_WORKSPACE/antlr-4.13.1-complete.jar -Dlanguage=Python3 -visitor ../src/antlr_source/PatchfileLexer.g4
+	java -jar $GITHUB_WORKSPACE/antlr-4.13.1-complete.jar -Dlanguage=Python3 -visitor ../src/antlr_source/PatchfileParser.g4
+	java -jar $GITHUB_WORKSPACE/antlr-4.13.1-complete.jar -Dlanguage=Python3 -visitor ../src/antlr_source/AssetPack.g4
+	java -jar $GITHUB_WORKSPACE/antlr-4.13.1-complete.jar -Dlanguage=Python3 -visitor ../src/antlr_source/Stagefile.g4
 
 install-lite:
 	sudo cp ../flash-patcher /usr/local/bin
