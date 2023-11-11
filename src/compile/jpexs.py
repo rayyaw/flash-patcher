@@ -122,6 +122,8 @@ class JPEXSInterface:
         Returns True on success.
         """
         info("Exporting scripts into %s...", output_dir)
+
+        # set check=False, we will verify the return code manually later
         process = subprocess.run(
             [
                 self.path,
@@ -133,7 +135,7 @@ class JPEXSInterface:
             ],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
-            check=True,
+            check=False,
         )
 
         return process.returncode == 0
@@ -144,11 +146,14 @@ class JPEXSInterface:
         decomp_location: Path,
         swf: Path,
         output: Path,
-    ) -> int:
+    ) -> bool:
         """Recompile data of a given type into the SWF file."""
+
         # Part types: SymbolClass, Movies, Sounds, Shapes, Images, Text, Script
         info("Reimporting %s...", part)
-        return subprocess.run(
+
+        # set check=False, we will verify the return code manually later
+        process = subprocess.run(
             [
                 self.path,
                 *self.args,
@@ -158,5 +163,7 @@ class JPEXSInterface:
                 decomp_location,
             ],
             stdout=subprocess.DEVNULL,
-            check=True,
+            check=False,
         )
+
+        return process.returncode == 0

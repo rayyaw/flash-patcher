@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from .single_injection import SingleInjectionManager
+from inject.single_injection import SingleInjectionManager
 
-# the FilePosition should have an injectAt fn which takes lineno and lines to add and injects there
 class BulkInjectionManager:
     """Handles injection of code into script files.
     

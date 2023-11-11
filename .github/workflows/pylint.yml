@@ -29,7 +29,7 @@ jobs:
       run: |
         cd build && make antlr-java
         cd ..
-    - name: Analysing the code with pylint
+    - name: Pylint style analysis
       run: |
         pylint $(git ls-files '*.py') \
         --disable=missing-module-docstring \
