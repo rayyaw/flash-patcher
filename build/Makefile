@@ -39,6 +39,12 @@ install:
 	sudo cp ../flash-patcher /usr/local/bin
 	sudo cp ../flash-patcher.json /var/gh-update/flash-patcher.json
 
+test:
+	touch ../test/__init__.py
+	touch ../test/compile/__init__.py
+
+	pytest ..
+
 clean:
 	rm -rf antlr_source compile inject parse util __main__.py patcher.py ../flash-patcher
 	rm ../src/antlr_source/*.g4 ../src/antlr_source/*.interp ../src/antlr_source/*.tokens ../src/antlr_source/*.py

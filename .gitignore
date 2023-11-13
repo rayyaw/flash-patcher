@@ -1,5 +1,8 @@
 .Patcher-Temp/* 
 */__pycache__/*
+*/__init__.py
+
+.pytest_cache/*
 
 build/*.py
 build/antlr/*
@@ -15,5 +18,10 @@ src/antlr_source/*.g4
 src/antlr_source/*.py
 src/antlr_source/*.interp
 src/antlr_source/*.tokens
+
+test/__pycache__/*
+test/__init__.py
+test/compile/__pycache__/*
+test/compile/__init__.py
 
 flash-patcher.zip

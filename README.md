@@ -16,6 +16,10 @@ Flash Patcher will automatically detect your JPEXS install location.
 
 You must have Python 3 on your system to run this script, including the `antlr4` pip package. Note that depending on your system, the package name may be `antlr4-python3-runtime` instead of `antlr4`.
 
+## Testing
+
+To run unit tests, simply run `make test` from the `build` folder. You must have `pytest` installed to run unit tests.
+
 ## Installing and running
 
 To apply a patch, run the following command:
