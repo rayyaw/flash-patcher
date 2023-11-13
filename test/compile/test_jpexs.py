@@ -22,7 +22,7 @@ class JPEXSInterfaceSpec (TestCase):
         self.subprocess_mock_failure = MagicMock(returncode=1, stdout='', stderr='Error!')
 
     def test_sanity(self: JPEXSInterfaceSpec) -> None:
-        assert(True)
+        assert True
 
     # JPEXS installation tests
     @patch('pathlib.Path.exists')
@@ -35,9 +35,9 @@ class JPEXSInterfaceSpec (TestCase):
         success = self.interface.install_jpexs(Path("/usr/bin/ffdec"))
 
         mock_path_exists.assert_called_once_with()
-        assert(self.interface.path == Path("/usr/bin/ffdec"))
-        assert(self.interface.args == [])
-        assert(success)
+        assert self.interface.path == Path("/usr/bin/ffdec")
+        assert self.interface.args == []
+        assert success
 
     @patch('pathlib.Path.exists')
     def test_automatic_installation_apt_failure(
@@ -48,8 +48,8 @@ class JPEXSInterfaceSpec (TestCase):
         mock_path_exists.return_value = False
         success = self.interface.install_jpexs(Path("/usr/bin/ffdec"))
 
-        assert(mock_path_exists.call_count == 2)
-        assert(not success)
+        assert mock_path_exists.call_count == 2
+        assert not success
 
     @patch('pathlib.Path.exists')
     @patch('subprocess.run')
@@ -65,11 +65,11 @@ class JPEXSInterfaceSpec (TestCase):
 
         success = self.interface.install_jpexs(Path("/usr/bin/flatpak"), ["run", "--branch=stable"])
 
-        assert(mock_path_exists.call_count == 2)
-        assert(self.interface.path == Path("/usr/bin/flatpak"))
-        assert(self.interface.args == ["run", "--branch=stable"])
+        assert mock_path_exists.call_count == 2
+        assert self.interface.path == Path("/usr/bin/flatpak")
+        assert self.interface.args == ["run", "--branch=stable"]
 
-        assert(success)
+        assert success
 
     @patch('pathlib.Path.exists')
     @patch('subprocess.run')
@@ -84,8 +84,8 @@ class JPEXSInterfaceSpec (TestCase):
 
         success = self.interface.install_jpexs(Path("/usr/bin/flatpak"), ["run", "--branch=stable"])
 
-        assert(mock_path_exists.call_count == 2)
-        assert(not success)
+        assert mock_path_exists.call_count == 2
+        assert not success
 
     # JPEXS calling tests
     @patch('subprocess.run')
@@ -103,8 +103,8 @@ class JPEXSInterfaceSpec (TestCase):
             '-swf2xml',
             input_swf,
             output,
-        ], stdout=-3, stderr=-3)
-        assert(success)
+        ], stdout=-3, stderr=-3, check=False)
+        assert success
 
     @patch('subprocess.run')
     def test_dump_xml_failure(self: JPEXSInterfaceSpec, mock_subprocess_run: MagicMock) -> None:
@@ -121,8 +121,8 @@ class JPEXSInterfaceSpec (TestCase):
             '-swf2xml',
             input_swf,
             output,
-        ], stdout=-3, stderr=-3)
-        assert(not success)
+        ], stdout=-3, stderr=-3, check=False)
+        assert not success
 
     @patch('subprocess.run')
     def test_rebuild_xml_success(self: JPEXSInterfaceSpec, mock_subprocess_run: MagicMock) -> None:
@@ -139,8 +139,8 @@ class JPEXSInterfaceSpec (TestCase):
             '-xml2swf',
             input_folder,
             output,
-        ], stdout=-3)
-        assert(success)
+        ], stdout=-3, check=False)
+        assert success
 
     @patch('subprocess.run')
     def test_rebuild_xml_failure(self: JPEXSInterfaceSpec, mock_subprocess_run: MagicMock) -> None:
@@ -157,11 +157,14 @@ class JPEXSInterfaceSpec (TestCase):
             '-xml2swf',
             input_folder,
             output,
-        ], stdout=-3)
-        assert(not success)
+        ], stdout=-3, check=False)
+        assert not success
 
     @patch('subprocess.run')
-    def test_export_scripts_success(self: JPEXSInterfaceSpec, mock_subprocess_run: MagicMock) -> None:
+    def test_export_scripts_success(
+        self: JPEXSInterfaceSpec,
+        mock_subprocess_run: MagicMock
+    ) -> None:
         input_file = Path("base.swf")
         output = Path("./folder")
 
@@ -176,11 +179,14 @@ class JPEXSInterfaceSpec (TestCase):
             'script',
             output,
             input_file,
-        ], stdout=-3, stderr=-3)
-        assert(success)
+        ], stdout=-3, stderr=-3, check=False)
+        assert success
 
     @patch('subprocess.run')
-    def test_export_scripts_failure(self: JPEXSInterfaceSpec, mock_subprocess_run: MagicMock) -> None:
+    def test_export_scripts_failure(
+        self: JPEXSInterfaceSpec,
+        mock_subprocess_run: MagicMock
+    ) -> None:
         input_file = Path("base.swf")
         output = Path("./folder")
 
@@ -195,11 +201,14 @@ class JPEXSInterfaceSpec (TestCase):
             'script',
             output,
             input_file,
-        ], stdout=-3, stderr=-3)
-        assert(not success)
+        ], stdout=-3, stderr=-3, check=False)
+        assert not success
 
     @patch('subprocess.run')
-    def test_recompile_data_success(self: JPEXSInterfaceSpec, mock_subprocess_run: MagicMock) -> None:
+    def test_recompile_data_success(
+        self: JPEXSInterfaceSpec,
+        mock_subprocess_run: MagicMock
+    ) -> None:
         input_folder = Path("./.Patcher-Temp/mod")
         swf = Path("test.swf")
         output = Path("./folder")
@@ -215,11 +224,14 @@ class JPEXSInterfaceSpec (TestCase):
             swf,
             output,
             input_folder,
-        ], stdout=-3)
-        assert(success)
+        ], stdout=-3, check=False)
+        assert success
 
     @patch('subprocess.run')
-    def test_recompile_data_failure(self: JPEXSInterfaceSpec, mock_subprocess_run: MagicMock) -> None:
+    def test_recompile_data_failure(
+        self: JPEXSInterfaceSpec,
+        mock_subprocess_run: MagicMock
+    ) -> None:
         input_folder = Path("./.Patcher-Temp/mod")
         swf = Path("test.swf")
         output = Path("./folder")
@@ -235,5 +247,5 @@ class JPEXSInterfaceSpec (TestCase):
             swf,
             output,
             input_folder,
-        ], stdout=-3)
-        assert(not success)
+        ], stdout=-3, check=False)
+        assert not success

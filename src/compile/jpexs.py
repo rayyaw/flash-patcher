@@ -54,7 +54,7 @@ class JPEXSInterface:
 
             info("Using JPEXS at: %s", self.path)
 
-    def install_jpexs(self: JPEXSInterface, path: Path, args: list | None = None) -> bool:
+    def install_jpexs(self :JPEXSInterface, path: Path, args: list | None = None) -> bool:
         """Install JPEXS from a path. Return true if the installation was successful."""
         if path.exists() and args is None:
             # Normal JPEXS install, we're just running ffdec.sh directly
@@ -69,6 +69,7 @@ class JPEXSInterface:
             testrun = subprocess.run(
                 [path, *args, "-help"],
                 stdout=subprocess.DEVNULL,
+                check=False,
             )
 
             if testrun.returncode == 0:
@@ -91,6 +92,7 @@ class JPEXSInterface:
             [self.path, *self.args, "-swf2xml", inputfile, output_dir],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
+            check=False,
         )
         return process.returncode == 0
 
@@ -106,6 +108,7 @@ class JPEXSInterface:
         process = subprocess.run(
             [self.path, *self.args, "-xml2swf", input_dir, output_file],
             stdout=subprocess.DEVNULL,
+            check=False,
         )
         return process.returncode == 0
 
@@ -120,6 +123,7 @@ class JPEXSInterface:
         """
         info("Exporting scripts into %s...", output_dir)
 
+        # set check=False, we will verify the return code manually later
         process = subprocess.run(
             [
                 self.path,
@@ -131,6 +135,7 @@ class JPEXSInterface:
             ],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
+            check=False,
         )
 
         return process.returncode == 0
@@ -147,6 +152,7 @@ class JPEXSInterface:
         # Part types: SymbolClass, Movies, Sounds, Shapes, Images, Text, Script
         info("Reimporting %s...", part)
 
+        # set check=False, we will verify the return code manually later
         process = subprocess.run(
             [
                 self.path,
@@ -157,6 +163,7 @@ class JPEXSInterface:
                 decomp_location,
             ],
             stdout=subprocess.DEVNULL,
+            check=False,
         )
 
         return process.returncode == 0

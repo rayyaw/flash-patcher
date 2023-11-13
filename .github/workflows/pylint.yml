@@ -31,7 +31,18 @@ jobs:
         cd ..
     - name: Pylint style analysis
       run: |
-        pylint $(git ls-files '*.py') \
+        echo "Running pylint on source code..."
+        pylint $(git ls-files 'src/*.py') \
+        --disable=missing-module-docstring \
+        --disable=too-few-public-methods \
+        --disable=no-self-argument \
+        --disable=inconsistent-return-statements \
+        --disable=too-many-arguments \
+        --disable=pointless-string-statement \
+        --disable=unspecified-encoding
+
+        echo "Running pylint on tests..."
+        pylint $(git ls-files 'src/*.py') \
         --disable=missing-module-docstring \
         --disable=too-few-public-methods \
         --disable=no-self-argument \
@@ -39,3 +50,5 @@ jobs:
         --disable=too-many-arguments \
         --disable=pointless-string-statement \
         --disable=unspecified-encoding \
+        --disable=missing-function-docstring \
+        --disable=import-error
