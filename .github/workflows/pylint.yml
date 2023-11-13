@@ -42,7 +42,7 @@ jobs:
         --disable=unspecified-encoding
 
         echo "Running pylint on tests..."
-        pylint $(git ls-files 'src/*.py') \
+        pylint $(git ls-files 'test/*.py') \
         --disable=missing-module-docstring \
         --disable=too-few-public-methods \
         --disable=no-self-argument \
