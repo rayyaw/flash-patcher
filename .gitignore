@@ -19,6 +19,7 @@ src/antlr_source/*.g4
 src/antlr_source/*.py
 src/antlr_source/*.interp
 src/antlr_source/*.tokens
+src/compile/__pycache__/*
 
 test/__pycache__/*
 test/__init__.py
