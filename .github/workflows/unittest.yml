@@ -24,7 +24,8 @@ jobs:
     - name: Install pip dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install antlr4-python3-runtime pylint
+        python -m pip install -U pytest
+        pip install antlr4-python3-runtime
     - name: Build ANTLR files
       run: |
         cd build && make antlr-java
