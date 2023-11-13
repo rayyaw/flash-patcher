@@ -3,6 +3,7 @@
 */__init__.py
 
 .pytest_cache/*
+.coverage
 
 build/*.py
 build/antlr/*
