@@ -51,4 +51,5 @@ jobs:
         --disable=pointless-string-statement \
         --disable=unspecified-encoding \
         --disable=missing-function-docstring \
+        --disable=missing-class-docstring \
         --disable=import-error
