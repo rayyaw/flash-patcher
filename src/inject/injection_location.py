@@ -40,7 +40,7 @@ class InjectionLocation:
             return self.resolve_end(file_content)
 
         # Unknown injection location
-        exception(
+        exception.throw(
             """%s, line %d: Invalid add location.
             Expected keyword or integer (got type "str").""",
             self.symbolic_location,
