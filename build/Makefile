@@ -2,9 +2,10 @@
 # https://stackoverflow.com/questions/9002275/how-to-build-a-single-python-file-from-multiple-scripts
 
 # Package everything into an executable zip file
+# The find rule creates an __init__.py in all subdirectories, including nested subdirectories
 all: antlr
 	cp -r ../src/* .
-	touch antlr_source/__init__.py compile/__init__.py inject/__init__.py parse/__init__.py parse/visitor/__init__.py util/__init__.py
+	find . -type d -exec touch {}/__init__.py \;
 	zip -r -D ../flash-patcher.zip . > /dev/null
 	echo "#!/usr/bin/python3" | /usr/bin/cat - ../flash-patcher.zip > ../flash-patcher
 	rm ../flash-patcher.zip
@@ -60,5 +61,5 @@ test:
 # We use find to delete everything in those directories, except for specific items
 clean:
 	rm ../flash-patcher
-	find . -mindepth 1 ! -name 'Makefile' -delete
+	find .                   -mindepth 1 ! -name 'Makefile' -delete
 	find ../src/antlr_source -mindepth 1 ! -name '.gitkeep' -delete
