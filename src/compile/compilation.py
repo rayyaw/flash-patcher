@@ -5,7 +5,7 @@ import sys
 from logging import error, info
 from pathlib import Path
 
-from compile.jpexs import JPEXSInterface
+from .jpexs import JPEXSInterface
 
 class CompilationManager:
     """Manage Flash compilation and decompilation, including caching.
