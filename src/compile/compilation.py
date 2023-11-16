@@ -5,7 +5,7 @@ import sys
 from logging import error, info
 from pathlib import Path
 
-from .jpexs import JPEXSInterface
+from compile.jpexs import JPEXSInterface
 
 class CompilationManager:
     """Manage Flash compilation and decompilation, including caching.
@@ -21,7 +21,7 @@ class CompilationManager:
     def decompile(
         self: CompilationManager,
         inputfile: Path,
-        drop_cache: bool = False, 
+        drop_cache: bool = False,
         xml_mode: bool = False
     ) -> Path:
         """Decompile the SWF and return the decompilation location.
@@ -79,7 +79,25 @@ class CompilationManager:
             info("Detected cached decompilation. Skipping...")
 
         return cache_location
-    
+
+    def recompile_with_check(
+        self: CompilationManager,
+        part: str,
+        decomp_location: Path,
+        swf: Path,
+        output: Path,
+    ) -> None:
+        """Recompile the SWF part, with a check for program errors."""
+        recomp = self.decompiler.recompile_data(part, decomp_location, swf, output)
+
+        if not recomp:
+            error(
+                """JPEXS couldn't recompile the SWF file: %s.
+                Aborting...""",
+                swf,
+            )
+            sys.exit(1)
+
     def recompile(
         self: CompilationManager,
         injection: Path,
@@ -94,17 +112,14 @@ class CompilationManager:
         outputfile: The location to save the output
         recompile_all: If this is set to False, will only recompile scripts
         """
-        # Repackage the file as a SWF
-        # Rant: JPEXS should really return an error code if recompilation fails here!
-        # Unable to detect if this was successful or not otherwise.
         if xml_mode:
             self.decompiler.rebuild_xml(injection, output)
             return
 
-        self.decompiler.recompile_data("Script", injection, inputfile, output)
+        self.recompile_with_check("Script", injection, inputfile, output)
 
         if recompile_all:
             for part in ("Images", "Sounds", "Shapes", "Text"):
                 # JPEXS doesn't have a way to import everything at once.
                 # We re-import iteratively.
-                self.decompiler.recompile_data(part, injection, output, output)
+                self.recompile_with_check(part, injection, output, output)

@@ -1,13 +1,16 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from antlr_source.PatchfileLexer import PatchfileLexer
 from antlr_source.PatchfileParser import PatchfileParser
-from pathlib import Path
 
 from parse.common import CommonParseManager
 from parse.visitor.patch_visitor import PatchfileProcessor
 
 class PatchfileManager:
+    """Manage patch files."""
+
     def parse(decomp_location: Path, file: Path) -> set:
         """Parse a single patch file.
 
@@ -18,6 +21,6 @@ class PatchfileManager:
         Everything within the file will be handled by the PatchfileProcessor
         Return the set of modified scripts.
         """
-        patchfile = CommonParseManager.getRoot(PatchfileLexer, PatchfileParser, file)
-        
+        patchfile = CommonParseManager.get_root(PatchfileLexer, PatchfileParser, file)
+
         return PatchfileProcessor(file, decomp_location).visitRoot(patchfile)

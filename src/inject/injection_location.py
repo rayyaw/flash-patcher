@@ -9,19 +9,18 @@ class InjectionLocation:
     which can then be injected.
     """
 
-    lineNo: int = None
-    symbolicLocation: str = None
+    line_no: int = None
+    symbolic_location: str = None
 
     def __init__(self: InjectionLocation, symbolic_location: str) -> None:
         if symbolic_location.isdigit():
             # the -1 is required to ensure we're injecting in the right location
-            self.lineNo = int(symbolic_location) - 1
+            self.line_no = int(symbolic_location) - 1
 
             # edge case of injecting at line 0
-            if (self.lineNo < 0):
-                self.lineNo = 0
-        
-        self.symbolicLocation = symbolic_location
+            self.line_no = max(self.line_no, 0)
+
+        self.symbolic_location = symbolic_location
 
     def resolve(
         self: InjectionLocation,
@@ -32,39 +31,39 @@ class InjectionLocation:
         
         If it was unable to resolve, use error_line_no to throw and exception.
         """
-        if self.lineNo is not None:
+        if self.line_no is not None:
             # Injecting by line number
             return self.resolve_line_no(file_content, exception)
-        
-        elif self.symbolicLocation == "end":
+
+        if self.symbolic_location == "end":
             # Injecting at the end of a file
-            return self.resolve_end(file_content, exception)
-        
-        else:
-            # Unknown injection location
-            exception(
-                """%s, line %d: Invalid add location.
-                Expected keyword or integer (got type "str").""",
-                self.symbolicLocation,
-                exception,
-            )
+            return self.resolve_end(file_content)
+
+        # Unknown injection location
+        exception.throw(
+            """%s, line %d: Invalid add location.
+            Expected keyword or integer (got type "str").""",
+            self.symbolic_location,
+            exception,
+        )
 
     def resolve_line_no(
         self: InjectionLocation,
         file_content: list,
         exception: ErrorManager
     ) -> int:
-        if self.lineNo > len(file_content):
+        """Resolve the injection location if it's a line number."""
+        if self.line_no > len(file_content):
             exception.throw(
                 """Out of bounds add location.
                 The provided location is outside the maximum line number in the file."""
             )
 
-        return self.lineNo
-    
+        return self.line_no
+
     def resolve_end(
         self: InjectionLocation,
-        file_content: list,
-        exception: ErrorManager
+        file_content: list
     ) -> int:
+        """Resolve the injection location if it's the end of the file."""
         return len(file_content)

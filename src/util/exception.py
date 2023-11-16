@@ -5,18 +5,18 @@ from logging import exception
 
 class ErrorManager:
     """Handle exceptions thrown by Flash Patcher during the injection stage."""
-    patchFile: str
-    lineNo: int
+    patch_file: str
+    line_no: int
     context: str
 
     def __init__(
-        self: ErrorManager, 
+        self: ErrorManager,
         patch_file: str,
         line_no: int,
         context: str | None = None,
     ) -> None:
-        self.patchFile = patch_file
-        self.lineNo = line_no
+        self.patch_file = patch_file
+        self.line_no = line_no
 
         # extra info is usually the content of the offending line
         self.context = context
@@ -28,6 +28,6 @@ class ErrorManager:
             Context: %s
             %s
             Aborting...""",
-            self.patchFile, self.lineNo, self.context, mesg
+            self.patch_file, self.line_no, self.context, mesg
         )
         sys.exit(1)

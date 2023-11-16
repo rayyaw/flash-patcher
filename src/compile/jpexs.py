@@ -48,34 +48,35 @@ class JPEXSInterface:
                 self.install_jpexs(LOCATION_WINDOWS),
                 self.install_jpexs(LOCATION_WOW64),
             ])
-            
+
             if not jpexs_installed:
-                raise ModuleNotFoundError("Failed to locate dependency: JPEXS Flash Decompiler") 
+                raise ModuleNotFoundError("Failed to locate dependency: JPEXS Flash Decompiler")
 
-            info("Using JPEXS at: %s", self.path) 
+            info("Using JPEXS at: %s", self.path)
 
-    def install_jpexs(self, path: Path, args: list | None = None) -> bool:
+    def install_jpexs(self :JPEXSInterface, path: Path, args: list | None = None) -> bool:
         """Install JPEXS from a path. Return true if the installation was successful."""
         if path.exists() and args is None:
             # Normal JPEXS install, we're just running ffdec.sh directly
             self.path = path
             self.args = []
             return True
-        elif path.exists():
+
+        if path.exists():
             # We're running JPEXS through a sandbox or proxy (like Flatpak)
             # path.exists() checks that the path exists, but not that JPEXS is installed
             # so we need to run jpexs -help to verify it's installed correctly
             testrun = subprocess.run(
-                    [path, *args, "-help"],
-                    stdout=subprocess.DEVNULL,
-                    check=True,
-                )
+                [path, *args, "-help"],
+                stdout=subprocess.DEVNULL,
+                check=False,
+            )
 
             if testrun.returncode == 0:
                 self.path = path
                 self.args = args
                 return True
-            
+
         return False
 
     def dump_xml(
@@ -87,11 +88,11 @@ class JPEXSInterface:
 
         Returns True if dump was successful.
         """
-        process =  subprocess.run(
+        process = subprocess.run(
             [self.path, *self.args, "-swf2xml", inputfile, output_dir],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
-            check=True,
+            check=False,
         )
         return process.returncode == 0
 
@@ -107,7 +108,7 @@ class JPEXSInterface:
         process = subprocess.run(
             [self.path, *self.args, "-xml2swf", input_dir, output_file],
             stdout=subprocess.DEVNULL,
-            check=True,
+            check=False,
         )
         return process.returncode == 0
 
@@ -121,6 +122,8 @@ class JPEXSInterface:
         Returns True on success.
         """
         info("Exporting scripts into %s...", output_dir)
+
+        # set check=False, we will verify the return code manually later
         process = subprocess.run(
             [
                 self.path,
@@ -132,7 +135,7 @@ class JPEXSInterface:
             ],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
-            check=True,
+            check=False,
         )
 
         return process.returncode == 0
@@ -143,11 +146,14 @@ class JPEXSInterface:
         decomp_location: Path,
         swf: Path,
         output: Path,
-    ) -> int:
+    ) -> bool:
         """Recompile data of a given type into the SWF file."""
+
         # Part types: SymbolClass, Movies, Sounds, Shapes, Images, Text, Script
         info("Reimporting %s...", part)
-        return subprocess.run(
+
+        # set check=False, we will verify the return code manually later
+        process = subprocess.run(
             [
                 self.path,
                 *self.args,
@@ -157,5 +163,7 @@ class JPEXSInterface:
                 decomp_location,
             ],
             stdout=subprocess.DEVNULL,
-            check=True,
+            check=False,
         )
+
+        return process.returncode == 0

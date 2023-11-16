@@ -1,13 +1,15 @@
 from __future__ import annotations
 
-from antlr_source.StagefileLexer import StagefileLexer
-from antlr_source.StagefileParser import StagefileParser
 from pathlib import Path
 
+from antlr_source.StagefileLexer import StagefileLexer
+from antlr_source.StagefileParser import StagefileParser
 from parse.common import CommonParseManager
 from parse.visitor.stage_visitor import StagefileProcessor
 
 class StagefileManager:
+    """Manage stage files."""
+
     def parse(
         folder: Path,
         file: Path,
@@ -19,8 +21,8 @@ class StagefileManager:
         This class handles everything to do with preprocessing (opening the file, etc.)
         Everything within the file will be handled by the StagefileProcessor
         """
-        
-        stagefile = CommonParseManager.getRoot(StagefileLexer, StagefileParser, folder / file)
+
+        stagefile = CommonParseManager.get_root(StagefileLexer, StagefileParser, folder / file)
 
         return StagefileProcessor(
             folder,

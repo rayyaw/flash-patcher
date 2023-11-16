@@ -1,0 +1,55 @@
+name: Pylint
+
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Java
+      run: |
+        sudo apt install default-jdk
+    - name: Install ANTLR
+      run: |
+        wget https://www.antlr.org/download/antlr-4.13.1-complete.jar
+        echo 'export CLASSPATH=".:$GITHUB_WORKSPACE/antlr-4.13.1-complete.jar:$CLASSPATH"' >> $GITHUB_ENV
+    - name: Install pip dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install antlr4-python3-runtime pylint
+    - name: Build ANTLR files
+      run: |
+        cd build && make antlr-java
+        cd ..
+    - name: Pylint style analysis
+      run: |
+        echo "Running pylint on source code..."
+        pylint $(git ls-files 'src/*.py') \
+        --disable=missing-module-docstring \
+        --disable=too-few-public-methods \
+        --disable=no-self-argument \
+        --disable=inconsistent-return-statements \
+        --disable=too-many-arguments \
+        --disable=pointless-string-statement \
+        --disable=unspecified-encoding
+
+        echo "Running pylint on tests..."
+        pylint $(git ls-files 'test/*.py') \
+        --disable=missing-module-docstring \
+        --disable=too-few-public-methods \
+        --disable=no-self-argument \
+        --disable=inconsistent-return-statements \
+        --disable=too-many-arguments \
+        --disable=pointless-string-statement \
+        --disable=unspecified-encoding \
+        --disable=missing-function-docstring \
+        --disable=missing-class-docstring \
+        --disable=import-error

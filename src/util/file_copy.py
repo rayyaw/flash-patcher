@@ -11,7 +11,7 @@ def clean_scripts(decomp_location: Path, modified_scripts: set) -> None:
     scripts = [
         Path(dp, f) for dp, _, fn in os.walk(decomp_location.expanduser()) for f in fn
     ]
-    
+
     for script in scripts:
         if script not in modified_scripts:
             script.unlink()
@@ -32,7 +32,7 @@ def copy_file(source: Path, dest: Path) -> None:
 
 def get_decomp_locations(xml_mode: str) -> (Path, Path):
     """Return (DECOMP_LOCATION, DECOMP_LOCATION_WITH_SCRIPTS)"""
-    if (xml_mode):
+    if xml_mode:
         return Path("./.Patcher-Temp/swf.xml"), Path("./.Patcher-Temp/")
-    else:
-        return Path("./.Patcher-Temp/mod/"), Path("./.Patcher-Temp/mod/scripts/")
+
+    return Path("./.Patcher-Temp/mod/"), Path("./.Patcher-Temp/mod/scripts/")
