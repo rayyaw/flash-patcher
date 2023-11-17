@@ -10,7 +10,7 @@ all: antlr
 	echo "#!/usr/bin/python3" | /usr/bin/cat - ../flash-patcher.zip > ../flash-patcher
 	chmod +x ../flash-patcher
 
-# Move stuff to antlr-source in preparation for copilation
+# Move stuff to antlr-source in preparation for compilation
 antlr-copy:
 	cp ../src/antlr/*.g4 ../src/antlr_source
 
@@ -52,9 +52,6 @@ test:
 	touch ../test/compile/__init__.py
 
 	pytest ..
-
-# FIXME - Add code coverage check here.
-# Command: python -m coverage report -m $(git ls-files 'src/*.py')
 
 # Delete all temp files used for compilation.
 # We use find to delete everything in those directories, except for specific items
