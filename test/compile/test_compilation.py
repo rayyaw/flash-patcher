@@ -13,7 +13,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../s
 
 from compile.compilation import CompilationManager
 from compile.jpexs import JPEXSInterface
-from exception.dependency import DependencyError
+from patcher_exception.dependency import DependencyError
 
 class CompilationManagerSpec (TestCase):
 
