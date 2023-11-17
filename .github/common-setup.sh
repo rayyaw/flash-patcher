@@ -12,6 +12,7 @@ echo 'export CLASSPATH=".:$GITHUB_WORKSPACE/antlr-4.13.1-complete.jar:$CLASSPATH
 
 echo -e "\nInstalling pip dependencies..."
 python -m pip install --upgrade pip
+python -m pip install -U pytest
 pip install antlr4-python3-runtime pylint
 
 echo -e "\nBuilding ANTLR files..."
