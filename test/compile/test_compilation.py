@@ -3,9 +3,10 @@ from __future__ import annotations
 import sys
 import os
 from pathlib import Path
-from pytest import raises
 from unittest import TestCase
 from unittest.mock import call, MagicMock, patch
+
+from pytest import raises
 
 # Add the 'src' directory to the Python path
 # Not doing this causes import errors
