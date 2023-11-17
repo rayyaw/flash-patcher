@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 from pytest import raises
 from unittest import TestCase
-from unittest.mock import MagicMock, patch
+from unittest.mock import call, MagicMock, patch
 
 # Add the 'src' directory to the Python path
 # Not doing this causes import errors
@@ -33,8 +33,7 @@ class CompilationManagerSpec (TestCase):
         self.compilation_manager.decompiler = self.mock_decompiler
 
         self.swf = Path("test.swf")
-        self.input_folder = Path("./.Patcher-Temp/mod")
-        self.output_folder = Path("./.Patcher-Temp/SMF")
+        self.folder = Path("./.Patcher-Temp/mod")
 
     @patch('pathlib.Path.exists')
     def test_decompile_success_xml_mode(
@@ -43,9 +42,10 @@ class CompilationManagerSpec (TestCase):
     ) -> None:
         mock_path_exists.return_value = True
 
-        self.compilation_manager.decompile(self.swf, drop_cache=True, xml_mode=True)
+        folder = self.compilation_manager.decompile(self.swf, drop_cache=True, xml_mode=True)
 
         assert mock_path_exists.call_count == 3
+        assert folder == Path('.Patcher-Temp/ORSXG5BOON3WM===')
         self.mock_decompiler.dump_xml.assert_called_once_with(
             self.swf, Path('.Patcher-Temp/ORSXG5BOON3WM===')
         )
@@ -57,9 +57,10 @@ class CompilationManagerSpec (TestCase):
     ) -> None:
         mock_path_exists.side_effect = [True, True, False, True]
 
-        self.compilation_manager.decompile(self.swf)
+        folder = self.compilation_manager.decompile(self.swf)
 
         assert mock_path_exists.call_count == 4
+        assert folder == Path('.Patcher-Temp/ORSXG5BOON3WM===')
         self.mock_decompiler.export_scripts.assert_called_once_with(
             self.swf, Path('.Patcher-Temp/ORSXG5BOON3WM===')
         )
@@ -71,9 +72,10 @@ class CompilationManagerSpec (TestCase):
     ) -> None:
         mock_path_exists.return_value = True
 
-        self.compilation_manager.decompile(self.swf, drop_cache=True)
+        folder = self.compilation_manager.decompile(self.swf, drop_cache=True)
 
         assert mock_path_exists.call_count == 3
+        assert folder == Path('.Patcher-Temp/ORSXG5BOON3WM===')
         self.mock_decompiler.export_scripts.assert_called_once_with(
             self.swf, Path('.Patcher-Temp/ORSXG5BOON3WM===')
         )
@@ -85,9 +87,10 @@ class CompilationManagerSpec (TestCase):
     ) -> None:
         mock_path_exists.return_value = True
 
-        self.compilation_manager.decompile(self.swf)
+        folder = self.compilation_manager.decompile(self.swf)
 
         assert mock_path_exists.call_count == 3
+        assert folder == Path('.Patcher-Temp/ORSXG5BOON3WM===')
         self.mock_decompiler.assert_not_called()
 
     @patch('pathlib.Path.exists')
@@ -119,4 +122,58 @@ class CompilationManagerSpec (TestCase):
             self.swf, Path('.Patcher-Temp/ORSXG5BOON3WM===')
         )
 
-# FIXME - insert all tests for recompilation here
+    def test_recompile_with_check_success(
+        self: CompilationManagerSpec,
+    ) -> None:
+        self.mock_decompiler.recompile_data.return_value = True
+
+        self.compilation_manager.recompile_with_check("Script", self.folder, self.swf, self.swf)
+
+        self.mock_decompiler.recompile_data.assert_called_once_with(
+            "Script", self.folder, self.swf, self.swf
+        )
+
+    def test_recompile_with_check_failure(
+        self: CompilationManagerSpec,
+    ) -> None:
+        self.mock_decompiler.recompile_data.return_value = False
+
+        with raises(DependencyError):
+            self.compilation_manager.recompile_with_check(
+                "Script", self.folder, self.swf, self.swf
+            )
+
+        self.mock_decompiler.recompile_data.assert_called_once_with(
+            "Script", self.folder, self.swf, self.swf
+        )
+
+    def test_recompile_success_xml_mode(
+            self: CompilationManagerSpec,
+        ) -> None:
+        self.compilation_manager.recompile(self.folder, self.folder, self.swf, xml_mode=True)
+        self.mock_decompiler.rebuild_xml.assert_called_once_with(self.folder, self.swf)
+
+    @patch('compile.compilation.CompilationManager.recompile_with_check')
+    def test_recompile_success_full(self, mock_recompile_with_check):
+        self.compilation_manager.recompile(
+            self.folder, self.swf, self.swf, recompile_all=True
+        )
+
+        expected_calls = [
+            call("Script", self.folder, self.swf, self.swf),
+            call("Images", self.folder, self.swf, self.swf),
+            call("Sounds", self.folder, self.swf, self.swf),
+            call("Shapes", self.folder, self.swf, self.swf),
+            call("Text", self.folder, self.swf, self.swf),
+        ]
+        mock_recompile_with_check.assert_has_calls(expected_calls)
+
+    @patch('compile.compilation.CompilationManager.recompile_with_check')
+    def test_recompile_success_script_only(
+        self: CompilationManagerSpec,
+        mock_recompile_with_check: MagicMock,
+    ) -> None:
+        self.compilation_manager.recompile(self.folder, self.swf, self.swf)
+        mock_recompile_with_check.assert_called_once_with(
+            "Script", self.folder, self.swf, self.swf
+        )

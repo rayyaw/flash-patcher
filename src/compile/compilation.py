@@ -6,7 +6,7 @@ from logging import error, info
 from pathlib import Path
 
 from compile.jpexs import JPEXSInterface
-from patcher_exception.dependency import DependencyError 
+from patcher_exception.dependency import DependencyError
 
 class CompilationManager:
     """Manage Flash compilation and decompilation, including caching.
@@ -94,7 +94,7 @@ class CompilationManager:
                 Aborting.."""
 
             error(failure_mesg)
-            sys.exit(1)
+            raise DependencyError(failure_mesg)
 
     def recompile(
         self: CompilationManager,
