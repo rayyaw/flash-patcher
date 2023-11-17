@@ -52,4 +52,5 @@ jobs:
         --disable=unspecified-encoding \
         --disable=missing-function-docstring \
         --disable=missing-class-docstring \
-        --disable=import-error
+        --disable=import-error \
+        --disable=wrong-import-position

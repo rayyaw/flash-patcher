@@ -5,7 +5,8 @@ import sys
 from logging import error, info
 from pathlib import Path
 
-from .jpexs import JPEXSInterface
+from compile.jpexs import JPEXSInterface
+from exception.dependency import DependencyError
 
 class CompilationManager:
     """Manage Flash compilation and decompilation, including caching.
@@ -37,12 +38,11 @@ class CompilationManager:
             Path("./.Patcher-Temp").mkdir()
 
         if not inputfile.exists():
-            error(
-                """Could not locate the SWF file: %s.
-                Aborting...""",
-                inputfile,
-            )
-            sys.exit(1)
+            failure_mesg = f"""Could not locate the SWF file: {inputfile}.
+            Aborting..."""
+
+            error(failure_mesg)
+            raise FileNotFoundError(failure_mesg)
 
         # Decompile swf into temp folder called ./.Patcher-Temp/[swf name, base32 encoded]
         cache_location = Path(
@@ -68,12 +68,11 @@ class CompilationManager:
                 decomp = self.decompiler.export_scripts(inputfile, cache_location)
 
             if not decomp:
-                error(
-                    """JPEXS couldn't decompile the SWF file: %s.
-                    Aborting...""",
-                    inputfile,
-                )
-                sys.exit(1)
+                failure_mesg = f"""JPEXS couldn't decompile the SWF file: {inputfile}.
+                    Aborting..."""
+
+                error(failure_mesg)
+                raise DependencyError(failure_mesg)
 
         else:
             info("Detected cached decompilation. Skipping...")
@@ -91,11 +90,10 @@ class CompilationManager:
         recomp = self.decompiler.recompile_data(part, decomp_location, swf, output)
 
         if not recomp:
-            error(
-                """JPEXS couldn't recompile the SWF file: %s.
-                Aborting...""",
-                swf,
-            )
+            failure_mesg = f"""JPEXS couldn't recompile the SWF file: {swf}.
+                Aborting.."""
+
+            error(failure_mesg)
             sys.exit(1)
 
     def recompile(

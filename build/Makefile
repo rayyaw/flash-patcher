@@ -8,7 +8,6 @@ all: antlr
 	find . -type d -exec touch {}/__init__.py \;
 	zip -r -D ../flash-patcher.zip . > /dev/null
 	echo "#!/usr/bin/python3" | /usr/bin/cat - ../flash-patcher.zip > ../flash-patcher
-	rm ../flash-patcher.zip
 	chmod +x ../flash-patcher
 
 # Move stuff to antlr-source in preparation for copilation
@@ -60,6 +59,6 @@ test:
 # Delete all temp files used for compilation.
 # We use find to delete everything in those directories, except for specific items
 clean:
-	rm ../flash-patcher
+	rm ../flash-patcher ../flash-patcher.zip
 	find .                   -mindepth 1 ! -name 'Makefile' -delete
 	find ../src/antlr_source -mindepth 1 ! -name '.gitkeep' -delete
