@@ -19,4 +19,5 @@ jobs:
         source .github/common-setup.sh
     - name: Run unit tests
       run: |
+        export ANTLR_TARGET=antlr-java
         cd build && make test

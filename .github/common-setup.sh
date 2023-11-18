@@ -16,6 +16,5 @@ python -m pip install -U pytest
 pip install antlr4-python3-runtime pylint
 
 echo -e "\nBuilding ANTLR files..."
-export ANTLR_TARGET=antlr-java
 cd build && make antlr-java
 cd ..
