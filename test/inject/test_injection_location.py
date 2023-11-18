@@ -26,8 +26,8 @@ class InjectionLocationSpec (TestCase):
             -1,
         )
 
-        with open("../test/testdata/DoAction1.as") as f:
-            self.file_content = f.readlines()
+        with open("../test/testdata/DoAction1.as") as file:
+            self.file_content = file.readlines()
 
     def test_resolve_success_line_no(self: InjectionLocationSpec) -> None:
         location = InjectionLocation("3")

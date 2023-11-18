@@ -8,6 +8,7 @@ from compile.compilation import CompilationManager
 from parse.stage import StagefileManager
 from util.file_copy import clean_scripts, copy_file, get_decomp_locations
 
+# pylint: disable=pointless-string-statement
 """
 Riley's SWF patcher - a tool to patch content into SWF files.
 

@@ -1,14 +1,16 @@
 # How to package and run multiple Python files:
 # https://stackoverflow.com/questions/9002275/how-to-build-a-single-python-file-from-multiple-scripts
 
+# If you don't have antlr4 CLI, run export ANTLR_TARGET=antlr-java in your CLI
+ANTLR_TARGET ?= antlr
+
 # Package everything into an executable zip file
 # The find rule creates an __init__.py in all subdirectories, including nested subdirectories
-all: antlr
+all: $(ANTLR_TARGET)
 	cp -r ../src/* .
 	find . -type d -exec touch {}/__init__.py \;
 	zip -r -D ../flash-patcher.zip . > /dev/null
 	echo "#!/usr/bin/python3" | /usr/bin/cat - ../flash-patcher.zip > ../flash-patcher
-	rm flash-patcher.zip
 	chmod +x ../flash-patcher
 
 # Move stuff to antlr-source in preparation for compilation
@@ -49,7 +51,7 @@ install:
 
 # Run unit tests
 # The find rule creates an __init__.py in all subdirectories, including nested subdirectories
-test:
+test: $(ANTLR_TARGET)
 	find ../test -type d -exec touch {}/__init__.py \;
 	pytest ..
 
@@ -57,8 +59,8 @@ test:
 # We use find to delete all __init__.py and __pycache__ files and folders
 # We also use find to delete everything in those directories, except for specific items
 clean:
-	rm ../flash-patcher
 	find ../test                           -name __init__.py -delete
 	find .. -type d                        -name __pycache__ -exec rm -r {} +
 	find .                   -mindepth 1 ! -name 'Makefile' -delete
 	find ../src/antlr_source -mindepth 1 ! -name '.gitkeep' -delete
+	rm ../flash-patcher ../flash-patcher.zip

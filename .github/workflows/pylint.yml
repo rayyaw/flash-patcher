@@ -26,7 +26,6 @@ jobs:
         --disable=no-self-argument \
         --disable=inconsistent-return-statements \
         --disable=too-many-arguments \
-        --disable=pointless-string-statement \
         --disable=unspecified-encoding
 
         echo "Running pylint on tests..."
@@ -36,7 +35,6 @@ jobs:
         --disable=no-self-argument \
         --disable=inconsistent-return-statements \
         --disable=too-many-arguments \
-        --disable=pointless-string-statement \
         --disable=unspecified-encoding \
         --disable=missing-function-docstring \
         --disable=missing-class-docstring \

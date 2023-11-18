@@ -54,7 +54,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         if stripped_text[0] == "\n":
             stripped_text = stripped_text[1:]
 
-        self.injector.inject_content(stripped_text)
+        self.injector.inject(stripped_text)
         self.injector.clear()
 
     def visitRemoveBlock(self, ctx: PatchfileParser.RemoveBlockContext) -> None:

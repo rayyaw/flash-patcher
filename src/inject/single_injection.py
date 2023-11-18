@@ -34,8 +34,8 @@ class SingleInjectionManager:
         self.error_manager = ErrorManager(self.patch_file.as_posix(), 0, None)
         self.file_content = readlines_safe(self.file_name, self.error_manager)
 
-    def inject(self: SingleInjectionManager, content: list, patch_file_line: int) -> None:
-        """Inject the content into every file."""
+    def inject(self: SingleInjectionManager, content: list[str], patch_file_line: int) -> None:
+        """Inject the content into the file."""
         patch_line_no = patch_file_line
         file_line_no = self.file_location.resolve(self.file_content, self.patch_line_no)
 
@@ -48,8 +48,8 @@ class SingleInjectionManager:
             self.error_manager.context = line_stripped
 
             # Handle internal commands
-            patch_line_no, was_secondary = self.handle_secondary_command(
-                patch_line_no, line_stripped
+            file_line_no, was_secondary = self.handle_secondary_command(
+                file_line_no, line_stripped
             )
 
             # No internal command, just a normal line
@@ -75,13 +75,13 @@ class SingleInjectionManager:
         and a boolean on whether any command was executed.
         """
         command_split = command.split()
-        match command_split:
-            case["//", "cmd:"]:
+        match command_split[:3]:
+            case ["//", "cmd:", "skip"]:
                 # command found
-                new_line_no, was_skip = self.handle_secondary_skip_command(old_line_no, command)
-                if was_skip:
-                    return new_line_no, was_skip
+                new_line_no = self.handle_secondary_skip_command(old_line_no, command)
+                return new_line_no, True
 
+            case ["//", "cmd:", _]:
                 self.error_manager.raise_(
                     """Invalid secondary command.
                     Expected one of: [skip].""",
@@ -94,23 +94,23 @@ class SingleInjectionManager:
         self: SingleInjectionManager,
         old_line_no: int,
         command: str,
-    ) -> (int, bool):
+    ) -> int:
         """Handle a secondary skip command of the form: // cmd: skip 10
 
         This will skip 10 lines ahead within the file.
         Returns True if the command is a valid skip command, and updates the line no. accordingly.
         """
-        split_line = command.split()
-        if split_line[2] == "skip":
-            n_str = split_line[3]
-            try:
-                skip_amount = int(n_str)
-                file_line_no = old_line_no + skip_amount
-                return file_line_no, True
-            except ValueError:
-                self.error_manager.raise_(
-                    """Invalid skip amount.
-                    Expected integer.""",
-                )
 
-        return old_line_no, False
+        split_line = command.split()
+        n_str = split_line[3]
+
+        try:
+            skip_amount = int(n_str)
+            file_line_no = old_line_no + skip_amount
+            return file_line_no
+
+        except ValueError:
+            self.error_manager.raise_(
+                """Invalid skip amount.
+                Expected integer.""",
+            )

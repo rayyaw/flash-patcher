@@ -18,7 +18,7 @@ from exception_handle.dependency import DependencyError
 
 class CompilationManagerSpec (TestCase):
 
-    mock_decompiler: MagicMock
+    mock_decompiler: MagicMock[JPEXSInterface]
     compilation_manager: CompilationManager
 
     swf: Path
@@ -155,7 +155,10 @@ class CompilationManagerSpec (TestCase):
         self.mock_decompiler.rebuild_xml.assert_called_once_with(self.folder, self.swf)
 
     @patch('compile.compilation.CompilationManager.recompile_with_check')
-    def test_recompile_success_full(self, mock_recompile_with_check):
+    def test_recompile_success_full(
+        self: CompilationManagerSpec,
+        mock_recompile_with_check: MagicMock
+    ) -> None:
         self.compilation_manager.recompile(
             self.folder, self.swf, self.swf, recompile_all=True
         )
