@@ -5,7 +5,7 @@ from logging import error, info
 from pathlib import Path
 
 from compile.jpexs import JPEXSInterface
-from patcher_exception.dependency import DependencyError
+from exception_handle.dependency import DependencyError
 
 class CompilationManager:
     """Manage Flash compilation and decompilation, including caching.

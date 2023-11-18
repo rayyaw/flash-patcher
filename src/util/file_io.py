@@ -3,7 +3,7 @@ import sys
 from logging import exception
 from pathlib import Path
 
-from util.exception import ErrorManager
+from exception_handle.error_manager import ErrorManager
 
 
 def read_safe(file_location: Path, error_manager: ErrorManager) -> str:

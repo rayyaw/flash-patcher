@@ -8,6 +8,7 @@ all: antlr
 	find . -type d -exec touch {}/__init__.py \;
 	zip -r -D ../flash-patcher.zip . > /dev/null
 	echo "#!/usr/bin/python3" | /usr/bin/cat - ../flash-patcher.zip > ../flash-patcher
+	rm flash-patcher.zip
 	chmod +x ../flash-patcher
 
 # Move stuff to antlr-source in preparation for compilation
@@ -47,15 +48,17 @@ install:
 	sudo cp ../flash-patcher.json /var/gh-update/flash-patcher.json
 
 # Run unit tests
+# The find rule creates an __init__.py in all subdirectories, including nested subdirectories
 test:
-	touch ../test/__init__.py
-	touch ../test/compile/__init__.py
-
+	find ../test -type d -exec touch {}/__init__.py \;
 	pytest ..
 
 # Delete all temp files used for compilation.
-# We use find to delete everything in those directories, except for specific items
+# We use find to delete all __init__.py and __pycache__ files and folders
+# We also use find to delete everything in those directories, except for specific items
 clean:
-	rm ../flash-patcher ../flash-patcher.zip
+	rm ../flash-patcher
+	find ../test                           -name __init__.py -delete
+	find .. -type d                        -name __pycache__ -exec rm -r {} +
 	find .                   -mindepth 1 ! -name 'Makefile' -delete
 	find ../src/antlr_source -mindepth 1 ! -name '.gitkeep' -delete

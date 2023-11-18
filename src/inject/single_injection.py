@@ -3,8 +3,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+from exception_handle.error_manager import ErrorManager
 from inject.injection_location import InjectionLocation
-from util.exception import ErrorManager
 from util.file_io import readlines_safe, writelines_safe
 
 class SingleInjectionManager:

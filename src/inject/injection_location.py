@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from util.exception import ErrorManager
+from exception_handle.error_manager import ErrorManager
 
 class InjectionLocation:
     """Store the location within a file to inject at.
@@ -24,7 +24,7 @@ class InjectionLocation:
 
     def resolve(
         self: InjectionLocation,
-        file_content: list,
+        file_content: list[str],
         exception: ErrorManager
     ) -> int:
         """Resolve the injection location in the given file.
@@ -40,21 +40,20 @@ class InjectionLocation:
             return self.resolve_end(file_content)
 
         # Unknown injection location
-        exception.throw(
-            """%s, line %d: Invalid add location.
+        exception.context = self.symbolic_location
+        exception.raise_(
+            """Invalid add location.
             Expected keyword or integer (got type "str").""",
-            self.symbolic_location,
-            exception,
         )
 
     def resolve_line_no(
         self: InjectionLocation,
-        file_content: list,
+        file_content: list[str],
         exception: ErrorManager
     ) -> int:
         """Resolve the injection location if it's a line number."""
         if self.line_no > len(file_content):
-            exception.throw(
+            exception.raise_(
                 """Out of bounds add location.
                 The provided location is outside the maximum line number in the file."""
             )
@@ -63,7 +62,7 @@ class InjectionLocation:
 
     def resolve_end(
         self: InjectionLocation,
-        file_content: list
+        file_content: list[str],
     ) -> int:
         """Resolve the injection location if it's the end of the file."""
         return len(file_content)

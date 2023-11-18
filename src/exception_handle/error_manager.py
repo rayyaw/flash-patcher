@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import sys
-from logging import exception
+from logging import error, exception
+
+from exception_handle.injection import InjectionError
 
 class ErrorManager:
     """Handle exceptions thrown by Flash Patcher during the injection stage."""
@@ -31,3 +33,13 @@ class ErrorManager:
             self.patch_file, self.line_no, self.context, mesg
         )
         sys.exit(1)
+
+    def raise_(self: ErrorManager, mesg: str) -> None:
+        """Throw the specified error message with the given context."""
+        error_mesg = f"""InjectionError at {self.patch_file}, line {self.line_no}
+            Additional context: {self.context}
+            {mesg}
+            Aborting..."""
+
+        error(error_mesg)
+        raise InjectionError(mesg)
