@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-import sys
-from logging import error, exception
+from logging import error
 
 from exception_handle.injection import InjectionError
 
@@ -23,19 +22,8 @@ class ErrorManager:
         # extra info is usually the content of the offending line
         self.context = context
 
-    def throw(self: ErrorManager, mesg: str) -> None:
-        """Throw the specified error message with the given context."""
-        exception(
-            """InjectionError at %s, line %d
-            Context: %s
-            %s
-            Aborting...""",
-            self.patch_file, self.line_no, self.context, mesg
-        )
-        sys.exit(1)
-
     def raise_(self: ErrorManager, mesg: str) -> None:
-        """Throw the specified error message with the given context."""
+        """Raise an InjectionError with the requested information."""
         error_mesg = f"""InjectionError at {self.patch_file}, line {self.line_no}
             Additional context: {self.context}
             {mesg}

@@ -26,10 +26,10 @@ class SingleInjectionManager:
         patch_file: Path,
         patch_line_no: int,
     ) -> None:
-        self.file_name = file_name         # file to inject into
-        self.file_location = file_location # location to inject at
+        self.file_name = file_name          # file to inject into
+        self.file_location = file_location  # location to inject at
 
-        self.patch_file = patch_file       # name of the patch file
+        self.patch_file = patch_file        # name of the patch file
         self.patch_line_no = patch_line_no  # line number within the patch file
 
         self.error_manager = ErrorManager(self.patch_file.as_posix(), 0, None)
@@ -76,19 +76,20 @@ class SingleInjectionManager:
         and a boolean on whether any command was executed.
         """
         command_split = command.split()
-        if command_split[:1] == ["//", "cmd:"]:
-            # command found
-            new_line_no, was_skip = self.handle_secondary_skip_command(old_line_no, command)
-            if was_skip:
-                return new_line_no, was_skip
+        match command_split:
+            case["//", "cmd:"]:
+                # command found
+                new_line_no, was_skip = self.handle_secondary_skip_command(old_line_no, command)
+                if was_skip:
+                    return new_line_no, was_skip
 
-            self.error_manager.throw(
-                """Invalid secondary command.
-                Expected one of: [skip].""",
-            )
+                self.error_manager.raise_(
+                    """Invalid secondary command.
+                    Expected one of: [skip].""",
+                )
 
-        else:
-            return old_line_no, False
+            case _:
+                return old_line_no, False
 
     def handle_secondary_skip_command(
         self: SingleInjectionManager,
@@ -108,10 +109,9 @@ class SingleInjectionManager:
                 file_line_no = old_line_no + skip_amount
                 return file_line_no, True
             except ValueError:
-                self.error_manager.throw(
+                self.error_manager.raise_(
                     """Invalid skip amount.
                     Expected integer.""",
                 )
-                sys.exit(1)
 
         return old_line_no, False

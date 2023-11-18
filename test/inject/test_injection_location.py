@@ -29,7 +29,7 @@ class InjectionLocationSpec (TestCase):
         with open("../test/testdata/DoAction1.as") as f:
             self.file_content = f.readlines()
 
-    def test_resolve_success_line_no(self: InjectionLocationSpec):
+    def test_resolve_success_line_no(self: InjectionLocationSpec) -> None:
         location = InjectionLocation("3")
 
         # InjectionLocation injects before a line, which means it subtracts 1
@@ -39,7 +39,7 @@ class InjectionLocationSpec (TestCase):
 
         assert line_no == 2
 
-    def test_resolve_success_end(self: InjectionLocationSpec):
+    def test_resolve_success_end(self: InjectionLocationSpec) -> None:
         location = InjectionLocation("end")
 
         assert location.line_no is None
@@ -49,19 +49,19 @@ class InjectionLocationSpec (TestCase):
 
         assert line_no == 5
 
-    def test_resolve_failure_invalid_command(self: InjectionLocationSpec):
+    def test_resolve_failure_invalid_command(self: InjectionLocationSpec) -> None:
         location = InjectionLocation("aeiou")
 
         with raises(InjectionError):
             location.resolve(self.file_content, self.error_manager)
 
-    def test_resolve_failure_line_no_beyond_eof(self: InjectionLocationSpec):
+    def test_resolve_failure_line_no_beyond_eof(self: InjectionLocationSpec) -> None:
         location = InjectionLocation("99999999")
 
         with raises(InjectionError):
             location.resolve(self.file_content, self.error_manager)
 
-    def test_resolve_failure_line_no_is_float(self: InjectionLocationSpec):
+    def test_resolve_failure_line_no_is_float(self: InjectionLocationSpec) -> None:
         location = InjectionLocation("3.2")
 
         with raises(InjectionError):

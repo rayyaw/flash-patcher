@@ -16,7 +16,7 @@ def read_safe(file_location: Path, error_manager: ErrorManager) -> str:
             return file.read()
     except (FileNotFoundError, IsADirectoryError):
         error_manager.context = file_location.as_posix()
-        error_manager.throw(
+        error_manager.raise_(
             """Invalid injection location.
             Could not find or load SWF decompiled file."""
         )
@@ -31,7 +31,7 @@ def readlines_safe(file_location: Path, error_manager: ErrorManager) -> list:
             return file.readlines()
     except (FileNotFoundError, IsADirectoryError):
         error_manager.context = file_location.as_posix()
-        error_manager.throw(
+        error_manager.raise_(
             """Invalid injection location.
             Could not find or load SWF decompiled file."""
         )
