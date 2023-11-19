@@ -5,8 +5,9 @@ from logging import basicConfig, exception, info
 from pathlib import Path
 
 from compile.compilation import CompilationManager
+from compile.locate_decomp import get_decomp_locations
 from parse.stage import StagefileManager
-from util.file_copy import clean_scripts, copy_file, get_decomp_locations
+from util.file_copy import clean_scripts, copy_file
 
 # pylint: disable=pointless-string-statement
 """

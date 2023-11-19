@@ -25,16 +25,12 @@ jobs:
         --disable=too-few-public-methods \
         --disable=inconsistent-return-statements \
         --disable=too-many-arguments \
-        --disable=unspecified-encoding \
-        --disable=no-self-argument
+        --disable=unspecified-encoding
 
         echo "Running pylint on tests..."
         pylint $(git ls-files 'test/*.py') \
         --disable=missing-module-docstring \
         --disable=too-few-public-methods \
-        --disable=inconsistent-return-statements \
-        --disable=too-many-arguments \
-        --disable=unspecified-encoding \
         --disable=missing-function-docstring \
         --disable=missing-class-docstring \
         --disable=import-error \

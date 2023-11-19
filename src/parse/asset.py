@@ -28,6 +28,6 @@ class AssetPackManager:
         This class handles everything to do with preprocessing (opening the file, etc.)
         Everything within the file will be handled by the AssetPackProcessor
         """
-        asset_pack = CommonParseManager.get_root(AssetPackLexer, AssetPackParser, self.file)
+        asset_pack = CommonParseManager(AssetPackLexer, AssetPackParser).get_root(self.file)
 
         return self.asset_pack_processor.visitRoot(asset_pack)

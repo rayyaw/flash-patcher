@@ -32,6 +32,6 @@ class StagefileManager:
         Everything within the file will be handled by the StagefileProcessor
         """
 
-        stagefile = CommonParseManager.get_root(StagefileLexer, StagefileParser, self.stage_file)
+        stagefile = CommonParseManager(StagefileLexer, StagefileParser).get_root(self.stage_file)
 
         return self.stagefile_processor.visitRoot(stagefile)

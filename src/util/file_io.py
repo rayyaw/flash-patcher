@@ -1,4 +1,4 @@
-from logging import error
+from logging import exception
 from pathlib import Path
 
 from exception_handle.error_manager import ErrorManager
@@ -38,7 +38,8 @@ def writelines_safe(path: Path, lines: list[str]) -> None:
     try:
         with path.open("w") as file:
             file.writelines(lines)
-    except (FileNotFoundError, IsADirectoryError):
+    except (FileNotFoundError, IsADirectoryError) as exc:
         mesg = """The provided decompilation is not in a writable location.
             Please ensure you have write access in the current directory."""
-        error(mesg)
+        exception(mesg)
+        raise exc

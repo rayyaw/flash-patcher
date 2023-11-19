@@ -15,10 +15,17 @@ class StagefileProcessor (StagefileVisitor):
     and perform all injections and asset adds in it.
     """
 
-    folder: Path                        # Folder the patch files are in
-    decomp_location: Path               # Decomp location of SWF
-    decomp_location_with_scripts: Path  # Decomp location of SWF scripts
-    modified_scripts: set               # Set of scripts that were modified (need recompilation)
+    # Folder the patch files are in
+    folder: Path
+
+    # Decomp location of SWF
+    decomp_location: Path
+
+    # Decomp location of SWF scripts
+    decomp_location_with_scripts: Path
+
+    # Set of scripts that were modified and need recompilation
+    modified_scripts: set[Path]
 
     def __init__(
         self: StagefileProcessor,

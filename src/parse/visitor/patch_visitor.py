@@ -20,7 +20,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
     """
 
     injector: BulkInjectionManager
-    modified_scripts: set
+    modified_scripts: set[Path]
     patch_file_name: Path
     decomp_location_with_scripts: Path
 

@@ -16,7 +16,7 @@ class AssetPackProcessor (AssetPackVisitor):
 
     asset_folder: Path
     decomp_location: Path
-    modified_scripts: set
+    modified_scripts: set[Path]
 
     def __init__(self: AssetPackProcessor, asset_folder: Path, decomp_location: Path) -> None:
         self.asset_folder = asset_folder

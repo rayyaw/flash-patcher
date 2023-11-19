@@ -2,7 +2,7 @@ import os
 import shutil
 from pathlib import Path
 
-def clean_scripts(decomp_location: Path, modified_scripts: set) -> None:
+def clean_scripts(decomp_location: Path, modified_scripts: set[Path]) -> None:
     """Delete all non-modified scripts.
 
     Taken from https://stackoverflow.com/questions/19309667/recursive-os-listdir
@@ -12,8 +12,11 @@ def clean_scripts(decomp_location: Path, modified_scripts: set) -> None:
         Path(dp, f) for dp, _, fn in os.walk(decomp_location.expanduser()) for f in fn
     ]
 
+    print(modified_scripts)
+
     for script in scripts:
         if script not in modified_scripts:
+            print("UNLINK: ", script)
             script.unlink()
 
 def copy_file(source: Path, dest: Path) -> None:
@@ -29,10 +32,3 @@ def copy_file(source: Path, dest: Path) -> None:
         shutil.copytree(source, dest)
     else:
         shutil.copy(source, dest)
-
-def get_decomp_locations(xml_mode: str) -> (Path, Path):
-    """Return (DECOMP_LOCATION, DECOMP_LOCATION_WITH_SCRIPTS)"""
-    if xml_mode:
-        return Path("./.Patcher-Temp/swf.xml"), Path("./.Patcher-Temp/")
-
-    return Path("./.Patcher-Temp/mod/"), Path("./.Patcher-Temp/mod/scripts/")

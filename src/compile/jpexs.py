@@ -27,9 +27,13 @@ class JPEXSInterface:
     """
 
     path: Path
-    args: list
+    args: list[str]
 
-    def __init__(self: JPEXSInterface, path: Path | None = None, args: list | None = None) -> None:
+    def __init__(
+        self: JPEXSInterface,
+        path: Path | None = None,
+        args: list[str] | None = None
+    ) -> None:
         """Initialize by detecting JPEXS, or using a provided version"""
         if path is not None:
             self.path = path
@@ -54,7 +58,7 @@ class JPEXSInterface:
 
             info("Using JPEXS at: %s", self.path)
 
-    def install_jpexs(self :JPEXSInterface, path: Path, args: list | None = None) -> bool:
+    def install_jpexs(self :JPEXSInterface, path: Path, args: list[str] | None = None) -> bool:
         """Install JPEXS from a path. Return true if the installation was successful."""
         if path.exists() and args is None:
             # Normal JPEXS install, we're just running ffdec.sh directly

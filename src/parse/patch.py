@@ -28,6 +28,6 @@ class PatchfileManager:
         Everything within the file will be handled by the PatchfileProcessor
         Return the set of modified scripts.
         """
-        patchfile = CommonParseManager.get_root(PatchfileLexer, PatchfileParser, self.file)
+        patchfile = CommonParseManager(PatchfileLexer, PatchfileParser).get_root(self.file)
 
         return self.patchfile_processor.visitRoot(patchfile)
