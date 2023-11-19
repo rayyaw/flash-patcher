@@ -12,11 +12,8 @@ def clean_scripts(decomp_location: Path, modified_scripts: set[Path]) -> None:
         Path(dp, f) for dp, _, fn in os.walk(decomp_location.expanduser()) for f in fn
     ]
 
-    print(modified_scripts)
-
     for script in scripts:
         if script not in modified_scripts:
-            print("UNLINK: ", script)
             script.unlink()
 
 def copy_file(source: Path, dest: Path) -> None:
