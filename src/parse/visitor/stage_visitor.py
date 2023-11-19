@@ -36,18 +36,15 @@ class StagefileProcessor (StagefileVisitor):
         self: StagefileProcessor,
         ctx: StagefileParser.PatchFileContext
     ) -> None:
-        self.modified_scripts |= PatchfileManager.parse(
-            self.decomp_location_with_scripts,
-            self.folder / ctx.getText()
-        )
+        self.modified_scripts |= PatchfileManager(
+            self.decomp_location_with_scripts, self.folder / ctx.getText()
+        ).parse()
 
     def visitAssetPackFile(
         self: StagefileProcessor,
         ctx: StagefileParser.AssetPackFileContext
     ) -> None:
-        self.modified_scripts |= AssetPackManager.parse(
-            self.decomp_location,
-            self.folder,
+        self.modified_scripts |= AssetPackManager(self.folder, self.decomp_location).parse(
             self.folder / ctx.getText()
         )
 

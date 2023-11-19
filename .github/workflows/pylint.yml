@@ -23,16 +23,15 @@ jobs:
         pylint $(git ls-files 'src/*.py') \
         --disable=missing-module-docstring \
         --disable=too-few-public-methods \
-        --disable=no-self-argument \
         --disable=inconsistent-return-statements \
         --disable=too-many-arguments \
-        --disable=unspecified-encoding
+        --disable=unspecified-encoding \
+        --disable=no-self-argument
 
         echo "Running pylint on tests..."
         pylint $(git ls-files 'test/*.py') \
         --disable=missing-module-docstring \
         --disable=too-few-public-methods \
-        --disable=no-self-argument \
         --disable=inconsistent-return-statements \
         --disable=too-many-arguments \
         --disable=unspecified-encoding \

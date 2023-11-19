@@ -87,8 +87,7 @@ class SingleInjectionManager:
                     Expected one of: [skip].""",
                 )
 
-            case _:
-                return old_line_no, False
+        return old_line_no, False
 
     def handle_secondary_skip_command(
         self: SingleInjectionManager,
