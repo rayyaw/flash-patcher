@@ -22,7 +22,7 @@ class SingleInjectionManager:
     patch_line_no: int
 
     error_manager: ErrorManager
-    file_content: list
+    file_content: list[str]
 
     def __init__(
         self: SingleInjectionManager,

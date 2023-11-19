@@ -31,7 +31,7 @@ class SingleInjectionManagerSpec (TestCase):
 
         self.as_path = Path("../test/testdata/DoAction1.as")
 
-        with open(self.as_path) as file:
+        with open(self.as_path, encoding="utf-8") as file:
             self.file_content = file.readlines()
 
         self.single_injection_manager = SingleInjectionManager(
