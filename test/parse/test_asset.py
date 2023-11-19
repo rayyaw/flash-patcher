@@ -38,4 +38,3 @@ class AssetPackManagerSpec (TestCase):
         )
 
         self.mock_processor.visitRoot.assert_called_once()
-
