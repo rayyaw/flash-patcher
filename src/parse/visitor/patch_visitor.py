@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from logging import exception
 from pathlib import Path
 
@@ -71,7 +70,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         try:
             for _ in range(line_start, line_end + 1):
                 del current_file[line_start - 1]
-        except IndexError:
+        except IndexError as exc:
             exception(
                 """%s, line %d: Out of range.
                 Line number %d out of range for file %s.
@@ -81,7 +80,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
                 line_end,
                 full_path.as_posix(),
             )
-            sys.exit(1)
+            raise exc
 
         writelines_safe(full_path, current_file)
 

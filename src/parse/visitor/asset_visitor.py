@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 import shutil
 from logging import exception
 from pathlib import Path
@@ -28,12 +27,10 @@ class AssetPackProcessor (AssetPackVisitor):
         remote_name = ctx.swf.getText()
 
         if not Path(self.asset_folder / local_name).exists():
-            exception(
-                """Could not find asset: %s
-                Aborting...""",
-                local_name,
-            )
-            sys.exit(1)
+            error_mesg = f"""Could not find asset: {local_name}
+            Aborting..."""
+            exception(error_mesg)
+            raise FileNotFoundError(error_mesg)
 
         # Create folder and copy things over
         remote_folder = remote_name.split("/")[0]
@@ -44,7 +41,6 @@ class AssetPackProcessor (AssetPackVisitor):
         shutil.copyfile(self.asset_folder / local_name, self.decomp_location / remote_name)
 
         self.modified_scripts.add(self.decomp_location / remote_name)
-
 
     def visitRoot(self, ctx: AssetPackParser.RootContext) -> set:
         super().visitRoot(ctx)
