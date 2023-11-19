@@ -62,12 +62,12 @@ def main(
 
     info("Decompilation finished. Beginning injection...")
 
-    modified_scripts = StagefileManager.parse(
+    modified_scripts = StagefileManager(
         folder,
         stagefile,
         decomp_location,
         decomp_location_with_scripts
-    )
+    ).parse()
 
     info("Injection complete, cleaning up...")
 

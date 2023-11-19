@@ -5,3 +5,5 @@ begin-patch
 This is not an actionscript command, it's just invalid
 // cmd: skip 20
 end-patch
+
+# comment

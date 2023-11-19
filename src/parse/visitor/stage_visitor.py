@@ -44,9 +44,9 @@ class StagefileProcessor (StagefileVisitor):
         self: StagefileProcessor,
         ctx: StagefileParser.AssetPackFileContext
     ) -> None:
-        self.modified_scripts |= AssetPackManager(self.folder, self.decomp_location).parse(
-            self.folder / ctx.getText()
-        )
+        self.modified_scripts |= AssetPackManager(
+            self.folder, self.decomp_location, self.folder / ctx.getText()
+        ).parse()
 
     def visitRoot(self: StagefileProcessor, ctx: StagefileParser.RootContext) -> set:
         super().visitRoot(ctx)

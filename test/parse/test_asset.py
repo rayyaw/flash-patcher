@@ -26,6 +26,7 @@ class AssetPackManagerSpec (TestCase):
         self.asset_pack_manager = AssetPackManager(
             Path("../"),
             Path("./.Patcher-Temp"),
+            Path("../test/testdata/Pack1.assets"),
         )
 
         self.asset_pack_manager.asset_pack_processor = self.mock_processor
@@ -33,8 +34,6 @@ class AssetPackManagerSpec (TestCase):
     def test_parse_success(
         self: AssetPackManagerSpec,
     ) -> None:
-        self.asset_pack_manager.parse(
-            Path("../test/testdata/Pack1.assets"),
-        )
+        self.asset_pack_manager.parse()
 
         self.mock_processor.visitRoot.assert_called_once()

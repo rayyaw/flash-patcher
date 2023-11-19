@@ -9,23 +9,29 @@ from parse.visitor.stage_visitor import StagefileProcessor
 
 class StagefileManager:
     """Manage stage files."""
+    stagefile_processor: StagefileProcessor
+    stage_file: Path
 
-    def parse(
+    def __init__(
+        self: StagefileManager,
         folder: Path,
         file: Path,
         decomp_location: Path,
-        decomp_location_with_scripts: Path
-    ) -> set:
+        decomp_location_with_scripts: Path,
+    ) -> None:
+        self.stagefile_processor = StagefileProcessor(
+            folder, decomp_location, decomp_location_with_scripts
+        )
+
+        self.stage_file = folder / file
+
+    def parse(self: StagefileManager) -> set:
         """Parse a single stagefile.
         
         This class handles everything to do with preprocessing (opening the file, etc.)
         Everything within the file will be handled by the StagefileProcessor
         """
 
-        stagefile = CommonParseManager.get_root(StagefileLexer, StagefileParser, folder / file)
+        stagefile = CommonParseManager.get_root(StagefileLexer, StagefileParser, self.stage_file)
 
-        return StagefileProcessor(
-            folder,
-            decomp_location,
-            decomp_location_with_scripts
-        ).visitRoot(stagefile)
+        return self.stagefile_processor.visitRoot(stagefile)
