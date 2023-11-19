@@ -14,7 +14,7 @@ You must install JPEXS Free Flash Decompiler to use this patcher. For more infor
 
 Flash Patcher will automatically detect your JPEXS install location.
 
-You must have Python 3 on your system to run this script, including the `antlr4` pip package. Note that depending on your system, the package name may be `antlr4-python3-runtime` instead of `antlr4`.
+You must have Python 3.10 or greater on your system to run this script, including the `antlr4-python3-runtime` pip package.
 
 ## Testing
 

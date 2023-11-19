@@ -11,7 +11,14 @@ from parse.visitor.patch_visitor import PatchfileProcessor
 class PatchfileManager:
     """Manage patch files."""
 
-    def parse(decomp_location: Path, file: Path) -> set:
+    file: Path
+    patchfile_processor: PatchfileProcessor
+
+    def __init__(self: PatchfileManager, decomp_location: Path, file: Path) -> None:
+        self.file = file
+        self.patchfile_processor = PatchfileProcessor(self.file, decomp_location)
+
+    def parse(self: PatchfileManager) -> set:
         """Parse a single patch file.
 
         folder_location: The location of the decompiled scripts from the SWF.
@@ -21,6 +28,6 @@ class PatchfileManager:
         Everything within the file will be handled by the PatchfileProcessor
         Return the set of modified scripts.
         """
-        patchfile = CommonParseManager.get_root(PatchfileLexer, PatchfileParser, file)
+        patchfile = CommonParseManager.get_root(PatchfileLexer, PatchfileParser, self.file)
 
-        return PatchfileProcessor(file, decomp_location).visitRoot(patchfile)
+        return self.patchfile_processor.visitRoot(patchfile)

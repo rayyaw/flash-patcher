@@ -1,29 +1,20 @@
-.Patcher-Temp/* 
-*/__pycache__/*
-*/__init__.py
+# Build files
+.Patcher-Temp/
 
-.pytest_cache/*
+build/
+!build/Makefile
+__pycache__/
+__init__.py
+
+# ANTLR files
+.antlr/
+src/antlr_source/
+!src/antlr_source/.gitkeep
+
+# Test files
 .coverage
+.pytest_cache/
 
-build/*.py
-build/antlr/*
-build/antlr_source
-build/compile/*
-build/inject/*
-build/parse/*
-build/util/*
-
-src/antlr/.antlr/*
-src/antlr_source/.antlr/*
-src/antlr_source/*.g4
-src/antlr_source/*.py
-src/antlr_source/*.interp
-src/antlr_source/*.tokens
-src/compile/__pycache__/*
-
-test/__pycache__/*
-test/__init__.py
-test/compile/__pycache__/*
-test/compile/__init__.py
-
+# Misc files and folders
 flash-patcher.zip
+flash-patcher

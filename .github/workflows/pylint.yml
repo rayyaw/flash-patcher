@@ -1,6 +1,6 @@
 name: Pylint
 
-on: [pull_request]
+on: [pull_request, workflow_dispatch]
 
 jobs:
   build:
@@ -14,42 +14,28 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install Java
+    - name: Install Dependencies
       run: |
-        sudo apt install default-jdk
-    - name: Install ANTLR
-      run: |
-        wget https://www.antlr.org/download/antlr-4.13.1-complete.jar
-        echo 'export CLASSPATH=".:$GITHUB_WORKSPACE/antlr-4.13.1-complete.jar:$CLASSPATH"' >> $GITHUB_ENV
-    - name: Install pip dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install antlr4-python3-runtime pylint
-    - name: Build ANTLR files
-      run: |
-        cd build && make antlr-java
-        cd ..
+        source .github/common-setup.sh
     - name: Pylint style analysis
       run: |
         echo "Running pylint on source code..."
         pylint $(git ls-files 'src/*.py') \
         --disable=missing-module-docstring \
         --disable=too-few-public-methods \
-        --disable=no-self-argument \
         --disable=inconsistent-return-statements \
         --disable=too-many-arguments \
-        --disable=pointless-string-statement \
-        --disable=unspecified-encoding
+        --disable=unspecified-encoding \
+        --disable=no-self-argument
 
         echo "Running pylint on tests..."
         pylint $(git ls-files 'test/*.py') \
         --disable=missing-module-docstring \
         --disable=too-few-public-methods \
-        --disable=no-self-argument \
         --disable=inconsistent-return-statements \
         --disable=too-many-arguments \
-        --disable=pointless-string-statement \
         --disable=unspecified-encoding \
         --disable=missing-function-docstring \
         --disable=missing-class-docstring \
-        --disable=import-error
+        --disable=import-error \
+        --disable=wrong-import-position

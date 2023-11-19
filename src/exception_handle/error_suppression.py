@@ -3,6 +3,8 @@ import sys
 from logging import error
 from typing import Callable
 
+from exception_handle.dependency import DependencyError
+
 def run_without_antlr_errors(function: Callable[..., any]) -> any:
     """Run a command while suppressing ANTLR version mismatch warnings.
     We also want to call sys.exit() if there is a parse error, which ANTLR doesn't do.
@@ -31,9 +33,7 @@ def run_without_antlr_errors(function: Callable[..., any]) -> any:
 def process_captured_output(captured_output = str) -> None:
     """Process the output from stderr, and error out if an error occurred."""
     if captured_output != "":
-        error(
-            """Processing halted due to lex and parse errors.
-            More info:\n%s""",
-            captured_output
-        )
-        sys.exit(1)
+        error_mesg = f"""Processing halted due to lex and parse errors.
+            More info:\n{captured_output}"""
+        error(error_mesg)
+        raise DependencyError(error_mesg)

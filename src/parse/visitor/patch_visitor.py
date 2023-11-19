@@ -7,10 +7,10 @@ from pathlib import Path
 from antlr_source.PatchfileParser import PatchfileParser
 from antlr_source.PatchfileParserVisitor import PatchfileParserVisitor
 
+from exception_handle.error_manager import ErrorManager
 from inject.bulk_injection import BulkInjectionManager
 from inject.injection_location import InjectionLocation
 from inject.single_injection import SingleInjectionManager
-from util.exception import ErrorManager
 from util.file_io import readlines_safe, writelines_safe
 
 class PatchfileProcessor (PatchfileParserVisitor):
@@ -54,7 +54,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         if stripped_text[0] == "\n":
             stripped_text = stripped_text[1:]
 
-        self.injector.inject_content(stripped_text)
+        self.injector.inject(stripped_text)
         self.injector.clear()
 
     def visitRemoveBlock(self, ctx: PatchfileParser.RemoveBlockContext) -> None:

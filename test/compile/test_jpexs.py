@@ -1,10 +1,16 @@
 from __future__ import annotations
 
+import sys
+import os
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-from src.compile.jpexs import JPEXSInterface
+# Add the 'src' directory to the Python path
+# Not doing this causes import errors
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
+
+from compile.jpexs import JPEXSInterface
 
 class JPEXSInterfaceSpec (TestCase):
 

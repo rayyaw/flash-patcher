@@ -9,8 +9,8 @@ from antlr4 import CommonTokenStream, InputStream
 from antlr4.Lexer import Lexer
 from antlr4.Parser import Parser, ParserRuleContext
 
-from util.error_suppression import run_without_antlr_errors
-from util.exception import ErrorManager
+from exception_handle.error_suppression import run_without_antlr_errors
+from exception_handle.error_manager import ErrorManager
 from util.file_io import read_safe
 
 class CommonParseManager:
