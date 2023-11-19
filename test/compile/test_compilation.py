@@ -170,7 +170,9 @@ class CompilationManagerSpec (TestCase):
             call("Shapes", self.folder, self.swf, self.swf),
             call("Text", self.folder, self.swf, self.swf),
         ]
+
         mock_recompile_with_check.assert_has_calls(expected_calls)
+        assert mock_recompile_with_check.call_count == 5
 
     @patch('compile.compilation.CompilationManager.recompile_with_check')
     def test_recompile_success_script_only(

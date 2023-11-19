@@ -9,10 +9,16 @@ from util.file_io import readlines_safe, writelines_safe
 class SingleInjectionManager:
     """A position in a named file."""
 
+    # file to inject into
     file_name: Path
+
+    # location to inject at
     file_location: InjectionLocation
 
+    # name of the patch file
     patch_file: Path
+
+    # line number within the pacth file
     patch_line_no: int
 
     error_manager: ErrorManager
@@ -25,11 +31,11 @@ class SingleInjectionManager:
         patch_file: Path,
         patch_line_no: int,
     ) -> None:
-        self.file_name = file_name          # file to inject into
-        self.file_location = file_location  # location to inject at
+        self.file_name = file_name
+        self.file_location = file_location
 
-        self.patch_file = patch_file        # name of the patch file
-        self.patch_line_no = patch_line_no  # line number within the patch file
+        self.patch_file = patch_file
+        self.patch_line_no = patch_line_no
 
         self.error_manager = ErrorManager(self.patch_file.as_posix(), 0, None)
         self.file_content = readlines_safe(self.file_name, self.error_manager)
