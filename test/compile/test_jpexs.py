@@ -181,6 +181,8 @@ class JPEXSInterfaceSpec (TestCase):
         mock_subprocess_run.assert_called_once_with([
             '/usr/bin/ffdec',
             '--derppotato',
+            '-config',
+            'autoDeobfuscate=1,parallelSpeedUp=0',
             '-export',
             'script',
             output,
@@ -203,6 +205,8 @@ class JPEXSInterfaceSpec (TestCase):
         mock_subprocess_run.assert_called_once_with([
             '/usr/bin/ffdec',
             '--derppotato',
+            '-config',
+            'autoDeobfuscate=1,parallelSpeedUp=0',
             '-export',
             'script',
             output,

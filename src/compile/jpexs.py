@@ -139,6 +139,8 @@ class JPEXSInterface:
                 output_dir,
                 inputfile,
             ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
             check=False,
         )
 
