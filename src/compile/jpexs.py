@@ -132,13 +132,13 @@ class JPEXSInterface:
             [
                 self.path,
                 *self.args,
+		"-config",
+		"autoDeobfuscate=1,parallelSpeedUp=0",
                 "-export",
                 "script",
                 output_dir,
                 inputfile,
             ],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
             check=False,
         )
 
