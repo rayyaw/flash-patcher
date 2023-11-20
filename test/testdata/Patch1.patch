@@ -1,9 +1,11 @@
-add frame_1/DoAction.as 17
-add DefineSprite_1109_Bowser 2/frame_1/DoAction.as 52
+add frame_1/DoAction1.as 17
+add frame_1/DoAction1.as 52
 begin-patch
 // This is an actionscript command
 This is not an actionscript command, it's just invalid
 // cmd: skip 20
 end-patch
+
+remove frame_169/DoAction.as 17-23
 
 # comment

@@ -13,23 +13,6 @@ all: $(ANTLR_TARGET)
 	echo "#!/usr/bin/python3" | /usr/bin/cat - ../flash-patcher.zip > ../flash-patcher
 	chmod +x ../flash-patcher
 
-pylint: $(ANTLR_TARGET)
-	echo "Running pylint on source code..."
-	pylint $(shell git ls-files '../src/*.py') \
-	--disable=missing-module-docstring \
-	--disable=too-few-public-methods \
-	--disable=inconsistent-return-statements \
-	--disable=too-many-arguments \
-	--disable=unspecified-encoding
-
-	echo "Running pylint on tests..."
-	pylint $(shell git ls-files '../test/*.py') \
-	--disable=missing-module-docstring \
-	--disable=missing-function-docstring \
-	--disable=missing-class-docstring \
-	--disable=import-error \
-	--disable=wrong-import-position
-
 # Move stuff to antlr-source in preparation for compilation
 antlr-copy:
 	cp ../src/antlr/*.g4 ../src/antlr_source
@@ -66,11 +49,34 @@ install:
 	sudo cp ../flash-patcher /usr/local/bin
 	sudo cp ../flash-patcher.json /var/gh-update/flash-patcher.json
 
+# Run Pylint pull-request checks
+pylint: $(ANTLR_TARGET)
+	echo "Running pylint on source code..."
+	pylint $(shell git ls-files '../src/*.py') \
+	--disable=missing-module-docstring \
+	--disable=too-few-public-methods \
+	--disable=inconsistent-return-statements \
+	--disable=too-many-arguments \
+	--disable=unspecified-encoding
+
+	echo "Running pylint on tests..."
+	pylint $(shell git ls-files '../test/*.py') \
+	--disable=missing-module-docstring \
+	--disable=missing-function-docstring \
+	--disable=missing-class-docstring \
+	--disable=import-error \
+	--disable=wrong-import-position
+
 # Run unit tests
 # The find rule creates an __init__.py in all subdirectories, including nested subdirectories
 test: $(ANTLR_TARGET)
 	find ../test -type d -exec touch {}/__init__.py \;
-	pytest ..
+
+	echo "Running tests..."
+	python -m coverage run -m pytest ..
+
+# TODO: Add code coverage check
+# Command: python -m coverage report -m $(shell git ls-files "../src/*.py") --omit "../src/__main__.py"
 
 # Delete all temp files used for compilation.
 # We use find to delete all __init__.py and __pycache__ files and folders

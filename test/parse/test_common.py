@@ -37,7 +37,7 @@ class CommonParseManagerSpec (TestCase):
         parse_tree = self.common_parse_manager.parse_input(content).root()
 
         assert len(parse_tree.addBlock()) == 1
-        assert len(parse_tree.removeBlock()) == 0
+        assert len(parse_tree.removeBlock()) == 1
 
         # ANTLR parse contexts will strip spaces for the getText() method
         assert parse_tree.addBlock()[0].getText().startswith("addframe_1/DoAction")
@@ -49,7 +49,7 @@ class CommonParseManagerSpec (TestCase):
         parse_tree = self.common_parse_manager.get_root(self.patch_file)
 
         assert len(parse_tree.addBlock()) == 1
-        assert len(parse_tree.removeBlock()) == 0
+        assert len(parse_tree.removeBlock()) == 1
 
         # ANTLR parse contexts will strip spaces for the getText() method
         assert parse_tree.addBlock()[0].getText().startswith("addframe_1/DoAction")
