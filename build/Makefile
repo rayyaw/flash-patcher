@@ -13,6 +13,23 @@ all: $(ANTLR_TARGET)
 	echo "#!/usr/bin/python3" | /usr/bin/cat - ../flash-patcher.zip > ../flash-patcher
 	chmod +x ../flash-patcher
 
+pylint: $(ANTLR_TARGET)
+	echo "Running pylint on source code..."
+	pylint $(shell git ls-files '../src/*.py') \
+	--disable=missing-module-docstring \
+	--disable=too-few-public-methods \
+	--disable=inconsistent-return-statements \
+	--disable=too-many-arguments \
+	--disable=unspecified-encoding
+
+	echo "Running pylint on tests..."
+	pylint $(shell git ls-files '../test/*.py') \
+	--disable=missing-module-docstring \
+	--disable=missing-function-docstring \
+	--disable=missing-class-docstring \
+	--disable=import-error \
+	--disable=wrong-import-position
+
 # Move stuff to antlr-source in preparation for compilation
 antlr-copy:
 	cp ../src/antlr/*.g4 ../src/antlr_source

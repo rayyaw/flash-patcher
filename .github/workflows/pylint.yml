@@ -19,18 +19,5 @@ jobs:
         source .github/common-setup.sh
     - name: Pylint style analysis
       run: |
-        echo "Running pylint on source code..."
-        pylint $(git ls-files 'src/*.py') \
-        --disable=missing-module-docstring \
-        --disable=too-few-public-methods \
-        --disable=inconsistent-return-statements \
-        --disable=too-many-arguments \
-        --disable=unspecified-encoding
-
-        echo "Running pylint on tests..."
-        pylint $(git ls-files 'test/*.py') \
-        --disable=missing-module-docstring \
-        --disable=missing-function-docstring \
-        --disable=missing-class-docstring \
-        --disable=import-error \
-        --disable=wrong-import-position
+        cd build
+        make pylint
