@@ -65,7 +65,8 @@ pylint: $(ANTLR_TARGET)
 	--disable=missing-function-docstring \
 	--disable=missing-class-docstring \
 	--disable=import-error \
-	--disable=wrong-import-position
+	--disable=wrong-import-position \
+	--disable=no-name-in-module
 
 # Run unit tests
 # The find rule creates an __init__.py in all subdirectories, including nested subdirectories
