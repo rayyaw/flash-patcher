@@ -22,7 +22,7 @@ def test_main_success(
     mock_stagefile_parse: MagicMock,
     mock_shutil_copytree: MagicMock,
 ) -> None:
-    
+
     inputfile = Path("input")
     outputfile = Path("test.swf")
     cache = Path("../test/testdata/")
