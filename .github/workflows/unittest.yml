@@ -21,3 +21,15 @@ jobs:
       run: |
         export ANTLR_TARGET=antlr-java
         cd build && make test
+    - name: Code Coverage Report
+      uses: irongut/CodeCoverageSummary@v1.3.0
+      with:
+        filename: build/coverage.xml
+        badge: true
+        fail_below_min: true
+        format: markdown
+        hide_branch_rate: false
+        hide_complexity: true
+        indicators: true
+        output: both
+        thresholds: '90 90'
