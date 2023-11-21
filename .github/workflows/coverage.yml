@@ -1,6 +1,6 @@
-name: Unit Tests
+name: Code Coverage
 
-on: [push, workflow_dispatch]
+on: [pull_request, workflow_dispatch]
 
 jobs:
   build:
@@ -21,3 +21,11 @@ jobs:
       run: |
         export ANTLR_TARGET=antlr-java
         cd build && make test
+    - name: Enforce Code Coverage
+      uses: orgoro/coverage@v3.1
+      with:
+        coverageFile: build/coverage.xml
+        token: ${{ secrets.GITHUB_TOKEN }}
+        thresholdAll: 0.9
+        thresholdNew: 0.9
+        thresholdModified: 0.9
