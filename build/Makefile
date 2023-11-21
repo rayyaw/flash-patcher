@@ -75,9 +75,8 @@ test: $(ANTLR_TARGET)
 
 	echo "Running tests..."
 	python -m coverage run -m pytest ..
-
-# TODO: Add code coverage check
-# Command: python -m coverage report -m $(shell git ls-files "../src/*.py") --omit "../src/__main__.py"
+	python -m coverage report -m $(shell git ls-files "../src/*.py")
+	python -m coverage xml -o coverage.xml
 
 # Delete all temp files used for compilation.
 # We use find to delete all __init__.py and __pycache__ files and folders
