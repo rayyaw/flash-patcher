@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from logging import basicConfig, exception, info
 from pathlib import Path
 
@@ -35,9 +33,9 @@ def main(
     folder: Path,
     stagefile: Path,
     output: Path,
-    drop_cache: bool,
-    recompile_all: bool,
-    xml_mode: bool,
+    drop_cache: bool = False,
+    recompile_all: bool = False,
+    xml_mode: bool = False,
 ) -> None:
     """Run the patcher."""
     info("Riley's SWF Patcher - %s", CURRENT_VERSION)
@@ -47,7 +45,7 @@ def main(
     except ModuleNotFoundError as exc:
         error_mesg = "Could not locate required dependency: JPEXS Flash Decompiler. Aborting..."
         exception(error_mesg)
-        raise DependencyError from exc
+        raise DependencyError(error_mesg) from exc
 
     decomp_location, decomp_location_with_scripts = get_decomp_locations(xml_mode)
 

@@ -6,6 +6,8 @@ from pathlib import Path
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
+from pytest import raises
+
 # Add the 'src' directory to the Python path
 # Not doing this causes import errors
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
@@ -14,7 +16,8 @@ from compile.jpexs import JPEXSInterface
 
 class JPEXSInterfaceSpec (TestCase):
 
-    interface:               JPEXSInterface
+    ffdec_path             : Path
+    interface              : JPEXSInterface
     subprocess_mock_success: MagicMock
     subprocess_mock_failure: MagicMock
 
@@ -22,7 +25,8 @@ class JPEXSInterfaceSpec (TestCase):
         super().__init__(methodName)
 
         # Manual initialization required for the default test case
-        self.interface = JPEXSInterface("/usr/bin/ffdec", ["--derppotato"])
+        self.ffdec_path = Path("/usr/bin/ffdec")
+        self.interface = JPEXSInterface(self.ffdec_path, ["--derppotato"])
 
         self.subprocess_mock_success = MagicMock(returncode=0, stdout='', stderr='')
         self.subprocess_mock_failure = MagicMock(returncode=1, stdout='', stderr='Error!')
@@ -31,6 +35,28 @@ class JPEXSInterfaceSpec (TestCase):
         assert True
 
     # JPEXS installation tests
+    def test_automatic_installation_complete_success_manual(
+        self: JPEXSInterfaceSpec,
+    ) -> None:
+        interface = JPEXSInterface(self.ffdec_path)
+
+        assert interface.path == self.ffdec_path
+        assert interface.args == []
+
+        assert self.interface.path == self.ffdec_path
+        assert self.interface.args == ["--derppotato"]
+
+    @patch('compile.jpexs.JPEXSInterface.install_jpexs')
+    def test_automatic_installation_complete_failure_not_found(
+        self: JPEXSInterfaceSpec,
+        mock_install_jpexs: MagicMock
+    ) -> None:
+
+        mock_install_jpexs.return_value = False
+
+        with raises(ModuleNotFoundError):
+            JPEXSInterface()
+
     @patch('pathlib.Path.exists')
     def test_automatic_installation_apt_success(
         self: JPEXSInterfaceSpec,
@@ -38,10 +64,10 @@ class JPEXSInterfaceSpec (TestCase):
     ) -> None:
 
         mock_path_exists.return_value = True
-        success = self.interface.install_jpexs(Path("/usr/bin/ffdec"))
+        success = self.interface.install_jpexs(self.ffdec_path)
 
         mock_path_exists.assert_called_once_with()
-        assert self.interface.path == Path("/usr/bin/ffdec")
+        assert self.interface.path == self.ffdec_path
         assert self.interface.args == []
         assert success
 
@@ -52,7 +78,7 @@ class JPEXSInterfaceSpec (TestCase):
     ) -> None:
 
         mock_path_exists.return_value = False
-        success = self.interface.install_jpexs(Path("/usr/bin/ffdec"))
+        success = self.interface.install_jpexs(self.ffdec_path)
 
         assert mock_path_exists.call_count == 2
         assert not success
@@ -104,7 +130,7 @@ class JPEXSInterfaceSpec (TestCase):
         success = self.interface.dump_xml(input_swf, output)
 
         mock_subprocess_run.assert_called_once_with([
-            '/usr/bin/ffdec',
+            self.ffdec_path,
             '--derppotato',
             '-swf2xml',
             input_swf,
@@ -122,7 +148,7 @@ class JPEXSInterfaceSpec (TestCase):
         success = self.interface.dump_xml(input_swf, output)
 
         mock_subprocess_run.assert_called_once_with([
-            '/usr/bin/ffdec',
+            self.ffdec_path,
             '--derppotato',
             '-swf2xml',
             input_swf,
@@ -140,7 +166,7 @@ class JPEXSInterfaceSpec (TestCase):
         success = self.interface.rebuild_xml(input_folder, output)
 
         mock_subprocess_run.assert_called_once_with([
-            '/usr/bin/ffdec',
+            self.ffdec_path,
             '--derppotato',
             '-xml2swf',
             input_folder,
@@ -158,7 +184,7 @@ class JPEXSInterfaceSpec (TestCase):
         success = self.interface.rebuild_xml(input_folder, output)
 
         mock_subprocess_run.assert_called_once_with([
-            '/usr/bin/ffdec',
+            self.ffdec_path,
             '--derppotato',
             '-xml2swf',
             input_folder,
@@ -179,7 +205,7 @@ class JPEXSInterfaceSpec (TestCase):
         success = self.interface.export_scripts(input_file, output)
 
         mock_subprocess_run.assert_called_once_with([
-            '/usr/bin/ffdec',
+            self.ffdec_path,
             '--derppotato',
             '-export',
             'script',
@@ -201,7 +227,7 @@ class JPEXSInterfaceSpec (TestCase):
         success = self.interface.export_scripts(input_file, output)
 
         mock_subprocess_run.assert_called_once_with([
-            '/usr/bin/ffdec',
+            self.ffdec_path,
             '--derppotato',
             '-export',
             'script',
@@ -224,7 +250,7 @@ class JPEXSInterfaceSpec (TestCase):
         success = self.interface.recompile_data("Script", input_folder, swf, output)
 
         mock_subprocess_run.assert_called_once_with([
-            '/usr/bin/ffdec',
+            self.ffdec_path,
             '--derppotato',
             '-importScript',
             swf,
@@ -247,7 +273,7 @@ class JPEXSInterfaceSpec (TestCase):
         success = self.interface.recompile_data("Script", input_folder, swf, output)
 
         mock_subprocess_run.assert_called_once_with([
-            '/usr/bin/ffdec',
+            self.ffdec_path,
             '--derppotato',
             '-importScript',
             swf,

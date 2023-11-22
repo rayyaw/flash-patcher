@@ -18,7 +18,7 @@ You must have Python 3.10 or greater on your system to run this script, includin
 
 ## Testing
 
-To run unit tests, simply run `make test` from the `build` folder. You must have `pytest` installed to run unit tests.
+To run unit tests, simply run `make test` from the `build` folder. You must have `pytest` and `coverage` installed to run unit tests.
 
 ## Installing and running
 

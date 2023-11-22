@@ -32,7 +32,7 @@ class JPEXSInterface:
     def __init__(
         self: JPEXSInterface,
         path: Path | None = None,
-        args: list[str] | None = None
+        args: list[str] | None = None,
     ) -> None:
         """Initialize by detecting JPEXS, or using a provided version"""
         if path is not None:

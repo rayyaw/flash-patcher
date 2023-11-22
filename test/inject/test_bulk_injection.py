@@ -46,3 +46,12 @@ class BulkInjectionManagerSpec (TestCase):
         single_injector.inject.assert_called_with(
             ["some test string\n", "with many lines"], -1
         )
+
+    def test_clear_success(self: BulkInjectionManagerSpec) -> None:
+        single_injector = MagicMock(SingleInjectionManager)
+
+        self.bulk_injection_manager.add_injection_target(single_injector)
+        self.bulk_injection_manager.clear()
+
+        assert len(self.bulk_injection_manager.injectors) == 0
+        assert self.bulk_injection_manager.starting_line_no == -1

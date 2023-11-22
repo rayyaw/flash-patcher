@@ -94,6 +94,25 @@ class CompilationManagerSpec (TestCase):
         assert folder == Path('.Patcher-Temp/ORSXG5BOON3WM===')
         self.mock_decompiler.assert_not_called()
 
+    @patch('pathlib.Path.mkdir')
+    @patch('pathlib.Path.exists')
+    def test_decompile_success_create_folders(
+        self: CompilationManagerSpec,
+        mock_path_exists: MagicMock,
+        mock_path_mkdir: MagicMock
+    ) -> None:
+        mock_path_exists.side_effect = [False, True, False, False]
+
+        folder = self.compilation_manager.decompile(self.swf)
+
+        assert mock_path_exists.call_count == 4
+        assert folder == Path('.Patcher-Temp/ORSXG5BOON3WM===')
+        self.mock_decompiler.export_scripts.assert_called_once_with(
+            self.swf, Path('.Patcher-Temp/ORSXG5BOON3WM===')
+        )
+
+        assert mock_path_mkdir.call_count == 2
+
     @patch('pathlib.Path.exists')
     def test_decompile_failure_no_input(
         self: CompilationManagerSpec,
