@@ -26,6 +26,6 @@ jobs:
       run:
         git clone https://github.com/rayyaw/flash-patcher-tests.git
     - name: Run integration tests
-      run:
+      run: |
         cd flash-patcher-tests
         ./run-all-tests.sh
