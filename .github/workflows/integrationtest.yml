@@ -21,13 +21,12 @@ jobs:
       run: |
         cd build
         export ANTLR_TARGET=antlr-java
-        make
+        make && sudo make install
         cd ..
     - name: Install test library
       run: |
         ls /usr/local/bin
         git clone https://github.com/rayyaw/flash-patcher-tests.git
-        export PATH="$GITHUB_WORKSPACE:$PATH"
     - name: Run integration tests
       run: |
         cd flash-patcher-tests
