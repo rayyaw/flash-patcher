@@ -28,5 +28,4 @@ jobs:
     - name: Run integration tests
       run: |
         cd flash-patcher-tests
-        ls
         ./run-all-tests.sh
