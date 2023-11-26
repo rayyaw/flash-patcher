@@ -12,8 +12,8 @@ wget https://www.antlr.org/download/antlr-4.13.1-complete.jar
 echo 'export CLASSPATH=".:$GITHUB_WORKSPACE/antlr-4.13.1-complete.jar:$CLASSPATH"' >> $GITHUB_ENV
 
 echo -e "\nInstalling pip dependencies..."
-python -m pip install -U pytest
-pip install antlr4-python3-runtime pylint coverage
+python3 -m pip install -U pytest
+python3 -m pip install antlr4-python3-runtime pylint coverage
 
 echo -e "\nBuilding ANTLR files..."
 cd build && make antlr-java
