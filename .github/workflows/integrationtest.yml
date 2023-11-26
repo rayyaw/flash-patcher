@@ -25,6 +25,7 @@ jobs:
     - name: Install test library
       run:
         git clone https://github.com/rayyaw/flash-patcher-tests.git
+        export PATH="/usr/local/bin:$PATH"
     - name: Run integration tests
       run: |
         cd flash-patcher-tests
