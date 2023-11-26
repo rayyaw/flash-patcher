@@ -1,0 +1,31 @@
+name: Integration Tests
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Common Dependencies
+      run: |
+        source .github/common-setup.sh
+    - name: Install Flash Patcher
+      run:
+        cd build
+        make && sudo make install
+        cd ..
+    - name: Install test library
+      run:
+        git clone https://github.com/rayyaw/flash-patcher-tests.git
+    - name: Run integration tests
+      run:
+        cd flash-patcher-tests
+        ./run-all-tests.sh
