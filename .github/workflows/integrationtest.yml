@@ -18,7 +18,7 @@ jobs:
       run: |
         source .github/common-setup.sh
     - name: Install Flash Patcher
-      run:
+      run: |
         cd build
         make && sudo make install
         cd ..
