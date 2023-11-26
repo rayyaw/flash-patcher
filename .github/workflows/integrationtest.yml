@@ -20,6 +20,7 @@ jobs:
     - name: Install Flash Patcher
       run: |
         cd build
+        export ANTLR_TARGET=antlr-java
         make
         cd ..
     - name: Install test library
