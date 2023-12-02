@@ -1,6 +1,7 @@
 # Common setup for all GitHub workflows of Flash Patcher
 echo -e "\nInstalling Java..."
-sudo apt install default-jre
+wget https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.deb
+sudo apt install ./jdk-17_linux-x64_bin.deb
 
 echo -e "\nInstalling JPEXS..."
 wget https://github.com/jindrapetrik/jpexs-decompiler/releases/download/version20.0.0/ffdec_20.0.0.deb
