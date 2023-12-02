@@ -43,7 +43,7 @@ class SingleInjectionManager:
     def inject(self: SingleInjectionManager, content: list[str], patch_file_line: int) -> None:
         """Inject the content into the file."""
         patch_line_no = patch_file_line
-        file_line_no = self.file_location.resolve(self.file_content, self.patch_line_no)
+        file_line_no = self.file_location.resolve(self.file_content, self.error_manager)
 
         for line in content:
             line_stripped = line.strip("\n\r ")

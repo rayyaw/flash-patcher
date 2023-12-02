@@ -54,7 +54,7 @@ class InjectionLocation:
         """Resolve the injection location if it's a line number."""
         if self.line_no > len(file_content):
             exception.raise_(
-                """Out of bounds add location.
+                f"""Out of bounds add location {self.symbolic_location}.
                 The provided location is outside the maximum line number in the file."""
             )
 
