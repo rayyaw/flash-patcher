@@ -1,6 +1,6 @@
 # Common setup for all GitHub workflows of Flash Patcher
 echo -e "\nInstalling Java..."
-sudo apt install default-jdk
+sudo apt install default-jre
 
 echo -e "\nInstalling JPEXS..."
 wget https://github.com/jindrapetrik/jpexs-decompiler/releases/download/version20.0.0/ffdec_20.0.0.deb
