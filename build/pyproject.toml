@@ -46,6 +46,9 @@ Issues = "https://github.com/rayyaw/flash-patcher/issues"
 [project.scripts]
 flash-patcher = "flash_patcher.__main__:cli"
 
+[tool.hatch.build.force-include]
+"flash_patcher/antlr_source" = "flash_patcher/antlr_source"
+
 [tool.hatch.envs.test]
 dependencies = [
     "pytest",
@@ -65,7 +68,7 @@ type = ["default", "min-req"]
 [tool.hatch.envs.integration.scripts]
 test = [
     "cd build",
-    "make && sudo make install",
+    "make",
     "git clone https://github.com/rayyaw/flash-patcher-tests.git",
     "cd flash-patcher-tests",
     "./run-all-tests.sh",
