@@ -12,33 +12,33 @@ from pytest import raises
 # Not doing this causes import errors
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
-from compile.jpexs import JPEXSInterface
+from compile.ffdec import FFDecInterface
 
-class JPEXSInterfaceSpec (TestCase):
+class FFDecInterfaceSpec (TestCase):
 
     ffdec_path             : Path
-    interface              : JPEXSInterface
+    interface              : FFDecInterface
     subprocess_mock_success: MagicMock
     subprocess_mock_failure: MagicMock
 
-    def __init__(self: JPEXSInterfaceSpec, methodName: str = "runTest") -> None:
+    def __init__(self: FFDecInterfaceSpec, methodName: str = "runTest") -> None:
         super().__init__(methodName)
 
         # Manual initialization required for the default test case
         self.ffdec_path = Path("/usr/bin/ffdec")
-        self.interface = JPEXSInterface(self.ffdec_path, ["--derppotato"])
+        self.interface = FFDecInterface(self.ffdec_path, ["--derppotato"])
 
         self.subprocess_mock_success = MagicMock(returncode=0, stdout='', stderr='')
         self.subprocess_mock_failure = MagicMock(returncode=1, stdout='', stderr='Error!')
 
-    def test_sanity(self: JPEXSInterfaceSpec) -> None:
+    def test_sanity(self: FFDecInterfaceSpec) -> None:
         assert True
 
-    # JPEXS installation tests
+    # FFDec installation tests
     def test_automatic_installation_complete_success_manual(
-        self: JPEXSInterfaceSpec,
+        self: FFDecInterfaceSpec,
     ) -> None:
-        interface = JPEXSInterface(self.ffdec_path)
+        interface = FFDecInterface(self.ffdec_path)
 
         assert interface.path == self.ffdec_path
         assert interface.args == []
@@ -46,25 +46,25 @@ class JPEXSInterfaceSpec (TestCase):
         assert self.interface.path == self.ffdec_path
         assert self.interface.args == ["--derppotato"]
 
-    @patch('compile.jpexs.JPEXSInterface.install_jpexs')
+    @patch('compile.ffdec.FFDecInterface.install_ffdec')
     def test_automatic_installation_complete_failure_not_found(
-        self: JPEXSInterfaceSpec,
-        mock_install_jpexs: MagicMock
+        self: FFDecInterfaceSpec,
+        mock_install_ffdec: MagicMock
     ) -> None:
 
-        mock_install_jpexs.return_value = False
+        mock_install_ffdec.return_value = False
 
         with raises(ModuleNotFoundError):
-            JPEXSInterface()
+            FFDecInterface()
 
     @patch('pathlib.Path.exists')
     def test_automatic_installation_apt_success(
-        self: JPEXSInterfaceSpec,
+        self: FFDecInterfaceSpec,
         mock_path_exists: MagicMock
     ) -> None:
 
         mock_path_exists.return_value = True
-        success = self.interface.install_jpexs(self.ffdec_path)
+        success = self.interface.install_ffdec(self.ffdec_path)
 
         mock_path_exists.assert_called_once_with()
         assert self.interface.path == self.ffdec_path
@@ -73,12 +73,12 @@ class JPEXSInterfaceSpec (TestCase):
 
     @patch('pathlib.Path.exists')
     def test_automatic_installation_apt_failure(
-        self: JPEXSInterfaceSpec,
+        self: FFDecInterfaceSpec,
         mock_path_exists: MagicMock
     ) -> None:
 
         mock_path_exists.return_value = False
-        success = self.interface.install_jpexs(self.ffdec_path)
+        success = self.interface.install_ffdec(self.ffdec_path)
 
         assert mock_path_exists.call_count == 2
         assert not success
@@ -87,7 +87,7 @@ class JPEXSInterfaceSpec (TestCase):
     @patch('subprocess.run')
     # For whatever reason, the order of mocks is passed in reverse
     def test_automatic_installation_flatpak_success(
-        self: JPEXSInterfaceSpec,
+        self: FFDecInterfaceSpec,
         mock_subprocess_run: MagicMock,
         mock_path_exists: MagicMock,
     ) -> None:
@@ -95,7 +95,7 @@ class JPEXSInterfaceSpec (TestCase):
         mock_path_exists.return_value = True
         mock_subprocess_run.return_value = self.subprocess_mock_success
 
-        success = self.interface.install_jpexs(Path("/usr/bin/flatpak"), ["run", "--branch=stable"])
+        success = self.interface.install_ffdec(Path("/usr/bin/flatpak"), ["run", "--branch=stable"])
 
         assert mock_path_exists.call_count == 2
         assert self.interface.path == Path("/usr/bin/flatpak")
@@ -106,7 +106,7 @@ class JPEXSInterfaceSpec (TestCase):
     @patch('pathlib.Path.exists')
     @patch('subprocess.run')
     def test_automatic_installation_flatpak_failure(
-        self: JPEXSInterfaceSpec,
+        self: FFDecInterfaceSpec,
         mock_subprocess_run: MagicMock,
         mock_path_exists: MagicMock,
     ) -> None:
@@ -114,14 +114,14 @@ class JPEXSInterfaceSpec (TestCase):
         mock_path_exists.return_value = True
         mock_subprocess_run.return_value = self.subprocess_mock_failure
 
-        success = self.interface.install_jpexs(Path("/usr/bin/flatpak"), ["run", "--branch=stable"])
+        success = self.interface.install_ffdec(Path("/usr/bin/flatpak"), ["run", "--branch=stable"])
 
         assert mock_path_exists.call_count == 2
         assert not success
 
-    # JPEXS calling tests
+    # FFDec calling tests
     @patch('subprocess.run')
-    def test_dump_xml_success(self: JPEXSInterfaceSpec, mock_subprocess_run: MagicMock) -> None:
+    def test_dump_xml_success(self: FFDecInterfaceSpec, mock_subprocess_run: MagicMock) -> None:
         input_swf = Path("./.Patcher-Temp/base.swf")
         output = Path("./folder")
 
@@ -139,7 +139,7 @@ class JPEXSInterfaceSpec (TestCase):
         assert success
 
     @patch('subprocess.run')
-    def test_dump_xml_failure(self: JPEXSInterfaceSpec, mock_subprocess_run: MagicMock) -> None:
+    def test_dump_xml_failure(self: FFDecInterfaceSpec, mock_subprocess_run: MagicMock) -> None:
         input_swf = Path("./.Patcher-Temp/base.swf")
         output = Path("./folder")
 
@@ -157,7 +157,7 @@ class JPEXSInterfaceSpec (TestCase):
         assert not success
 
     @patch('subprocess.run')
-    def test_rebuild_xml_success(self: JPEXSInterfaceSpec, mock_subprocess_run: MagicMock) -> None:
+    def test_rebuild_xml_success(self: FFDecInterfaceSpec, mock_subprocess_run: MagicMock) -> None:
         input_folder = Path("./.Patcher-Temp/base")
         output = Path("./folder/file.swf")
 
@@ -175,7 +175,7 @@ class JPEXSInterfaceSpec (TestCase):
         assert success
 
     @patch('subprocess.run')
-    def test_rebuild_xml_failure(self: JPEXSInterfaceSpec, mock_subprocess_run: MagicMock) -> None:
+    def test_rebuild_xml_failure(self: FFDecInterfaceSpec, mock_subprocess_run: MagicMock) -> None:
         input_folder = Path("./.Patcher-Temp/base")
         output = Path("./folder/file.swf")
 
@@ -194,7 +194,7 @@ class JPEXSInterfaceSpec (TestCase):
 
     @patch('subprocess.run')
     def test_export_scripts_success(
-        self: JPEXSInterfaceSpec,
+        self: FFDecInterfaceSpec,
         mock_subprocess_run: MagicMock
     ) -> None:
         input_file = Path("base.swf")
@@ -216,7 +216,7 @@ class JPEXSInterfaceSpec (TestCase):
 
     @patch('subprocess.run')
     def test_export_scripts_failure(
-        self: JPEXSInterfaceSpec,
+        self: FFDecInterfaceSpec,
         mock_subprocess_run: MagicMock
     ) -> None:
         input_file = Path("base.swf")
@@ -238,7 +238,7 @@ class JPEXSInterfaceSpec (TestCase):
 
     @patch('subprocess.run')
     def test_recompile_data_success(
-        self: JPEXSInterfaceSpec,
+        self: FFDecInterfaceSpec,
         mock_subprocess_run: MagicMock
     ) -> None:
         input_folder = Path("./.Patcher-Temp/mod")
@@ -261,7 +261,7 @@ class JPEXSInterfaceSpec (TestCase):
 
     @patch('subprocess.run')
     def test_recompile_data_failure(
-        self: JPEXSInterfaceSpec,
+        self: FFDecInterfaceSpec,
         mock_subprocess_run: MagicMock
     ) -> None:
         input_folder = Path("./.Patcher-Temp/mod")

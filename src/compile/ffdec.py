@@ -18,11 +18,11 @@ ARGS_FLATPAK = [
     "com.jpexs.decompiler.flash",
 ]
 
-class JPEXSInterface:
-    """An interface to interact with JPEXS via the shell.
+class FFDecInterface:
+    """An interface to interact with FFDec via the shell.
 
     This class should only be used for functions that have a one-to-one correspondence
-    with JPEXS CLI commands.
+    with FFDec CLI commands.
     For anything more sophisticated, you should use the CompilationManager class instead.
     """
 
@@ -30,11 +30,11 @@ class JPEXSInterface:
     args: list[str]
 
     def __init__(
-        self: JPEXSInterface,
+        self: FFDecInterface,
         path: Path | None = None,
         args: list[str] | None = None,
     ) -> None:
-        """Initialize by detecting JPEXS, or using a provided version"""
+        """Initialize by detecting FFDec, or using a provided version"""
         if path is not None:
             self.path = path
             if args is None:
@@ -42,34 +42,34 @@ class JPEXSInterface:
             else:
                 self.args = args
 
-            info("Using JPEXS at: %s", path)
+            info("Using FFDec at: %s", path)
 
         else:
-            # Auto-detect JPEXS at any of the default locations
-            jpexs_installed = any([
-                self.install_jpexs(LOCATION_APT),
-                self.install_jpexs(LOCATION_FLATPAK, ARGS_FLATPAK),
-                self.install_jpexs(LOCATION_WINDOWS),
-                self.install_jpexs(LOCATION_WOW64),
+            # Auto-detect FFDec at any of the default locations
+            ffdec_installed = any([
+                self.install_ffdec(LOCATION_APT),
+                self.install_ffdec(LOCATION_FLATPAK, ARGS_FLATPAK),
+                self.install_ffdec(LOCATION_WINDOWS),
+                self.install_ffdec(LOCATION_WOW64),
             ])
 
-            if not jpexs_installed:
+            if not ffdec_installed:
                 raise ModuleNotFoundError("Failed to locate dependency: JPEXS Flash Decompiler")
 
-            info("Using JPEXS at: %s", self.path)
+            info("Using FFDec at: %s", self.path)
 
-    def install_jpexs(self :JPEXSInterface, path: Path, args: list[str] | None = None) -> bool:
-        """Install JPEXS from a path. Return true if the installation was successful."""
+    def install_ffdec(self: FFDecInterface, path: Path, args: list[str] | None = None) -> bool:
+        """Install FFDec from a path. Return true if the installation was successful."""
         if path.exists() and args is None:
-            # Normal JPEXS install, we're just running ffdec.sh directly
+            # Normal FFDec install, we're just running ffdec.sh directly
             self.path = path
             self.args = []
             return True
 
         if path.exists():
-            # We're running JPEXS through a sandbox or proxy (like Flatpak)
-            # path.exists() checks that the path exists, but not that JPEXS is installed
-            # so we need to run jpexs -help to verify it's installed correctly
+            # We're running FFDec through a sandbox or proxy (like Flatpak)
+            # path.exists() checks that the path exists, but not that FFDec is installed
+            # so we need to run ffdec -help to verify it's installed correctly
             testrun = subprocess.run(
                 [path, *args, "-help"],
                 stdout=subprocess.DEVNULL,
@@ -85,7 +85,7 @@ class JPEXSInterface:
         return False
 
     def dump_xml(
-        self: JPEXSInterface,
+        self: FFDecInterface,
         inputfile: Path,
         output_dir: Path,
     ) -> bool:
@@ -102,7 +102,7 @@ class JPEXSInterface:
         return process.returncode == 0
 
     def rebuild_xml(
-        self: JPEXSInterface,
+        self: FFDecInterface,
         input_dir: Path,
         output_file: Path,
     ) -> bool:
@@ -118,7 +118,7 @@ class JPEXSInterface:
         return process.returncode == 0
 
     def export_scripts(
-        self: JPEXSInterface,
+        self: FFDecInterface,
         inputfile: Path,
         output_dir: Path,
     ) -> bool:
@@ -146,7 +146,7 @@ class JPEXSInterface:
         return process.returncode == 0
 
     def recompile_data(
-        self: JPEXSInterface,
+        self: FFDecInterface,
         part: str,
         decomp_location: Path,
         swf: Path,

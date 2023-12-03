@@ -4,19 +4,19 @@ import base64
 from logging import error, info
 from pathlib import Path
 
-from compile.jpexs import JPEXSInterface
+from compile.ffdec import FFDecInterface
 from exception_handle.dependency import DependencyError
 
 class CompilationManager:
     """Manage Flash compilation and decompilation, including caching.
 
-    This class should not call JPEXS directly, instead it should use the JPEXSInterface.
+    This class should not call FFDec directly, instead it should use the FFDecInterface.
     """
 
-    decompiler: JPEXSInterface
+    decompiler: FFDecInterface
 
     def __init__(self: CompilationManager) -> None:
-        self.decompiler = JPEXSInterface()
+        self.decompiler = FFDecInterface()
 
     def decompile(
         self: CompilationManager,
@@ -67,7 +67,7 @@ class CompilationManager:
                 decomp = self.decompiler.export_scripts(inputfile, cache_location)
 
             if not decomp:
-                failure_mesg = f"""JPEXS couldn't decompile the SWF file: {inputfile}.
+                failure_mesg = f"""FFDec couldn't decompile the SWF file: {inputfile}.
                     Aborting..."""
 
                 error(failure_mesg)
@@ -89,7 +89,7 @@ class CompilationManager:
         recomp = self.decompiler.recompile_data(part, decomp_location, swf, output)
 
         if not recomp:
-            failure_mesg = f"""JPEXS couldn't recompile the SWF file: {swf}.
+            failure_mesg = f"""FFDec couldn't recompile the SWF file: {swf}.
                 Aborting.."""
 
             error(failure_mesg)
@@ -117,6 +117,6 @@ class CompilationManager:
 
         if recompile_all:
             for part in ("Images", "Sounds", "Shapes", "Text"):
-                # JPEXS doesn't have a way to import everything at once.
+                # FFDec doesn't have a way to import everything at once.
                 # We re-import iteratively.
                 self.recompile_with_check(part, injection, output, output)

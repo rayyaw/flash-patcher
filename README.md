@@ -12,7 +12,7 @@ You must have `gh-update` installed to receive automatic updates. For more info,
 
 You must install JPEXS Free Flash Decompiler to use this patcher. For more information, check https://github.com/jindrapetrik/jpexs-decompiler.
 
-Flash Patcher will automatically detect your JPEXS install location.
+Flash Patcher will automatically detect your FFDec install location.
 
 You must have Python 3.10 or greater on your system to run this script, including the `antlr4-python3-runtime` pip package.
 
@@ -85,7 +85,7 @@ end-patch
 remove frame_1/DoAction.as 789-1111
 ```
 
-You can use \# to write comments. There are two types of commands, `add` and `remove`. The first parameter to any command is the file to modify (in this case, "DefineSprite_1058 boss2/DoAction.as" or "frame_1/DoAction.as"). To find the name of this, export all scripts using JPEXS and make a note of the file name you want to modify.
+You can use \# to write comments. There are two types of commands, `add` and `remove`. The first parameter to any command is the file to modify (in this case, "DefineSprite_1058 boss2/DoAction.as" or "frame_1/DoAction.as"). To find the name of this, export all scripts using FFDec and make a note of the file name you want to modify.
 
 You are allowed to put multiple `add` statements before a code block you wish to inject.
 

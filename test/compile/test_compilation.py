@@ -13,12 +13,12 @@ from pytest import raises
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
 from compile.compilation import CompilationManager
-from compile.jpexs import JPEXSInterface
+from compile.ffdec import FFDecInterface
 from exception_handle.dependency import DependencyError
 
 class CompilationManagerSpec (TestCase):
 
-    mock_decompiler: MagicMock[JPEXSInterface]
+    mock_decompiler: MagicMock[FFDecInterface]
     compilation_manager: CompilationManager
 
     swf: Path
@@ -28,9 +28,9 @@ class CompilationManagerSpec (TestCase):
     def __init__(self: CompilationManagerSpec, methodName: str = "runTest") -> None:
         super().__init__(methodName)
 
-        # Manual initialization required to mock the internal JPEXS interface
+        # Manual initialization required to mock the internal FFDec interface
         self.compilation_manager = CompilationManager()
-        self.mock_decompiler = MagicMock(spec=JPEXSInterface)
+        self.mock_decompiler = MagicMock(spec=FFDecInterface)
         self.compilation_manager.decompiler = self.mock_decompiler
 
         self.swf = Path("test.swf")
@@ -127,7 +127,7 @@ class CompilationManagerSpec (TestCase):
         self.mock_decompiler.assert_not_called()
 
     @patch('pathlib.Path.exists')
-    def test_decompile_failure_jpexs_error(
+    def test_decompile_failure_ffdec_error(
         self: CompilationManagerSpec,
         mock_path_exists: MagicMock,
     ) -> None:

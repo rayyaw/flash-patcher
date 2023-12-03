@@ -1,5 +1,5 @@
 # Common setup for all GitHub workflows of Flash Patcher
-echo -e "\nInstalling JPEXS..."
+echo -e "\nInstalling FFDec..."
 wget https://github.com/jindrapetrik/jpexs-decompiler/releases/download/version20.0.0/ffdec_20.0.0.deb
 sudo apt install ./ffdec_20.0.0.deb
 
