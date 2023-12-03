@@ -3,14 +3,14 @@ from __future__ import annotations
 from logging import exception
 from pathlib import Path
 
-from antlr_source.PatchfileParser import PatchfileParser
-from antlr_source.PatchfileParserVisitor import PatchfileParserVisitor
+from ...antlr_source.PatchfileParser import PatchfileParser
+from ...antlr_source.PatchfileParserVisitor import PatchfileParserVisitor
 
-from exception_handle.error_manager import ErrorManager
-from inject.bulk_injection import BulkInjectionManager
-from inject.injection_location import InjectionLocation
-from inject.single_injection import SingleInjectionManager
-from util.file_io import readlines_safe, writelines_safe
+from ...exception_handle.error_manager import ErrorManager
+from ...inject.bulk_injection import BulkInjectionManager
+from ...inject.injection_location import InjectionLocation
+from ...inject.single_injection import SingleInjectionManager
+from ...util.file_io import readlines_safe, writelines_safe
 
 class PatchfileProcessor (PatchfileParserVisitor):
     """This class inherits from the ANTLR visitor to process patch files.

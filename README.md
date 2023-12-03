@@ -34,6 +34,8 @@ The recommended way to install Flash Patcher is through pip. You can do this via
 
 If you want to build the Flash Patcher .whl file locally, run `cd build && make wheel`. The .whl will be generated in the dist/ folder. The `hatch` pip package is required to run the build.
 
+If you want to build from source, you should then use `pip` to install the generated wheel file in `dist`,
+
 You can also install Flash Patcher by running `cd build && make && sudo make install`. After this, you can run Flash Patcher with `flash-patcher [args]`.
 
 The command line arguments are as follows:

@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from exception_handle.error_manager import ErrorManager
-from inject.injection_location import InjectionLocation
-from util.file_io import readlines_safe, writelines_safe
+from ..exception_handle.error_manager import ErrorManager
+from .injection_location import InjectionLocation
+from ..util.file_io import readlines_safe, writelines_safe
 
 class SingleInjectionManager:
     """A position in a named file."""

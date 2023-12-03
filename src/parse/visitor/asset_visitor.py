@@ -4,8 +4,8 @@ import shutil
 from logging import exception
 from pathlib import Path
 
-from antlr_source.AssetPackParser import AssetPackParser
-from antlr_source.AssetPackVisitor import AssetPackVisitor
+from ...antlr_source.AssetPackParser import AssetPackParser
+from ...antlr_source.AssetPackVisitor import AssetPackVisitor
 
 class AssetPackProcessor (AssetPackVisitor):
     """This class inherits from the ANTLR visitor to process asset pack files.

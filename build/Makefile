@@ -1,17 +1,8 @@
 # If you don't have antlr4 CLI, run export ANTLR_TARGET=antlr-java in your CLI
 ANTLR_TARGET ?= antlr
 
-# Package everything into an executable zip file
-# The find rule creates an __init__.py in all subdirectories, including nested subdirectories
-all: $(ANTLR_TARGET)
-	cp -r ../src/* .
-	find . -type d -exec touch {}/__init__.py \;
-	zip -r -D ../flash-patcher.zip . > /dev/null
-	echo "#!/usr/bin/env python3" | /usr/bin/cat - ../flash-patcher.zip > ../flash-patcher
-	chmod +x ../flash-patcher
-
 # Build the python project using hatch.
-wheel: $(ANTLR_TARGET)
+make: $(ANTLR_TARGET)
 	rm -rf flash_patcher
 	cp -r ../src .
 	mv src flash_patcher
@@ -45,10 +36,6 @@ antlr-java: antlr-copy
 	java -jar ${GITHUB_WORKSPACE}/antlr-4.13.1-complete.jar -Dlanguage=Python3 -visitor ../src/antlr_source/PatchfileParser.g4
 	java -jar ${GITHUB_WORKSPACE}/antlr-4.13.1-complete.jar -Dlanguage=Python3 -visitor ../src/antlr_source/AssetPack.g4
 	java -jar ${GITHUB_WORKSPACE}/antlr-4.13.1-complete.jar -Dlanguage=Python3 -visitor ../src/antlr_source/Stagefile.g4
-
-# Install the zip to /usr/local/bin
-install:
-	sudo cp ../flash-patcher /usr/local/bin
 
 # Run Pylint pull-request checks
 pylint: $(ANTLR_TARGET)

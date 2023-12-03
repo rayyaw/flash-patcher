@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from antlr_source.StagefileParser import StagefileParser
-from antlr_source.StagefileVisitor import StagefileVisitor
+from ...antlr_source.StagefileParser import StagefileParser
+from ...antlr_source.StagefileVisitor import StagefileVisitor
 
-from parse.asset import AssetPackManager
-from parse.patch import PatchfileManager
+from ..asset import AssetPackManager
+from ..patch import PatchfileManager
 
 class StagefileProcessor (StagefileVisitor):
     """This class inherits from the ANTLR visitor to process stage files.

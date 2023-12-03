@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from exception_handle.error_manager import ErrorManager
+from ..exception_handle.error_manager import ErrorManager
 
 class InjectionLocation:
     """Store the location within a file to inject at.

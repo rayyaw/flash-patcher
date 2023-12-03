@@ -3,9 +3,9 @@
 import argparse
 from pathlib import Path
 
-from patcher import main
+from .patcher import main
 
-if __name__ == "__main__":
+def cli():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -75,3 +75,7 @@ if __name__ == "__main__":
         recompile_all=args.recompile_all,
         xml_mode=args.xml_mode,
     )
+
+
+if __name__ == "__main__":
+    cli()

@@ -1,13 +1,12 @@
-from __init__ import __version__
-
 from logging import basicConfig, exception, info
+from importlib.metadata import version
 from pathlib import Path
 
-from compile.compilation import CompilationManager
-from compile.locate_decomp import get_decomp_locations
-from exception_handle.dependency import DependencyError
-from parse.stage import StagefileManager
-from util.file_copy import clean_scripts, copy_file
+from .compile.compilation import CompilationManager
+from .compile.locate_decomp import get_decomp_locations
+from .exception_handle.dependency import DependencyError
+from .parse.stage import StagefileManager
+from .util.file_copy import clean_scripts, copy_file
 
 # pylint: disable=pointless-string-statement
 """
@@ -38,7 +37,8 @@ def main(
     xml_mode: bool = False,
 ) -> None:
     """Run the patcher."""
-    info("Riley's SWF Patcher - v%s", __version__)
+    __version__ = version("flash_patcher")
+    info(f"Riley's SWF Patcher - v{__version__}")
 
     try:
         compiler = CompilationManager()

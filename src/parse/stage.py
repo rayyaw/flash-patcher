@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from antlr_source.StagefileLexer import StagefileLexer
-from antlr_source.StagefileParser import StagefileParser
-from parse.common import CommonParseManager
-from parse.visitor.stage_visitor import StagefileProcessor
+from ..antlr_source.StagefileLexer import StagefileLexer
+from ..antlr_source.StagefileParser import StagefileParser
+
+from .common import CommonParseManager
+from .visitor.stage_visitor import StagefileProcessor
 
 class StagefileManager:
     """Manage stage files."""
