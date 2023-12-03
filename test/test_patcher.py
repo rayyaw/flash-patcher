@@ -53,8 +53,8 @@ def test_main_success(
     mock_shutil_copytree.assert_called_once_with(cache, Path("./.Patcher-Temp/mod/"))
 
 @patch('compile.compilation.CompilationManager.__init__')
-def test_main_failure_no_jpexs(mock_compilation_manager: MagicMock) -> None:
-    mock_compilation_manager.side_effect = ModuleNotFoundError("no JPEXS")
+def test_main_failure_no_ffdec(mock_compilation_manager: MagicMock) -> None:
+    mock_compilation_manager.side_effect = ModuleNotFoundError("no FFDec")
 
     with raises(DependencyError):
         main(
