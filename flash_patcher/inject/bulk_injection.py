@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from inject.single_injection import SingleInjectionManager
+from flash_patcher.inject.single_injection import SingleInjectionManager
 
 class BulkInjectionManager:
     """Handles injection of code into script files.

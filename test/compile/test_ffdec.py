@@ -1,18 +1,12 @@
 from __future__ import annotations
 
-import sys
-import os
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from pytest import raises
 
-# Add the 'src' directory to the Python path
-# Not doing this causes import errors
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
-
-from compile.ffdec import FFDecInterface
+from flash_patcher.compile.ffdec import FFDecInterface
 
 class FFDecInterfaceSpec (TestCase):
 
@@ -46,7 +40,7 @@ class FFDecInterfaceSpec (TestCase):
         assert self.interface.path == self.ffdec_path
         assert self.interface.args == ["--derppotato"]
 
-    @patch('compile.ffdec.FFDecInterface.install_ffdec')
+    @patch('flash_patcher.compile.ffdec.FFDecInterface.install_ffdec')
     def test_automatic_installation_complete_failure_not_found(
         self: FFDecInterfaceSpec,
         mock_install_ffdec: MagicMock

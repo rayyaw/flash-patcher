@@ -1,12 +1,14 @@
 # Riley's SWF Patcher
 
+[![Pylint](https://github.com/rayyaw/flash-patcher/actions/workflows/pylint.yml/badge.svg)](https://github.com/rayyaw/flash-patcher/actions/workflows/pylint.yml)
+[![Unit Tests](https://github.com/rayyaw/flash-patcher/actions/workflows/unittest.yml/badge.svg)](https://github.com/rayyaw/flash-patcher/actions/workflows/unittest.yml)
+[![Integration Tests](https://github.com/rayyaw/flash-patcher/actions/workflows/integrationtest.yml/badge.svg)](https://github.com/rayyaw/flash-patcher/actions/workflows/integrationtest.yml)
+
 ## Requirements
 
 ### Build Dependencies
 
 To compile this project yourself, you must install ANTLR. You can view more information at https://www.antlr.org/. For most linux distributions, this will be available as `antlr4` through your package manager.
-
-You must have `gh-update` installed to receive automatic updates. For more info, see https://github.com/rayyaw/gh-update.
 
 ### Runtime Dependencies
 
@@ -28,9 +30,13 @@ To apply a patch, run the following command:
 
 The patcher will take the input SWF, apply the patches specified in the stage file (which must be located in the patch folder), and create the output SWF.
 
-You can also install Flash Patcher by running `cd build && make && sudo make install`. After this, you can run Flash Patcher with `flash-patcher [args]`.
+The recommended way to install Flash Patcher is through pip. You can do this via [TODO].
 
-To install without automatic updates, you can run `cd build && make && sudo make install-lite` instead.
+If you want to build the Flash Patcher .whl file locally, run `cd build && make wheel`. The .whl will be generated in the dist/ folder. The `hatch` pip package is required to run the build.
+
+If you want to build from source, you should then use `pip` to install the generated wheel file in `dist`,
+
+You can also install Flash Patcher by running `cd build && make && sudo make install`. After this, you can run Flash Patcher with `flash-patcher [args]`.
 
 The command line arguments are as follows:
 

@@ -1,7 +1,7 @@
 from logging import exception
 from pathlib import Path
 
-from exception_handle.error_manager import ErrorManager
+from flash_patcher.exception_handle.error_manager import ErrorManager
 
 def read_safe(file_location: Path, error_manager: ErrorManager) -> str:
     """Read the full content from a file.

@@ -54,7 +54,12 @@ class FFDecInterface:
             ])
 
             if not ffdec_installed:
-                raise ModuleNotFoundError("Failed to locate dependency: JPEXS Flash Decompiler")
+                raise ModuleNotFoundError(
+                    """Failed to locate dependency: JPEXS Flash Decompiler.
+                    You can download FFDec from this link:
+                    https://github.com/jindrapetrik/jpexs-decompiler/releases
+                    """
+                )
 
             info("Using FFDec at: %s", self.path)
 

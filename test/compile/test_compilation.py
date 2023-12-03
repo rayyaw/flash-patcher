@@ -1,20 +1,14 @@
 from __future__ import annotations
 
-import sys
-import os
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import call, MagicMock, patch
 
 from pytest import raises
 
-# Add the 'src' directory to the Python path
-# Not doing this causes import errors
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
-
-from compile.compilation import CompilationManager
-from compile.ffdec import FFDecInterface
-from exception_handle.dependency import DependencyError
+from flash_patcher.compile.compilation import CompilationManager
+from flash_patcher.compile.ffdec import FFDecInterface
+from flash_patcher.exception_handle.dependency import DependencyError
 
 class CompilationManagerSpec (TestCase):
 
@@ -173,7 +167,7 @@ class CompilationManagerSpec (TestCase):
         self.compilation_manager.recompile(self.folder, self.folder, self.swf, xml_mode=True)
         self.mock_decompiler.rebuild_xml.assert_called_once_with(self.folder, self.swf)
 
-    @patch('compile.compilation.CompilationManager.recompile_with_check')
+    @patch('flash_patcher.compile.compilation.CompilationManager.recompile_with_check')
     def test_recompile_success_full(
         self: CompilationManagerSpec,
         mock_recompile_with_check: MagicMock
@@ -193,7 +187,7 @@ class CompilationManagerSpec (TestCase):
         mock_recompile_with_check.assert_has_calls(expected_calls)
         assert mock_recompile_with_check.call_count == 5
 
-    @patch('compile.compilation.CompilationManager.recompile_with_check')
+    @patch('flash_patcher.compile.compilation.CompilationManager.recompile_with_check')
     def test_recompile_success_script_only(
         self: CompilationManagerSpec,
         mock_recompile_with_check: MagicMock,

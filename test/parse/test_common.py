@@ -1,21 +1,15 @@
 from __future__ import annotations
 
-import sys
-import os
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from pytest import raises
 
-# Add the 'src' directory to the Python path
-# Not doing this causes import errors
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
-
-from antlr_source.PatchfileLexer import PatchfileLexer
-from antlr_source.PatchfileParser import PatchfileParser
-from exception_handle.dependency import DependencyError
-from parse.common import CommonParseManager
+from flash_patcher.antlr_source.PatchfileLexer import PatchfileLexer
+from flash_patcher.antlr_source.PatchfileParser import PatchfileParser
+from flash_patcher.exception_handle.dependency import DependencyError
+from flash_patcher.parse.common import CommonParseManager
 
 class CommonParseManagerSpec (TestCase):
 
@@ -55,7 +49,7 @@ class CommonParseManagerSpec (TestCase):
         assert parse_tree.addBlock()[0].getText().startswith("addframe_1/DoAction")
         assert parse_tree.addBlock()[0].getText().endswith("end-patch")
 
-    @patch('parse.common.CommonParseManager.parse_input')
+    @patch('flash_patcher.parse.common.CommonParseManager.parse_input')
     def test_get_root_failure_parse_exception(
         self: CommonParseManagerSpec,
         mock_parse_input: MagicMock,

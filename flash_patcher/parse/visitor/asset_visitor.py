@@ -4,8 +4,8 @@ import shutil
 from logging import exception
 from pathlib import Path
 
-from antlr_source.AssetPackParser import AssetPackParser
-from antlr_source.AssetPackVisitor import AssetPackVisitor
+from flash_patcher.antlr_source.AssetPackParser import AssetPackParser
+from flash_patcher.antlr_source.AssetPackVisitor import AssetPackVisitor
 
 class AssetPackProcessor (AssetPackVisitor):
     """This class inherits from the ANTLR visitor to process asset pack files.
@@ -23,6 +23,7 @@ class AssetPackProcessor (AssetPackVisitor):
         self.modified_scripts = set()
 
     def visitAddAssetBlock(self, ctx: AssetPackParser.AddAssetBlockContext) -> None:
+        """In an Add Asset block, we should take the specified assets and copy them into the SWF"""
         local_name = ctx.local.getText()
         remote_name = ctx.swf.getText()
 
@@ -43,5 +44,6 @@ class AssetPackProcessor (AssetPackVisitor):
         self.modified_scripts.add(self.decomp_location / remote_name)
 
     def visitRoot(self, ctx: AssetPackParser.RootContext) -> set:
+        """Root function. Call this when running the visitor."""
         super().visitRoot(ctx)
         return self.modified_scripts

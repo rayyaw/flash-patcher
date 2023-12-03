@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from logging import error
 
-from exception_handle.injection import InjectionError
+from flash_patcher.exception_handle.injection import InjectionError
 
 class ErrorManager:
     """Handle exceptions thrown by Flash Patcher during the injection stage."""

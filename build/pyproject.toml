@@ -1,0 +1,89 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "flash-patcher"
+description = "Riley's SWF patcher"
+version = "4.1.10"
+readme = "../README.md"
+license = { file = "../LICENSE" }
+authors = [
+    {name = "RileyTech", email = "rayyawspeedruns@gmail.com"},
+    {name = "qtkito", email = "gtcreyon@gmail.com"},
+    {name = "GTcreyon", email = "gtcreyon@gmail.com"},
+]
+keywords = [
+    "flash",
+    "patcher",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: Free To Use But Restricted",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Compilers",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "antlr4-python3-runtime >=4.7.0",
+]
+
+[project.urls]
+Documentation = "https://github.com/rayyaw/flash-patcher"
+Source = "https://github.com/rayyaw/flash-patcher"
+History = "https://github.com/rayyaw/flash-patcher"
+Issues = "https://github.com/rayyaw/flash-patcher/issues"
+
+[project.scripts]
+flash-patcher = "flash_patcher.__main__:cli"
+
+[tool.hatch.build.force-include]
+"flash_patcher/antlr_source" = "flash_patcher/antlr_source"
+
+[tool.hatch.envs.test]
+dependencies = [
+    "pytest",
+    "coverage",
+]
+[tool.hatch.envs.test.scripts]
+test = [
+    "cd build",
+    "make test",
+]
+with-coverage = "test"
+[[tool.hatch.envs.test.matrix]]
+python = ["3.10", "3.11", "3.12"]
+type = ["default", "min-req"]
+
+[tool.hatch.envs.integration]
+[tool.hatch.envs.integration.scripts]
+test = [
+    "cd build",
+    "make",
+    "git clone https://github.com/rayyaw/flash-patcher-tests.git",
+    "cd flash-patcher-tests",
+    "./run-all-tests.sh",
+]
+[[tool.hatch.envs.integration.matrix]]
+python = ["3.10", "3.11", "3.12"]
+type = ["default"]
+
+[tool.hatch.envs.style]
+detached = true
+dependencies = [
+    "pylint",
+]
+[tool.hatch.envs.style.scripts]
+lint = [
+    "cd build",
+    "make pylint"
+]

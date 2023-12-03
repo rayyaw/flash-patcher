@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from antlr_source.AssetPackLexer import AssetPackLexer
-from antlr_source.AssetPackParser import AssetPackParser
+from flash_patcher.antlr_source.AssetPackLexer import AssetPackLexer
+from flash_patcher.antlr_source.AssetPackParser import AssetPackParser
 
-from parse.common import CommonParseManager
-from parse.visitor.asset_visitor import AssetPackProcessor
+from flash_patcher.parse.common import CommonParseManager
+from flash_patcher.parse.visitor.asset_visitor import AssetPackProcessor
 
 class AssetPackManager:
     """Manage asset pack files."""

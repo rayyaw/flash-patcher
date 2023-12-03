@@ -1,13 +1,7 @@
-import sys
-import os
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-# Add the 'src' directory to the Python path
-# Not doing this causes import errors
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
-
-from util.file_copy import clean_scripts, copy_file
+from flash_patcher.util.file_copy import clean_scripts, copy_file
 
 @patch('pathlib.Path.unlink')
 def test_clean_scripts_success(

@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from antlr_source.PatchfileLexer import PatchfileLexer
-from antlr_source.PatchfileParser import PatchfileParser
+from flash_patcher.antlr_source.PatchfileLexer import PatchfileLexer
+from flash_patcher.antlr_source.PatchfileParser import PatchfileParser
 
-from parse.common import CommonParseManager
-from parse.visitor.patch_visitor import PatchfileProcessor
+from flash_patcher.parse.common import CommonParseManager
+from flash_patcher.parse.visitor.patch_visitor import PatchfileProcessor
 
 class PatchfileManager:
     """Manage patch files."""

@@ -1,21 +1,15 @@
-import sys
-import os
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from pytest import raises
 
-# Add the 'src' directory to the Python path
-# Not doing this causes import errors
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-
-from exception_handle.dependency import DependencyError
-from patcher import main
+from flash_patcher.exception_handle.dependency import DependencyError
+from flash_patcher.patcher import main
 
 @patch('shutil.copytree')
-@patch('parse.stage.StagefileManager.parse')
-@patch('compile.compilation.CompilationManager.recompile')
-@patch('compile.compilation.CompilationManager.decompile')
+@patch('flash_patcher.parse.stage.StagefileManager.parse')
+@patch('flash_patcher.compile.compilation.CompilationManager.recompile')
+@patch('flash_patcher.compile.compilation.CompilationManager.decompile')
 def test_main_success(
     mock_decompile: MagicMock,
     mock_recompile: MagicMock,
@@ -52,7 +46,7 @@ def test_main_success(
 
     mock_shutil_copytree.assert_called_once_with(cache, Path("./.Patcher-Temp/mod/"))
 
-@patch('compile.compilation.CompilationManager.__init__')
+@patch('flash_patcher.compile.compilation.CompilationManager.__init__')
 def test_main_failure_no_ffdec(mock_compilation_manager: MagicMock) -> None:
     mock_compilation_manager.side_effect = ModuleNotFoundError("no FFDec")
 

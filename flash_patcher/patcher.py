@@ -1,11 +1,12 @@
 from logging import basicConfig, exception, info
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
-from compile.compilation import CompilationManager
-from compile.locate_decomp import get_decomp_locations
-from exception_handle.dependency import DependencyError
-from parse.stage import StagefileManager
-from util.file_copy import clean_scripts, copy_file
+from flash_patcher.compile.compilation import CompilationManager
+from flash_patcher.compile.locate_decomp import get_decomp_locations
+from flash_patcher.exception_handle.dependency import DependencyError
+from flash_patcher.parse.stage import StagefileManager
+from flash_patcher.util.file_copy import clean_scripts, copy_file
 
 # pylint: disable=pointless-string-statement
 """
@@ -26,8 +27,6 @@ See the README for documentation and license.
 
 basicConfig(level=1, format="%(levelname)s: %(message)s")
 
-CURRENT_VERSION = "v4.1.9"
-
 def main(
     inputfile: Path,
     folder: Path,
@@ -38,7 +37,12 @@ def main(
     xml_mode: bool = False,
 ) -> None:
     """Run the patcher."""
-    info("Riley's SWF Patcher - %s", CURRENT_VERSION)
+    try:
+        __version__ = version("flash_patcher")
+    except PackageNotFoundError:
+        __version__ = "Unit Tests"
+
+    info(f"Riley's SWF Patcher - v{__version__}")
 
     try:
         compiler = CompilationManager()

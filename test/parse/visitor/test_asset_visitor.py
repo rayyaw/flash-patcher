@@ -1,21 +1,15 @@
 from __future__ import annotations
 
-import sys
-import os
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from pytest import raises
 
-# Add the 'src' directory to the Python path
-# Not doing this causes import errors
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
-
-from antlr_source.AssetPackLexer import AssetPackLexer
-from antlr_source.AssetPackParser import AssetPackParser
-from parse.common import CommonParseManager
-from parse.visitor.asset_visitor import AssetPackProcessor
+from flash_patcher.antlr_source.AssetPackLexer import AssetPackLexer
+from flash_patcher.antlr_source.AssetPackParser import AssetPackParser
+from flash_patcher.parse.common import CommonParseManager
+from flash_patcher.parse.visitor.asset_visitor import AssetPackProcessor
 
 class AssetPackVisitorSpec (TestCase):
 
@@ -89,7 +83,7 @@ class AssetPackVisitorSpec (TestCase):
         with raises(FileNotFoundError):
             self.asset_pack_visitor.visitRoot(self.root_context)
 
-    @patch('parse.visitor.asset_visitor.AssetPackProcessor.visitAddAssetBlock')
+    @patch('flash_patcher.parse.visitor.asset_visitor.AssetPackProcessor.visitAddAssetBlock')
     def test_visit_root_context_success(
         self: AssetPackVisitorSpec,
         mock_visit_add: MagicMock,
