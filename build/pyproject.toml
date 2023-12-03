@@ -10,7 +10,7 @@ readme = "../README.md"
 license = { file = "../LICENSE" }
 authors = [
     {name = "RileyTech", email = "rayyawspeedruns@gmail.com"},
-    {name = "qtkito"},
+    {name = "qtkito", email = "gtcreyon@gmail.com"},
     {name = "GTcreyon", email = "gtcreyon@gmail.com"},
 ]
 keywords = [

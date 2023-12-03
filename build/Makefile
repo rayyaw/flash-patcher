@@ -8,6 +8,7 @@ make: $(ANTLR_TARGET)
 	find . -type d -exec touch {}/__init__.py \;
 	hatch build
 	cp -r dist ..
+	rm -f ../dist/__init__.py
 
 # Move stuff to antlr-source in preparation for compilation
 antlr-copy:
