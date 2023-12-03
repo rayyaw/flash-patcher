@@ -12,11 +12,11 @@ To compile this project yourself, you must install ANTLR. You can view more info
 
 ### Runtime Dependencies
 
-You must install JPEXS Free Flash Decompiler to use this patcher. For more information, check https://github.com/jindrapetrik/jpexs-decompiler. You must install this manually.
+You must install JPEXS Free Flash Decompiler to use this patcher. For more information, check https://github.com/jindrapetrik/jpexs-decompiler. This will need to be installed manually.
 
 Flash Patcher will automatically detect your FFDec install location.
 
-You must have Python 3.10 or greater on your system to run this script, including the `antlr4-python3-runtime` pip package. If you install through pip, these will automatically be verified and installed.
+You must have Python 3.10 or greater on your system to run this script, including the `antlr4-python3-runtime` pip package. This will be installed and verified automatically when installing through pip.
 
 ## Testing
 
@@ -24,13 +24,11 @@ To run unit tests, simply run `make test` from the `build` folder. You must have
 
 ## Installing and running
 
-To apply a patch, run the following command:
-
-`./flash-patcher.py`
+To apply a patch, run the `flash-patcher` command.
 
 The patcher will take the input SWF, apply the patches specified in the stage file (which must be located in the patch folder), and create the output SWF.
 
-The recommended way to install Flash Patcher is through pip. You can do this via [TODO].
+The recommended way to install Flash Patcher is through pip. You can do this via TestPyPI with `pip install -i https://test.pypi.org/simple/ flash-patcher` until we are approved to create an account on the production PyPI environment.
 
 If you want to build the Flash Patcher .whl file locally, run `cd build && make wheel`. The .whl will be generated in the dist/ folder. The `hatch` pip package is required to run the build.
 
