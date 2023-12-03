@@ -1,3 +1,5 @@
+from __init__ import __version__
+
 from logging import basicConfig, exception, info
 from pathlib import Path
 
@@ -26,8 +28,6 @@ See the README for documentation and license.
 
 basicConfig(level=1, format="%(levelname)s: %(message)s")
 
-CURRENT_VERSION = "v4.1.9"
-
 def main(
     inputfile: Path,
     folder: Path,
@@ -38,7 +38,7 @@ def main(
     xml_mode: bool = False,
 ) -> None:
     """Run the patcher."""
-    info("Riley's SWF Patcher - %s", CURRENT_VERSION)
+    info("Riley's SWF Patcher - v%s", __version__)
 
     try:
         compiler = CompilationManager()

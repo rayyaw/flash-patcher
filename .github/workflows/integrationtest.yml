@@ -26,7 +26,7 @@ jobs:
       run: |
         cd build
         export ANTLR_TARGET=antlr-java
-        make && sudo make install-lite
+        make && sudo make install
         cd ..
     - name: Install test library
       run: |

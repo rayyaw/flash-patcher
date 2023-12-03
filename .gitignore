@@ -1,10 +1,10 @@
 # Build files
-.Patcher-Temp/
-
 build/
 !build/Makefile
+!build/pyproject.toml
 __pycache__/
 __init__.py
+!src/__init__.py
 
 # ANTLR files
 .antlr/
@@ -18,4 +18,6 @@ src/antlr_source/
 # Misc files and folders
 flash-patcher.zip
 flash-patcher
+.Patcher-Temp/
+dist/
 venv/

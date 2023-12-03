@@ -13,6 +13,16 @@ all: $(ANTLR_TARGET)
 	echo "#!/usr/bin/env python3" | /usr/bin/cat - ../flash-patcher.zip > ../flash-patcher
 	chmod +x ../flash-patcher
 
+
+# Build the python project using hatch.
+wheel: $(ANTLR_TARGET)
+	rm -rf flash_patcher
+	cp -r ../src .
+	mv src flash_patcher
+	find . -type d -exec touch {}/__init__.py \;
+	hatch build
+	cp -r dist ..
+
 # Move stuff to antlr-source in preparation for compilation
 antlr-copy:
 	cp ../src/antlr/*.g4 ../src/antlr_source
@@ -41,13 +51,8 @@ antlr-java: antlr-copy
 	java -jar ${GITHUB_WORKSPACE}/antlr-4.13.1-complete.jar -Dlanguage=Python3 -visitor ../src/antlr_source/Stagefile.g4
 
 # Install the zip to /usr/local/bin
-install-lite:
-	sudo cp ../flash-patcher /usr/local/bin
-
-# Install the zip to /usr/local/bin, and install the gh-update files
 install:
 	sudo cp ../flash-patcher /usr/local/bin
-	sudo cp ../flash-patcher.json /var/gh-update/flash-patcher.json
 
 # Run Pylint pull-request checks
 pylint: $(ANTLR_TARGET)
@@ -81,9 +86,12 @@ test: $(ANTLR_TARGET)
 # Delete all temp files used for compilation.
 # We use find to delete all __init__.py and __pycache__ files and folders
 # We also use find to delete everything in those directories, except for specific items
+# We use rm -f to delete without erroring out if the file does not exist
 clean:
 	find ../test                           -name __init__.py -delete
+	find ../src              -mindepth 2   -name __init__.py -delete
 	find .. -type d                        -name __pycache__ -exec rm -r {} +
-	find .                   -mindepth 1 ! -name 'Makefile' -delete
+	find .                   -mindepth 1 ! -name 'Makefile' -name 'pyproject.toml' -delete
 	find ../src/antlr_source -mindepth 1 ! -name '.gitkeep' -delete
-	rm ../flash-patcher ../flash-patcher.zip
+	rm -rf ../dist
+	rm -f ../flash-patcher ../flash-patcher.zip
