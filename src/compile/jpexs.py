@@ -73,6 +73,7 @@ class JPEXSInterface:
             testrun = subprocess.run(
                 [path, *args, "-help"],
                 stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
                 check=False,
             )
 

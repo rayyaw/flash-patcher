@@ -10,7 +10,7 @@ all: $(ANTLR_TARGET)
 	cp -r ../src/* .
 	find . -type d -exec touch {}/__init__.py \;
 	zip -r -D ../flash-patcher.zip . > /dev/null
-	echo "#!/usr/bin/python3" | /usr/bin/cat - ../flash-patcher.zip > ../flash-patcher
+	echo "#!/usr/bin/env python3" | /usr/bin/cat - ../flash-patcher.zip > ../flash-patcher
 	chmod +x ../flash-patcher
 
 # Move stuff to antlr-source in preparation for compilation

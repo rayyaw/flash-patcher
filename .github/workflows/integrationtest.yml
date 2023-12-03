@@ -1,4 +1,4 @@
-name: Pylint
+name: Integration Tests
 
 on: [pull_request, workflow_dispatch]
 
@@ -22,8 +22,16 @@ jobs:
     - name: Install Common Dependencies
       run: |
         source .github/common-setup.sh
-    - name: Pylint style analysis
+    - name: Install Flash Patcher
       run: |
-        export ANTLR_TARGET=antlr-java
         cd build
-        make pylint
+        export ANTLR_TARGET=antlr-java
+        make && sudo make install-lite
+        cd ..
+    - name: Install test library
+      run: |
+        git clone https://github.com/rayyaw/flash-patcher-tests.git
+    - name: Run integration tests
+      run: |
+        cd flash-patcher-tests
+        ./run-all-tests.sh
