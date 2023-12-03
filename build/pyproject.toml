@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "flash-patcher"
 description = "Riley's SWF patcher"
-dynamic = ["version"]
+version = "4.1.10"
 readme = "../README.md"
 license = { file = "../LICENSE" }
 authors = [
@@ -45,9 +45,6 @@ Issues = "https://github.com/rayyaw/flash-patcher/issues"
 
 [project.scripts]
 flash-patcher = "flash_patcher.__main__:cli"
-
-[tool.hatch.version]
-path = "flash_patcher/__init__.py"
 
 [tool.hatch.envs.test]
 dependencies = [
