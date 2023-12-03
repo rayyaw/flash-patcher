@@ -43,6 +43,7 @@ class StagefileProcessor (StagefileVisitor):
         self: StagefileProcessor,
         ctx: StagefileParser.PatchFileContext
     ) -> None:
+        """When we encounter a patch file, we should open and process it"""
         self.modified_scripts |= PatchfileManager(
             self.decomp_location_with_scripts, self.folder / ctx.getText()
         ).parse()
@@ -51,10 +52,12 @@ class StagefileProcessor (StagefileVisitor):
         self: StagefileProcessor,
         ctx: StagefileParser.AssetPackFileContext
     ) -> None:
+        """When we encounter an asset pack, we should open and process it"""
         self.modified_scripts |= AssetPackManager(
             self.folder, self.decomp_location, self.folder / ctx.getText()
         ).parse()
 
     def visitRoot(self: StagefileProcessor, ctx: StagefileParser.RootContext) -> set:
+        """Root function. Call this when running the visitor."""
         super().visitRoot(ctx)
         return self.modified_scripts

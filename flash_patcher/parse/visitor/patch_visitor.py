@@ -34,7 +34,8 @@ class PatchfileProcessor (PatchfileParserVisitor):
         self.injector = BulkInjectionManager()
         self.modified_scripts = set()
 
-    def visitAddBlockHeader(self, ctx: PatchfileParser.AddBlockHeaderContext):
+    def visitAddBlockHeader(self, ctx: PatchfileParser.AddBlockHeaderContext) -> None:
+        """Add the headers to the injector metadata"""
         full_path = self.decomp_location_with_scripts / ctx.FILENAME().getText()
 
         inject_location = InjectionLocation(ctx.FILE_ADD_TOKEN().getText())
@@ -45,6 +46,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         self.modified_scripts.add(full_path)
 
     def visitAddBlock(self, ctx: PatchfileParser.AddBlockContext) -> None:
+        """When we visit an add block, use an injector to manage injection"""
         for header in ctx.addBlockHeader():
             self.visitAddBlockHeader(header)
 
@@ -57,6 +59,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         self.injector.clear()
 
     def visitRemoveBlock(self, ctx: PatchfileParser.RemoveBlockContext) -> None:
+        """Remove is processed manually as the command is less complex than add."""
         full_path = self.decomp_location_with_scripts / ctx.FILENAME().getText()
 
         line_start, line_end = ctx.NUMBER_RANGE().getText().split("-")
@@ -87,5 +90,6 @@ class PatchfileProcessor (PatchfileParserVisitor):
         self.modified_scripts.add(full_path)
 
     def visitRoot(self, ctx: PatchfileParser.RootContext) -> set:
+        """Root function. Call this when running the visitor."""
         super().visitRoot(ctx)
         return self.modified_scripts

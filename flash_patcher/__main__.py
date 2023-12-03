@@ -6,6 +6,7 @@ from pathlib import Path
 from flash_patcher.patcher import main
 
 def cli():
+    """Run Flash Patcher from the CLI."""
     parser = argparse.ArgumentParser()
 
     parser.add_argument(

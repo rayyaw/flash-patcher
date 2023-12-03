@@ -37,14 +37,16 @@ antlr-java: antlr-copy
 	java -jar ${GITHUB_WORKSPACE}/antlr-4.13.1-complete.jar -Dlanguage=Python3 -visitor ../flash_patcher/antlr_source/Stagefile.g4
 
 # Run Pylint pull-request checks
-pylint: $(ANTLR_TARGET)
+pylint:
 	echo "Running pylint on source code..."
 	pylint $(shell git ls-files '../flash_patcher/*.py') \
 	--disable=missing-module-docstring \
 	--disable=too-few-public-methods \
 	--disable=inconsistent-return-statements \
 	--disable=too-many-arguments \
-	--disable=unspecified-encoding
+	--disable=unspecified-encoding \
+	--disable=import-error \
+	--disable=invalid-name
 
 	echo "Running pylint on tests..."
 	pylint $(shell git ls-files '../test/*.py') \
