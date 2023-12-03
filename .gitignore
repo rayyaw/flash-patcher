@@ -4,20 +4,18 @@ build/*
 !build/pyproject.toml
 __pycache__/
 __init__.py
-!src/__init__.py
+!flash_patcher/__init__.py
 
 # ANTLR files
 .antlr/
-src/antlr_source/*
-!src/antlr_source/.gitkeep
+flash_patcher/antlr_source/*
+!flash_patcher/antlr_source/.gitkeep
 
 # Test files
 .coverage
 .pytest_cache/
 
 # Misc files and folders
-flash-patcher.zip
-flash-patcher
 .Patcher-Temp/
 dist/
 venv/
