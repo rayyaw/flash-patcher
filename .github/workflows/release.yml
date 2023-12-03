@@ -1,6 +1,7 @@
-name: Unit Tests
+name: Release to PyPI
 
-on: [push, workflow_dispatch]
+# This is explicitly not runnable manually. Manual releases should be initiated locally.
+on: [release]
 
 jobs:
   build:
@@ -22,20 +23,17 @@ jobs:
     - name: Install Common Dependencies
       run: |
         source .github/common-setup.sh
-    - name: Run unit tests
+    - name: Build Flash Patcher
       env:
         ANTLR_TARGET: antlr-java
       run: |
-        cd build && make test
-    - name: Code Coverage Report
-      uses: irongut/CodeCoverageSummary@v1.3.0
-      with:
-        filename: build/coverage.xml
-        badge: true
-        fail_below_min: true
-        format: markdown
-        hide_branch_rate: false
-        hide_complexity: true
-        indicators: true
-        output: both
-        thresholds: '90 90'
+        export ANTLR_TARGET=antlr-java
+        cd build
+        make
+        cd ..
+    - name: Release to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+      run: |
+        twine upload dist/*

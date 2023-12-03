@@ -9,7 +9,7 @@ echo 'export CLASSPATH=".:$GITHUB_WORKSPACE/antlr-4.13.1-complete.jar:$CLASSPATH
 
 echo -e "\nInstalling pip dependencies..."
 python3 -m pip install -U pytest
-python3 -m pip install antlr4-python3-runtime pylint coverage hatch
+python3 -m pip install antlr4-python3-runtime pylint coverage hatch twine
 
 echo -e "\nBuilding ANTLR files..."
 cd build && make antlr-java

@@ -23,9 +23,10 @@ jobs:
       run: |
         source .github/common-setup.sh
     - name: Install Flash Patcher
+      env:
+        ANTLR_TARGET: antlr-java
       run: |
         cd build
-        export ANTLR_TARGET=antlr-java
         make
         pip install ../dist/*.whl
         cd ..

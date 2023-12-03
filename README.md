@@ -12,11 +12,11 @@ To compile this project yourself, you must install ANTLR. You can view more info
 
 ### Runtime Dependencies
 
-You must install JPEXS Free Flash Decompiler to use this patcher. For more information, check https://github.com/jindrapetrik/jpexs-decompiler.
+You must install JPEXS Free Flash Decompiler to use this patcher. For more information, check https://github.com/jindrapetrik/jpexs-decompiler. You must install this manually.
 
 Flash Patcher will automatically detect your FFDec install location.
 
-You must have Python 3.10 or greater on your system to run this script, including the `antlr4-python3-runtime` pip package.
+You must have Python 3.10 or greater on your system to run this script, including the `antlr4-python3-runtime` pip package. If you install through pip, these will automatically be verified and installed.
 
 ## Testing
 
