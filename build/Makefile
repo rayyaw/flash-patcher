@@ -1,6 +1,3 @@
-# How to package and run multiple Python files:
-# https://stackoverflow.com/questions/9002275/how-to-build-a-single-python-file-from-multiple-scripts
-
 # If you don't have antlr4 CLI, run export ANTLR_TARGET=antlr-java in your CLI
 ANTLR_TARGET ?= antlr
 
@@ -12,7 +9,6 @@ all: $(ANTLR_TARGET)
 	zip -r -D ../flash-patcher.zip . > /dev/null
 	echo "#!/usr/bin/env python3" | /usr/bin/cat - ../flash-patcher.zip > ../flash-patcher
 	chmod +x ../flash-patcher
-
 
 # Build the python project using hatch.
 wheel: $(ANTLR_TARGET)
