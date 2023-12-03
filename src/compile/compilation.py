@@ -4,7 +4,7 @@ import base64
 from logging import error, info
 from pathlib import Path
 
-from src.compile.ffdec import FFDecInterface
+from compile.ffdec import FFDecInterface
 from exception_handle.dependency import DependencyError
 
 class CompilationManager:
