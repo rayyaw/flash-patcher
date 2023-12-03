@@ -1,16 +1,10 @@
 from __future__ import annotations
 
-import sys
-import os
 from unittest import TestCase
 from unittest.mock import MagicMock
 
-# Add the 'src' directory to the Python path
-# Not doing this causes import errors
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
-
-from inject.single_injection import SingleInjectionManager
-from inject.bulk_injection import BulkInjectionManager
+from flash_patcher.inject.single_injection import SingleInjectionManager
+from flash_patcher.inject.bulk_injection import BulkInjectionManager
 
 class BulkInjectionManagerSpec (TestCase):
 

@@ -1,17 +1,11 @@
-import sys
-import os
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from pytest import raises
 
-# Add the 'src' directory to the Python path
-# Not doing this causes import errors
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
-
-from exception_handle.error_manager import ErrorManager
-from exception_handle.injection import InjectionError
-from util.file_io import read_safe, readlines_safe, writelines_safe
+from flash_patcher.exception_handle.error_manager import ErrorManager
+from flash_patcher.exception_handle.injection import InjectionError
+from flash_patcher.util.file_io import read_safe, readlines_safe, writelines_safe
 
 def test_read_safe_success() -> None:
     content_actual = read_safe(

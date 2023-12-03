@@ -1,19 +1,13 @@
 from __future__ import annotations
 
-import sys
-import os
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-# Add the 'src' directory to the Python path
-# Not doing this causes import errors
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
-
-from antlr_source.StagefileLexer import StagefileLexer
-from antlr_source.StagefileParser import StagefileParser
-from parse.common import CommonParseManager
-from parse.visitor.stage_visitor import StagefileProcessor
+from flash_patcher.antlr_source.StagefileLexer import StagefileLexer
+from flash_patcher.antlr_source.StagefileParser import StagefileParser
+from flash_patcher.parse.common import CommonParseManager
+from flash_patcher.parse.visitor.stage_visitor import StagefileProcessor
 
 class StagefileProcessorSpec (TestCase):
 
@@ -39,8 +33,8 @@ class StagefileProcessorSpec (TestCase):
             Path("./.Patcher-Temp/mod/scripts"),
         )
 
-    @patch('parse.visitor.stage_visitor.StagefileProcessor.visitPatchFile')
-    @patch('parse.visitor.stage_visitor.StagefileProcessor.visitAssetPackFile')
+    @patch('flash_patcher.parse.visitor.stage_visitor.StagefileProcessor.visitPatchFile')
+    @patch('flash_patcher.parse.visitor.stage_visitor.StagefileProcessor.visitAssetPackFile')
     def test_visit_root_success(
         self: StagefileProcessorSpec,
         mock_asset_visit: MagicMock,
@@ -51,7 +45,7 @@ class StagefileProcessorSpec (TestCase):
         mock_asset_visit.assert_called_once_with(self.asset_pack_context)
         mock_patch_visit.assert_called_once_with(self.patchfile_context)
 
-    @patch('parse.asset.AssetPackManager.parse')
+    @patch('flash_patcher.parse.asset.AssetPackManager.parse')
     def test_visit_add_asset_pack_success(
         self: StagefileProcessorSpec,
         mock_parse_asset_pack: MagicMock,
@@ -60,7 +54,7 @@ class StagefileProcessorSpec (TestCase):
 
         mock_parse_asset_pack.assert_called_once_with()
 
-    @patch('parse.patch.PatchfileManager.parse')
+    @patch('flash_patcher.parse.patch.PatchfileManager.parse')
     def test_visit_patchfile_success(
         self: StagefileProcessorSpec,
         mock_parse_patchfile: MagicMock,

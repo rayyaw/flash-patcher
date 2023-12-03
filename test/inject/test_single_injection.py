@@ -1,20 +1,14 @@
 from __future__ import annotations
 
-import sys
-import os
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
 from pytest import raises
 
-# Add the 'src' directory to the Python path
-# Not doing this causes import errors
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
-
-from exception_handle.injection import InjectionError
-from inject.injection_location import InjectionLocation
-from inject.single_injection import SingleInjectionManager
+from flash_patcher.exception_handle.injection import InjectionError
+from flash_patcher.inject.injection_location import InjectionLocation
+from flash_patcher.inject.single_injection import SingleInjectionManager
 
 class SingleInjectionManagerSpec (TestCase):
 
