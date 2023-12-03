@@ -1,5 +1,5 @@
 # Build files
-build/
+build/*
 !build/Makefile
 !build/pyproject.toml
 __pycache__/
@@ -8,7 +8,7 @@ __init__.py
 
 # ANTLR files
 .antlr/
-src/antlr_source/
+src/antlr_source/*
 !src/antlr_source/.gitkeep
 
 # Test files

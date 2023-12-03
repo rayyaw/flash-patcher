@@ -91,7 +91,7 @@ clean:
 	find ../test                           -name __init__.py -delete
 	find ../src              -mindepth 2   -name __init__.py -delete
 	find .. -type d                        -name __pycache__ -exec rm -r {} +
-	find .                   -mindepth 1 ! -name 'Makefile' -name 'pyproject.toml' -delete
+	find .                   -mindepth 1 ! -name 'Makefile' ! -name 'pyproject.toml' -delete
 	find ../src/antlr_source -mindepth 1 ! -name '.gitkeep' -delete
 	rm -rf ../dist
 	rm -f ../flash-patcher ../flash-patcher.zip
