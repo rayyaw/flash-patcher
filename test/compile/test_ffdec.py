@@ -49,10 +49,10 @@ class FFDecInterfaceSpec (TestCase):
     @patch('compile.ffdec.FFDecInterface.install_ffdec')
     def test_automatic_installation_complete_failure_not_found(
         self: FFDecInterfaceSpec,
-        mock_install_FFDec: MagicMock
+        mock_install_ffdec: MagicMock
     ) -> None:
 
-        mock_install_FFDec.return_value = False
+        mock_install_ffdec.return_value = False
 
         with raises(ModuleNotFoundError):
             FFDecInterface()

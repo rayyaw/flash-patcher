@@ -127,7 +127,7 @@ class CompilationManagerSpec (TestCase):
         self.mock_decompiler.assert_not_called()
 
     @patch('pathlib.Path.exists')
-    def test_decompile_failure_FFDec_error(
+    def test_decompile_failure_ffdec_error(
         self: CompilationManagerSpec,
         mock_path_exists: MagicMock,
     ) -> None:
