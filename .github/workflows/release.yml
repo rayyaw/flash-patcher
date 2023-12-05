@@ -3,7 +3,7 @@ name: Release to PyPI
 # This is explicitly not runnable manually. Manual releases should be initiated locally.
 on: 
   release:
-    types: [published]
+    types: [published, workflow_dispatch]
 
 permissions:
   contents: read
@@ -11,6 +11,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: pypi-release
     strategy:
       matrix:
         python-version: ["3.11"]
@@ -37,8 +38,5 @@ jobs:
         make
         cd ..
     - name: Release to PyPI
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
       run: |
         twine upload dist/*
