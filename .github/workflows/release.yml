@@ -8,13 +8,14 @@ on:
     branches:
       - pip
 
-permissions:
-  contents: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: pypi-release
+    environment: 
+      name: pypi-release
+      url: https://pypi.org/project/flash-patcher/
+    permissions:
+      id-token: write
     strategy:
       matrix:
         python-version: ["3.11"]
@@ -41,5 +42,4 @@ jobs:
         make
         cd ..
     - name: Release to PyPI
-      run: |
-        twine upload dist/*
+      uses: pypa/gh-action-pypi-publish@release/v1
