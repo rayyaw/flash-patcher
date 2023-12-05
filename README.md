@@ -1,8 +1,14 @@
 # Riley's SWF Patcher
 
+### CI/CD
 [![Pylint](https://github.com/rayyaw/flash-patcher/actions/workflows/pylint.yml/badge.svg)](https://github.com/rayyaw/flash-patcher/actions/workflows/pylint.yml)
 [![Unit Tests](https://github.com/rayyaw/flash-patcher/actions/workflows/unittest.yml/badge.svg)](https://github.com/rayyaw/flash-patcher/actions/workflows/unittest.yml)
 [![Integration Tests](https://github.com/rayyaw/flash-patcher/actions/workflows/integrationtest.yml/badge.svg)](https://github.com/rayyaw/flash-patcher/actions/workflows/integrationtest.yml)
+
+### PyPI
+[![PyPI Version](https://img.shields.io/pypi/v/flash-patcher.svg?logo=pypi&label=PyPI&logoColor=gold)](https://pypi.org/project/flash-patcher/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flash-patcher.svg?logo=python&label=Python&logoColor=gold)](https://pypi.org/project/flash-patcher/)
+
 
 ## Requirements
 
