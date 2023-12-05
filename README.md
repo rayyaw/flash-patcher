@@ -28,7 +28,7 @@ To apply a patch, run the `flash-patcher` command.
 
 The patcher will take the input SWF, apply the patches specified in the stage file (which must be located in the patch folder), and create the output SWF.
 
-The recommended way to install Flash Patcher is through pip. You can do this via TestPyPI with `pip install -i https://test.pypi.org/simple/ flash-patcher` until we are approved to create an account on the production PyPI environment.
+The recommended way to install Flash Patcher is through pip. You can do this with `pip install flash-patcher`.
 
 If you want to build the Flash Patcher .whl file locally, run `cd build && make wheel`. The .whl will be generated in the dist/ folder. The `hatch` pip package is required to run the build.
 
