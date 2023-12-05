@@ -4,9 +4,6 @@ name: Release to PyPI
 on: 
   release:
     types: [published]
-  push:
-    branches:
-      - pip
 
 jobs:
   build:
