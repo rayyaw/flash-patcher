@@ -3,7 +3,10 @@ name: Release to PyPI
 # This is explicitly not runnable manually. Manual releases should be initiated locally.
 on: 
   release:
-    types: [published, push]
+    types: [published]
+  push:
+    branches:
+      - pip
 
 permissions:
   contents: read
