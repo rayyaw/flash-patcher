@@ -3,7 +3,7 @@ name: Release to PyPI
 # This is explicitly not runnable manually. Manual releases should be initiated locally.
 on: 
   release:
-    types: [published, workflow_dispatch]
+    types: [published, push]
 
 permissions:
   contents: read
