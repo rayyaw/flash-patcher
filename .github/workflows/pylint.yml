@@ -23,7 +23,8 @@ jobs:
       run: |
         source .github/common-setup.sh
     - name: Pylint style analysis
+      env:
+        ANTLR_TARGET: antlr-java
       run: |
-        export ANTLR_TARGET=antlr-java
         cd build
         make pylint
