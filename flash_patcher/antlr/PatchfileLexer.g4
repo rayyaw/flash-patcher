@@ -9,8 +9,8 @@ REMOVE          : R E M O V E;
 FILENAME        : (D E F I N E S P R I T E | F R A M E) .+? '.as' | S W F '.xml';
 
 BEGIN_PATCH     : B E G I N '-' P A T C H -> mode(ADD_BLOCK_MODE);
-NUMBER_RANGE    : INTEGER '-' INTEGER;
-FILE_ADD_TOKEN  : INTEGER | E N D;
+FUNCTION        : F U N C T I O N;
+END             : E N D;
 
 // We cannot use the common.g4 file, since modes don't play nice with it
 // (This is also why Patchfile needs a separate lexer file)
@@ -47,6 +47,9 @@ fragment SPACE      : ' ';
 fragment SLASH      : '/'|'\\';
 
 INTEGER : NUMBER+;
+DASH    : '-';
+
+FUNCTION_NAME : ~( '-' | ' ' | '\r' | '\n')+;
 
 // Stuff to ignore, like comments or whitespace
 WHITESPACE  : [ \t\r\n\f]+         -> skip;

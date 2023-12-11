@@ -1,8 +1,7 @@
-add frame_1/DoAction1.as 17
-add frame_1/DoAction1.as 52
-add frame_1/DoAction1.as end
-add frame_1/DoAction1.as function Mainfunc
-add frame_1/DoAction1.as function Mainfunc 15
+add frame_1/DoAction1.as function Derppotato
+add frame_1/DoAction1.as function Derppotato 15
+add frame_1/DoAction1.as 3000
+add frame_1/DoAction1.as function Mainfunc 3000
 begin-patch
 // This is an actionscript command
 This is not an actionscript command, it's just invalid

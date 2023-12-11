@@ -1,5 +1,6 @@
 # Build files
 build/*
+dist/
 !build/Makefile
 !build/pyproject.toml
 __pycache__/
@@ -16,5 +17,5 @@ flash_patcher/antlr_source/*
 
 # Misc files and folders
 .Patcher-Temp/
-dist/
 venv/
+TODO.md

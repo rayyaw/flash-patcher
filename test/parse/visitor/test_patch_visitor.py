@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from contextlib import ExitStack
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
@@ -9,6 +8,8 @@ from pytest import raises
 
 from flash_patcher.antlr_source.PatchfileLexer import PatchfileLexer
 from flash_patcher.antlr_source.PatchfileParser import PatchfileParser
+
+from flash_patcher.exception_handle.injection import InjectionError
 from flash_patcher.inject.bulk_injection import BulkInjectionManager
 from flash_patcher.parse.common import CommonParseManager
 from flash_patcher.parse.visitor.patch_visitor import PatchfileProcessor
@@ -43,7 +44,7 @@ class PatchfileProcessorSpec (TestCase):
     def test_visit_add_block_success(self: PatchfileProcessorSpec) -> None:
         self.patch_visitor.visitAddBlock(self.add_context)
 
-        assert self.mock_injector.add_injection_target.call_count == 2
+        assert self.mock_injector.add_injection_target.call_count == 5
 
         self.mock_injector.inject.assert_called_once_with(
             "// This is an actionscript command\n" \
@@ -63,6 +64,8 @@ class PatchfileProcessorSpec (TestCase):
         mock_file = MagicMock()
 
         mock_open.return_value.__enter__.return_value = mock_file
+        mock_file.readlines.return_value = [" "] * 100
+
         with patch.object(mock_file, 'writelines') as mock_writelines:
             self.patch_visitor.visitRemoveBlock(self.remove_context)
 
@@ -80,15 +83,9 @@ class PatchfileProcessorSpec (TestCase):
         mock_file = MagicMock()
 
         mock_open.return_value.__enter__.return_value = mock_file
+        mock_file.readlines.return_value = [" "] * 2
 
-        # Using an ExitStack prevents having to use nested with statements
-        with ExitStack() as stack:
-            mock_readlines = stack.enter_context(
-                patch.object(mock_file, 'readlines')
-            )
-            stack.enter_context(raises(IndexError))
-
-            mock_readlines.return_value = []
+        with raises(InjectionError):
             self.patch_visitor.visitRemoveBlock(self.remove_context)
 
     @patch('flash_patcher.parse.visitor.patch_visitor.PatchfileProcessor.visitRemoveBlock')
