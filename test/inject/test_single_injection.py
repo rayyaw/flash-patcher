@@ -11,7 +11,7 @@ from flash_patcher.inject.injection_location import InjectionLocation
 from flash_patcher.inject.single_injection import SingleInjectionManager
 
 # pylint: disable=wrong-import-order
-from test.test_util.get_patch_context import get_patch_context
+from test.test_util.get_patch_context import get_add_patch_context
 
 class SingleInjectionManagerSpec (TestCase):
 
@@ -31,7 +31,7 @@ class SingleInjectionManagerSpec (TestCase):
         with open(self.as_path, encoding="utf-8") as file:
             self.file_content = file.readlines()
 
-        location = InjectionLocation(get_patch_context(
+        location = InjectionLocation(get_add_patch_context(
             Path("../test/testdata/Patch1.patch"), 2,
         ))
 
@@ -111,6 +111,22 @@ class SingleInjectionManagerSpec (TestCase):
             mock_writelines.assert_called_once_with(self.file_content)
 
         mock_open.assert_called_once()
+
+        # Overwriting write is super annoying...
+    # (For some reason patching writelines_safe doesn't work)
+    @patch('pathlib.Path.open', create=True)
+    def test_inject_no_location(
+        self: SingleInjectionManagerSpec,
+        mock_open: MagicMock,
+    ) -> None:
+        mock_injection_location = MagicMock()
+
+        self.single_injection_manager.file_location = mock_injection_location
+        mock_injection_location.resolve.return_value = None
+
+        self.single_injection_manager.inject(["test\n"], 1)
+
+        mock_open.assert_not_called()
 
     def test_inject_failure_invalid_command(
         self: SingleInjectionManagerSpec,

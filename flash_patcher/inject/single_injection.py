@@ -45,6 +45,9 @@ class SingleInjectionManager:
         patch_line_no = patch_file_line
         file_line_no = self.file_location.resolve(self.file_content, True, self.error_manager)
 
+        if file_line_no is None:
+            return
+
         for line in content:
             line_stripped = line.strip("\n\r ")
 

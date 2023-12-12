@@ -71,6 +71,13 @@ class PatchfileProcessor (PatchfileParserVisitor):
         line_end = InjectionLocation(ctx.locationToken(1)) \
             .resolve(current_file, False, error_manager)
 
+        if line_start is None or line_end is None:
+            error_manager.raise_(
+                """Invalid line start or end.
+                You must provide a valid and in-bounds line number for remove.
+                """
+            )
+
         # Exceptions will be thrown in InjectionLocation if this location is invalid
         for _ in range(line_start, line_end + 1):
             del current_file[line_start - 1]

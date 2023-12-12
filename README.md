@@ -97,11 +97,18 @@ You can use \# to write comments. There are two types of commands, `add` and `re
 
 You are allowed to put multiple `add` statements before a code block you wish to inject.
 
-The second argument is a line number. For the add command, all lines up to (but not including) the `end-patch` command will be inserted into the SWF, *on* the specified line. For the remove command, all lines between the two numbers specified will be removed (and this is inclusive).
+The first parameter to the add or remove command is always the name of the file to inject into.
+
+The add and remove parameters can come in the following forms:
+- `add file.as 567`. This will inject at line 567 in `file.as`.
+- `add file.as end`. This will inject at the end of `file.as`.
+- `add file.as function Mainfunc`. This will inject after the definition of `Mainfunc` in `file.as`.
+- `add file.as function Mainfunc 15`. This will inject after the definition of `Mainfunc` in `file.as`, with an offset of 15 lines from the start of `Mainfunc`.
+
+
+For the add command, all lines up to (but not including) the `end-patch` command will be inserted into the SWF, *on* the specified line. For the remove command, all lines between the two numbers specified will be removed (and this is inclusive).
 
 After one or more add commands, add a newline, a `begin-patch\n` and then enter your code block. At the end of the block, add a newline and `end-patch` to tell the patcher the patch is finished.
-
-Instead of a line number, you can also specify `end` to append to the end of the file. This only applies for add commands.
 
 Within a code block, you can also use the following syntax to skip ahead within the file:
 ```

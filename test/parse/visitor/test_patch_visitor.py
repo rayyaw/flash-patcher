@@ -14,6 +14,9 @@ from flash_patcher.inject.bulk_injection import BulkInjectionManager
 from flash_patcher.parse.common import CommonParseManager
 from flash_patcher.parse.visitor.patch_visitor import PatchfileProcessor
 
+# pylint: disable=wrong-import-order
+from test.test_util.get_patch_context import get_remove_patch_context
+
 class PatchfileProcessorSpec (TestCase):
 
     add_context: PatchfileParser.AddBlockContext
@@ -76,7 +79,7 @@ class PatchfileProcessorSpec (TestCase):
     # Overwriting write is super annoying...
     # (For some reason patching writelines_safe doesn't work)
     @patch('pathlib.Path.open', create=True)
-    def test_visit_remove_block_failure(
+    def test_visit_remove_block_failure_beyond_eof(
         self: PatchfileProcessorSpec,
         mock_open: MagicMock,
     ) -> None:
@@ -87,6 +90,16 @@ class PatchfileProcessorSpec (TestCase):
 
         with raises(InjectionError):
             self.patch_visitor.visitRemoveBlock(self.remove_context)
+
+    def test_visit_remove_block_failure_invalid_target(
+        self: PatchfileProcessorSpec,
+    ) -> None:
+        context = get_remove_patch_context(
+            Path("../test/testdata/Patch2.patch"), 0,
+        )
+
+        with raises(InjectionError):
+            self.patch_visitor.visitRemoveBlock(context)
 
     @patch('flash_patcher.parse.visitor.patch_visitor.PatchfileProcessor.visitRemoveBlock')
     @patch('flash_patcher.parse.visitor.patch_visitor.PatchfileProcessor.visitAddBlock')

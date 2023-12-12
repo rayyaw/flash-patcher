@@ -12,7 +12,7 @@ from flash_patcher.exception_handle.injection import InjectionError
 from flash_patcher.inject.injection_location import InjectionLocation
 
 # pylint: disable=wrong-import-order
-from test.test_util.get_patch_context import get_patch_context
+from test.test_util.get_patch_context import get_add_patch_context
 
 class InjectionLocationSpec (TestCase):
 
@@ -40,7 +40,7 @@ class InjectionLocationSpec (TestCase):
             "function_offset"   : 4,
         }
 
-        return get_patch_context(
+        return get_add_patch_context(
             Path("../test/testdata/Patch1.patch"),
             context_map[context_type],
         )
@@ -54,7 +54,7 @@ class InjectionLocationSpec (TestCase):
             "function_offset"   : 1,
         }
 
-        return get_patch_context(
+        return get_add_patch_context(
             Path("../test/testdata/Patch2.patch"),
             context_map[context_type],
         )
@@ -68,7 +68,7 @@ class InjectionLocationSpec (TestCase):
             "function_offset"   : 3,
         }
 
-        return get_patch_context(
+        return get_add_patch_context(
             Path("../test/testdata/Patch2.patch"),
             context_map[context_type],
         )
