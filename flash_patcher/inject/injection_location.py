@@ -34,7 +34,7 @@ class InjectionLocation:
             line_no = self.resolve_line_no(file_content, is_add, exception)
 
         elif isinstance(self.context, PatchfileParser.FunctionContext):
-            line_no = self.resolve_function(file_content, is_add, exception)
+            line_no = self.resolve_function(file_content, exception)
 
         elif isinstance(self.context, PatchfileParser.EndContext):
             line_no = self.resolve_end(file_content)
@@ -72,7 +72,6 @@ class InjectionLocation:
     def resolve_function(
         self: InjectionLocation,
         file_content: list[str],
-        is_add: bool,
         exception: ErrorManager,
     ) -> int | None:
         """Resolve the injection location if it's a function + offset."""
@@ -83,16 +82,13 @@ class InjectionLocation:
             line = line.replace(")", " ")
 
             if line.split()[:2] == ["function", self.context.FUNCTION_NAME().getText()]:
-                line_no = i
+                # We need to add after the specified line
+                line_no = i + 1
                 break
 
         if line_no is not None:
             if self.context.INTEGER():
                 line_no += int(self.context.INTEGER().getText())
-
-            # ensure we inject before the line
-            if is_add:
-                line_no -= 1
 
             self.verify_line_no(line_no, file_content, exception)
 

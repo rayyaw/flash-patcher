@@ -105,6 +105,7 @@ The add and remove parameters can come in the following forms:
 - `add file.as function Mainfunc`. This will inject after the definition of `Mainfunc` in `file.as`.
 - `add file.as function Mainfunc 15`. This will inject after the definition of `Mainfunc` in `file.as`, with an offset of 15 lines from the start of `Mainfunc`.
 
+Note that `remove` commands are inclusive of the final line.
 
 For the add command, all lines up to (but not including) the `end-patch` command will be inserted into the SWF, *on* the specified line. For the remove command, all lines between the two numbers specified will be removed (and this is inclusive).
 

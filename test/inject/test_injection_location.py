@@ -89,25 +89,25 @@ class InjectionLocationSpec (TestCase):
         line_no = InjectionLocation(self.get_valid_patch_context("function")) \
             .resolve(self.file_content, True, self.error_manager)
 
-        assert line_no == 7
+        assert line_no == 9
 
     def test_resolve_success_function_remove(self: InjectionLocationSpec) -> None:
         line_no = InjectionLocation(self.get_valid_patch_context("function")) \
             .resolve(self.file_content, False, self.error_manager)
 
-        assert line_no == 8
+        assert line_no == 9
 
     def test_resolve_success_function_offset_add(self: InjectionLocationSpec) -> None:
         line_no = InjectionLocation(self.get_valid_patch_context("function_offset")) \
             .resolve(self.file_content, True, self.error_manager)
 
-        assert line_no == 22
+        assert line_no == 24
 
     def test_resolve_success_function_offset_remove(self: InjectionLocationSpec) -> None:
         line_no = InjectionLocation(self.get_valid_patch_context("function_offset")) \
             .resolve(self.file_content, False, self.error_manager)
 
-        assert line_no == 23
+        assert line_no == 24
 
     def test_resolve_success_end_add(self: InjectionLocationSpec) -> None:
         line_no = InjectionLocation(self.get_valid_patch_context("end")) \
