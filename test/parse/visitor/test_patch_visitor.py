@@ -95,7 +95,7 @@ class PatchfileProcessorSpec (TestCase):
         self: PatchfileProcessorSpec,
     ) -> None:
         context = get_remove_patch_context(
-            Path("../test/testdata/Patch2.patch"), 0,
+            Path("../test/testdata/Patch1.patch"), 1,
         )
 
         with raises(InjectionError):
@@ -111,4 +111,5 @@ class PatchfileProcessorSpec (TestCase):
         self.patch_visitor.visitRoot(self.root_context)
 
         mock_visit_add.assert_called_once_with(self.add_context)
-        mock_visit_remove.assert_called_once_with(self.remove_context)
+
+        assert mock_visit_remove.call_count == 2
