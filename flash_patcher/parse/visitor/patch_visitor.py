@@ -73,7 +73,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
 
         if line_start is None or line_end is None:
             error_manager.raise_(
-                """Invalid line start or end.
+                """Could not resolve line start or end.
                 You must provide a valid and in-bounds line number for remove.
                 """
             )

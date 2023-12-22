@@ -12,6 +12,9 @@ BEGIN_PATCH     : B E G I N '-' P A T C H -> mode(ADD_BLOCK_MODE);
 FUNCTION        : F U N C T I O N;
 END             : E N D;
 
+OPEN_BLOCK      : '(';
+CLOSE_BLOCK     : ')';
+
 // We cannot use the common.g4 file, since modes don't play nice with it
 // (This is also why Patchfile needs a separate lexer file)
 fragment A : [aA];

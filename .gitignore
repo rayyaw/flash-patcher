@@ -19,3 +19,4 @@ flash_patcher/antlr_source/*
 .Patcher-Temp/
 venv/
 TODO.md
+antlr-*-complete.jar

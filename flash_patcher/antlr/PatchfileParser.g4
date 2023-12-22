@@ -10,7 +10,7 @@ removeBlock         : REMOVE FILENAME locationToken DASH locationToken;
 
 root                : (addBlock | removeBlock)*;
 
-locationToken       : FUNCTION FUNCTION_NAME INTEGER?   # function
-                    | INTEGER                           # lineNumber
-                    | END                               # end
+locationToken       : OPEN_BLOCK? FUNCTION FUNCTION_NAME INTEGER? CLOSE_BLOCK?  # function
+                    | INTEGER                                                   # lineNumber
+                    | END                                                       # end
                     ;
