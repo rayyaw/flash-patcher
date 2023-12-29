@@ -4,7 +4,7 @@ from pathlib import Path
 
 from flash_patcher.compile.compilation import CompilationManager
 from flash_patcher.compile.locate_decomp import get_decomp_locations
-from flash_patcher.exception_handle.dependency import DependencyError
+from flash_patcher.exception.dependency import DependencyError
 from flash_patcher.parse.stage import StagefileManager
 from flash_patcher.util.file_copy import clean_scripts, copy_file
 

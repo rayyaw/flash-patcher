@@ -6,7 +6,7 @@ from unittest.mock import patch, MagicMock
 
 from pytest import raises
 
-from flash_patcher.exception_handle.injection import InjectionError
+from flash_patcher.exception.injection import InjectionError
 from flash_patcher.inject.injection_location import InjectionLocation
 from flash_patcher.inject.single_injection import SingleInjectionManager
 

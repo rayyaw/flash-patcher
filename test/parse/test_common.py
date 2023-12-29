@@ -8,7 +8,7 @@ from pytest import raises
 
 from flash_patcher.antlr_source.PatchfileLexer import PatchfileLexer
 from flash_patcher.antlr_source.PatchfileParser import PatchfileParser
-from flash_patcher.exception_handle.dependency import DependencyError
+from flash_patcher.exception.dependency import DependencyError
 from flash_patcher.parse.common import CommonParseManager
 
 class CommonParseManagerSpec (TestCase):

@@ -5,7 +5,7 @@ from logging import error, info
 from pathlib import Path
 
 from flash_patcher.compile.ffdec import FFDecInterface
-from flash_patcher.exception_handle.dependency import DependencyError
+from flash_patcher.exception.dependency import DependencyError
 
 class CompilationManager:
     """Manage Flash compilation and decompilation, including caching.

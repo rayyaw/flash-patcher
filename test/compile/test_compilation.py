@@ -8,7 +8,7 @@ from pytest import raises
 
 from flash_patcher.compile.compilation import CompilationManager
 from flash_patcher.compile.ffdec import FFDecInterface
-from flash_patcher.exception_handle.dependency import DependencyError
+from flash_patcher.exception.dependency import DependencyError
 
 class CompilationManagerSpec (TestCase):
 

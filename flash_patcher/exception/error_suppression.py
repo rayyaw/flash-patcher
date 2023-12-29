@@ -3,7 +3,7 @@ import sys
 from logging import error
 from typing import Callable
 
-from flash_patcher.exception_handle.dependency import DependencyError
+from flash_patcher.exception.dependency import DependencyError
 
 def run_without_antlr_errors(function: Callable[..., any]) -> any:
     """Run a command while suppressing ANTLR version mismatch warnings.

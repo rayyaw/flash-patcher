@@ -2,8 +2,8 @@ import sys
 
 from pytest import raises
 
-from flash_patcher.exception_handle.dependency import DependencyError
-from flash_patcher.exception_handle.error_suppression import run_without_antlr_errors
+from flash_patcher.exception.dependency import DependencyError
+from flash_patcher.exception.error_suppression import run_without_antlr_errors
 
 def test_run_without_antlr_errors_success() -> None:
     run_without_antlr_errors(lambda: print("some stdout output"))
