@@ -10,6 +10,9 @@ from flash_patcher.exception_handle.injection import InjectionError
 from flash_patcher.inject.injection_location import InjectionLocation
 from flash_patcher.inject.single_injection import SingleInjectionManager
 
+# pylint: disable=wrong-import-order
+from test.test_util.get_patch_context import get_add_patch_context
+
 class SingleInjectionManagerSpec (TestCase):
 
     as_path: Path
@@ -28,11 +31,15 @@ class SingleInjectionManagerSpec (TestCase):
         with open(self.as_path, encoding="utf-8") as file:
             self.file_content = file.readlines()
 
+        location = InjectionLocation(get_add_patch_context(
+            Path("../test/testdata/Patch1.patch"), 2,
+        ))
+
         self.single_injection_manager = SingleInjectionManager(
             self.as_path,
-            InjectionLocation("end"),
+            location,
             Path("test.patch"),
-            1
+            1,
         )
 
         self.mock_file = MagicMock()
@@ -44,13 +51,17 @@ class SingleInjectionManagerSpec (TestCase):
         self: SingleInjectionManagerSpec,
         mock_open: MagicMock,
     ) -> None:
-
         mock_file = MagicMock()
+        mock_injection_location = MagicMock()
 
         # Configure the mock_open.return_value to have a mock for the TextIOWrapper
         mock_open.return_value.__enter__.return_value = mock_file
+        mock_file.readlines.return_value = [" "] * 1000
+
+        self.single_injection_manager.file_location = mock_injection_location
+        mock_injection_location.resolve.return_value = 2
+
         with patch.object(mock_file, 'writelines') as mock_writelines:
-            self.single_injection_manager.file_location = InjectionLocation("3")
             self.single_injection_manager.inject(["test\n", "// cmd: skip 3\n", "line2\n"], 1)
 
             self.file_content.insert(2, "test\n")
@@ -58,6 +69,9 @@ class SingleInjectionManagerSpec (TestCase):
             mock_writelines.assert_called_once_with(self.file_content)
 
         mock_open.assert_called_once()
+        mock_injection_location.resolve.assert_called_once_with(
+            self.file_content, True, self.single_injection_manager.error_manager
+        )
 
     # Overwriting write is super annoying...
     # (For some reason patching writelines_safe doesn't work)
@@ -66,11 +80,12 @@ class SingleInjectionManagerSpec (TestCase):
         self: SingleInjectionManagerSpec,
         mock_open: MagicMock,
     ) -> None:
-
         mock_file = MagicMock()
 
         # Configure the mock_open.return_value to have a mock for the TextIOWrapper
         mock_open.return_value.__enter__.return_value = mock_file
+        mock_file.readlines.return_value = [" "] * 1000
+
         with patch.object(mock_file, 'writelines') as mock_writelines:
             self.single_injection_manager.inject(["test\n", "line2\n"], 1)
             self.file_content.extend(["test\n", "line2\n"])
@@ -85,16 +100,33 @@ class SingleInjectionManagerSpec (TestCase):
         self: SingleInjectionManagerSpec,
         mock_open: MagicMock,
     ) -> None:
-
         mock_file = MagicMock()
 
         # Configure the mock_open.return_value to have a mock for the TextIOWrapper
         mock_open.return_value.__enter__.return_value = mock_file
+        mock_file.readlines.return_value = [" "] * 1000
+
         with patch.object(mock_file, 'writelines') as mock_writelines:
             self.single_injection_manager.inject([], 1)
             mock_writelines.assert_called_once_with(self.file_content)
 
         mock_open.assert_called_once()
+
+        # Overwriting write is super annoying...
+    # (For some reason patching writelines_safe doesn't work)
+    @patch('pathlib.Path.open', create=True)
+    def test_inject_no_location(
+        self: SingleInjectionManagerSpec,
+        mock_open: MagicMock,
+    ) -> None:
+        mock_injection_location = MagicMock()
+
+        self.single_injection_manager.file_location = mock_injection_location
+        mock_injection_location.resolve.return_value = None
+
+        self.single_injection_manager.inject(["test\n"], 1)
+
+        mock_open.assert_not_called()
 
     def test_inject_failure_invalid_command(
         self: SingleInjectionManagerSpec,

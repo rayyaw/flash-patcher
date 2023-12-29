@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from logging import exception
 from pathlib import Path
 
 from flash_patcher.antlr_source.PatchfileParser import PatchfileParser
@@ -38,7 +37,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         """Add the headers to the injector metadata"""
         full_path = self.decomp_location_with_scripts / ctx.FILENAME().getText()
 
-        inject_location = InjectionLocation(ctx.FILE_ADD_TOKEN().getText())
+        inject_location = InjectionLocation(ctx.locationToken())
 
         self.injector.add_injection_target(
             SingleInjectionManager(full_path, inject_location, self.patch_file_name, ctx.start.line)
@@ -62,28 +61,26 @@ class PatchfileProcessor (PatchfileParserVisitor):
         """Remove is processed manually as the command is less complex than add."""
         full_path = self.decomp_location_with_scripts / ctx.FILENAME().getText()
 
-        line_start, line_end = ctx.NUMBER_RANGE().getText().split("-")
-        line_start = int(line_start)
-        line_end = int(line_end)
-
         # Open file, delete lines, and close it
         error_manager = ErrorManager(self.patch_file_name, ctx.start.line)
         current_file = readlines_safe(full_path, error_manager)
 
-        try:
-            for _ in range(line_start, line_end + 1):
-                del current_file[line_start - 1]
-        except IndexError as exc:
-            exception(
-                """%s, line %d: Out of range.
-                Line number %d out of range for file %s.
-                Aborting...""",
-                self.patch_file_name,
-                ctx.start.line,
-                line_end,
-                full_path.as_posix(),
+        line_start = InjectionLocation(ctx.locationToken(0)) \
+            .resolve(current_file, False, error_manager)
+
+        line_end = InjectionLocation(ctx.locationToken(1)) \
+            .resolve(current_file, False, error_manager)
+
+        if line_start is None or line_end is None:
+            error_manager.raise_(
+                """Could not resolve line start or end.
+                You must provide a valid and in-bounds line number for remove.
+                """
             )
-            raise exc
+
+        # Exceptions will be thrown in InjectionLocation if this location is invalid
+        for _ in range(line_start, line_end + 1):
+            del current_file[line_start - 1]
 
         writelines_safe(full_path, current_file)
 

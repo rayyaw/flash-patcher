@@ -6,9 +6,9 @@ tile47.run = function(input) {
 
 
 
-
-
-
+function Mainfunc() {
+    derp;
+}
 
 
 
