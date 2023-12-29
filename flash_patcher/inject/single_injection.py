@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flash_patcher.exception_handle.error_manager import ErrorManager
+from flash_patcher.exception.error_manager import ErrorManager
 from flash_patcher.inject.injection_location import InjectionLocation
 from flash_patcher.util.file_io import readlines_safe, writelines_safe
 

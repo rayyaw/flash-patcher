@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from flash_patcher.antlr_source.PatchfileParser import PatchfileParser
 
-from flash_patcher.exception_handle.error_manager import ErrorManager
+from flash_patcher.exception.error_manager import ErrorManager
 
 class InjectionLocation:
     """Store the location within a file to inject at.

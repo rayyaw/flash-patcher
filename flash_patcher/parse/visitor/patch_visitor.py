@@ -5,7 +5,7 @@ from pathlib import Path
 from flash_patcher.antlr_source.PatchfileParser import PatchfileParser
 from flash_patcher.antlr_source.PatchfileParserVisitor import PatchfileParserVisitor
 
-from flash_patcher.exception_handle.error_manager import ErrorManager
+from flash_patcher.exception.error_manager import ErrorManager
 from flash_patcher.inject.bulk_injection import BulkInjectionManager
 from flash_patcher.inject.injection_location import InjectionLocation
 from flash_patcher.inject.single_injection import SingleInjectionManager

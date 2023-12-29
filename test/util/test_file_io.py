@@ -3,8 +3,8 @@ from unittest.mock import MagicMock, patch
 
 from pytest import raises
 
-from flash_patcher.exception_handle.error_manager import ErrorManager
-from flash_patcher.exception_handle.injection import InjectionError
+from flash_patcher.exception.error_manager import ErrorManager
+from flash_patcher.exception.injection import InjectionError
 from flash_patcher.util.file_io import read_safe, readlines_safe, writelines_safe
 
 def test_read_safe_success() -> None:

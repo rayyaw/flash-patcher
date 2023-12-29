@@ -8,9 +8,9 @@ from antlr4 import CommonTokenStream, InputStream
 from antlr4.Lexer import Lexer
 from antlr4.Parser import Parser, ParserRuleContext
 
-from flash_patcher.exception_handle.dependency import DependencyError
-from flash_patcher.exception_handle.error_suppression import run_without_antlr_errors
-from flash_patcher.exception_handle.error_manager import ErrorManager
+from flash_patcher.exception.dependency import DependencyError
+from flash_patcher.exception.error_suppression import run_without_antlr_errors
+from flash_patcher.exception.error_manager import ErrorManager
 from flash_patcher.util.file_io import read_safe
 
 class CommonParseManager:

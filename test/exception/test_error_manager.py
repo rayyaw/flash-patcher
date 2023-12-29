@@ -4,8 +4,8 @@ from unittest import TestCase
 
 from pytest import raises
 
-from flash_patcher.exception_handle.error_manager import ErrorManager
-from flash_patcher.exception_handle.injection import InjectionError
+from flash_patcher.exception.error_manager import ErrorManager
+from flash_patcher.exception.injection import InjectionError
 
 class ErrorManagerSpec (TestCase):
 

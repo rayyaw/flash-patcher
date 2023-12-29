@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 from pytest import raises
 
-from flash_patcher.exception_handle.dependency import DependencyError
+from flash_patcher.exception.dependency import DependencyError
 from flash_patcher.patcher import main
 
 @patch('shutil.copytree')
