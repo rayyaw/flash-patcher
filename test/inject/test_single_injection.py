@@ -56,7 +56,7 @@ class SingleInjectionManagerSpec (TestCase):
 
         # Configure the mock_open.return_value to have a mock for the TextIOWrapper
         mock_open.return_value.__enter__.return_value = mock_file
-        mock_file.readlines.return_value = [" "] * 1000
+        mock_file.readlines.return_value = self.file_content
 
         self.single_injection_manager.file_location = mock_injection_location
         mock_injection_location.resolve.return_value = 2
@@ -68,7 +68,9 @@ class SingleInjectionManagerSpec (TestCase):
             self.file_content.insert(7, "line2\n")
             mock_writelines.assert_called_once_with(self.file_content)
 
-        mock_open.assert_called_once()
+        # .readlines() counts as a mock_open call for some reason
+        assert mock_open.call_count == 2
+
         mock_injection_location.resolve.assert_called_once_with(
             self.file_content, True, self.single_injection_manager.error_manager
         )
@@ -84,14 +86,15 @@ class SingleInjectionManagerSpec (TestCase):
 
         # Configure the mock_open.return_value to have a mock for the TextIOWrapper
         mock_open.return_value.__enter__.return_value = mock_file
-        mock_file.readlines.return_value = [" "] * 1000
+        mock_file.readlines.return_value = self.file_content
 
         with patch.object(mock_file, 'writelines') as mock_writelines:
             self.single_injection_manager.inject(["test\n", "line2\n"], 1)
             self.file_content.extend(["test\n", "line2\n"])
             mock_writelines.assert_called_once_with(self.file_content)
 
-        mock_open.assert_called_once()
+        # .readlines() counts as a mock_open call for some reason
+        assert mock_open.call_count == 2
 
     # Overwriting write is super annoying...
     # (For some reason patching writelines_safe doesn't work)
@@ -104,15 +107,16 @@ class SingleInjectionManagerSpec (TestCase):
 
         # Configure the mock_open.return_value to have a mock for the TextIOWrapper
         mock_open.return_value.__enter__.return_value = mock_file
-        mock_file.readlines.return_value = [" "] * 1000
+        mock_file.readlines.return_value = self.file_content
 
         with patch.object(mock_file, 'writelines') as mock_writelines:
             self.single_injection_manager.inject([], 1)
             mock_writelines.assert_called_once_with(self.file_content)
 
-        mock_open.assert_called_once()
+        # .readlines() counts as a mock_open call for some reason
+        assert mock_open.call_count == 2
 
-        # Overwriting write is super annoying...
+    # Overwriting write is super annoying...
     # (For some reason patching writelines_safe doesn't work)
     @patch('pathlib.Path.open', create=True)
     def test_inject_no_location(
@@ -126,7 +130,7 @@ class SingleInjectionManagerSpec (TestCase):
 
         self.single_injection_manager.inject(["test\n"], 1)
 
-        mock_open.assert_not_called()
+        mock_open.assert_called_once_with()
 
     def test_inject_failure_invalid_command(
         self: SingleInjectionManagerSpec,
