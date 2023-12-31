@@ -2,13 +2,19 @@
 ANTLR_TARGET ?= antlr
 
 # Build the python project using hatch.
-make: $(ANTLR_TARGET)
+all: $(ANTLR_TARGET)
 	rm -rf flash_patcher
 	cp -r ../flash_patcher .
 	find . -type d -exec touch {}/__init__.py \;
 	hatch build
 	cp -r dist ..
 	rm -f ../dist/__init__.py
+
+install: all
+	pip3 install ../dist/*.whl --break-system-packages --force-reinstall
+
+uninstall:
+	pip3 uninstall flash-patcher --break-system-packages
 
 # Move stuff to antlr-source in preparation for compilation
 antlr-copy:
