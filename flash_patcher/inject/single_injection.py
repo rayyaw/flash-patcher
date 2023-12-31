@@ -38,11 +38,12 @@ class SingleInjectionManager:
         self.patch_line_no = patch_line_no
 
         self.error_manager = ErrorManager(self.patch_file.as_posix(), 0, None)
-        self.file_content = readlines_safe(self.file_name, self.error_manager)
 
     def inject(self: SingleInjectionManager, content: list[str], patch_file_line: int) -> None:
         """Inject the content into the file."""
         patch_line_no = patch_file_line
+
+        self.file_content = readlines_safe(self.file_name, self.error_manager)
         file_line_no = self.file_location.resolve(self.file_content, True, self.error_manager)
 
         if file_line_no is None:

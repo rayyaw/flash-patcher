@@ -137,6 +137,10 @@ add-asset localfolder/derp.png images/8.png
 
 This asset pack file takes the local file at `localfolder/derp.png` and copies it to `images/8.png` within the SWF. If there was already a file named `images/8.png`, it will be overwritten with the new file.
 
+### Injection Order
+
+Patchfiles and asset packs will be applied in the order that they are specified in the stage file. Within each patchfile, the patches will be processed one block at a time, with each `add` or `remove` being processed from the top of the file to the bottom. Note that if you are injecting multiple times into the same file, this means that you should inject bottom to top to avoid the line numbers changing as the file is being patched.
+
 ## Licensing
 
 This code is made available under CC-BY SA 4.0. For more information, check https://creativecommons.org/licenses/by-sa/4.0 .
