@@ -35,9 +35,7 @@ The patcher will take the input SWF, apply the patches specified in the stage fi
 
 The recommended way to install Flash Patcher is through pip. You can do this with `pip install flash-patcher`.
 
-If you want to build the Flash Patcher .whl file locally, run `cd build && make wheel`. The .whl will be generated in the dist/ folder. The `hatch` pip package is required to run the build.
-
-If you want to build from source, you should then use `pip` to install the generated wheel file in `dist`,
+If you want to build the Flash Patcher .whl file locally, run `cd build && make`. The .whl will be generated in the dist/ folder. The `hatch` pip package is required to run the build. You can also run `make install` to install the package locally. **Note that this will run pip with `--break-system-packages` and `--force-reinstall` options, so use this at your own risk.**
 
 The command line arguments are as follows:
 
@@ -136,6 +134,10 @@ add-asset localfolder/derp.png images/8.png
 ```
 
 This asset pack file takes the local file at `localfolder/derp.png` and copies it to `images/8.png` within the SWF. If there was already a file named `images/8.png`, it will be overwritten with the new file.
+
+### Injection Order
+
+Patchfiles and asset packs will be applied in the order that they are specified in the stage file. Within each patchfile, the patches will be processed one block at a time, with each `add` or `remove` being processed from the top of the file to the bottom. Note that if you are injecting multiple times into the same file, this means that you should inject bottom to top to avoid the line numbers changing as the file is being patched.
 
 ## Licensing
 
