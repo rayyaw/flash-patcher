@@ -4,7 +4,7 @@ from pathlib import Path
 
 from flash_patcher.exception.error_manager import ErrorManager
 from flash_patcher.inject.injection_location import InjectionLocation
-from flash_patcher.util.file_io import readlines_safe, writelines_safe
+from flash_patcher.util.file_io import FileWritebackManager
 
 class SingleInjectionManager:
     """A position in a named file."""
@@ -43,33 +43,34 @@ class SingleInjectionManager:
         """Inject the content into the file."""
         patch_line_no = patch_file_line
 
-        self.file_content = readlines_safe(self.file_name, self.error_manager)
-        file_line_no = self.file_location.resolve(self.file_content, True, self.error_manager)
+        with FileWritebackManager(
+            self.file_name, self.error_manager, readlines=True,
+        ) as self.file_content:
 
-        if file_line_no is None:
-            return
+            file_line_no = self.file_location.resolve(self.file_content, True, self.error_manager)
 
-        for line in content:
-            line_stripped = line.strip("\n\r ")
+            if file_line_no is None:
+                return
 
-            # setup error information for the current line
-            self.error_manager.patch_file = self.patch_file
-            self.error_manager.line_no = patch_line_no
-            self.error_manager.context = line_stripped
+            for line in content:
+                line_stripped = line.strip("\n\r ")
 
-            # Handle internal commands
-            file_line_no, was_secondary = self.handle_secondary_command(
-                file_line_no, line_stripped
-            )
+                # setup error information for the current line
+                self.error_manager.patch_file = self.patch_file
+                self.error_manager.line_no = patch_line_no
+                self.error_manager.context = line_stripped
 
-            # No internal command, just a normal line
-            if not was_secondary:
-                self.file_content.insert(file_line_no, line)
-                file_line_no += 1
+                # Handle internal commands
+                file_line_no, was_secondary = self.handle_secondary_command(
+                    file_line_no, line_stripped
+                )
 
-            patch_line_no += 1
+                # No internal command, just a normal line
+                if not was_secondary:
+                    self.file_content.insert(file_line_no, line)
+                    file_line_no += 1
 
-        writelines_safe(self.file_name, self.file_content)
+                patch_line_no += 1
 
     def handle_secondary_command(
         self: SingleInjectionManager,

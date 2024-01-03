@@ -93,7 +93,6 @@ class SingleInjectionManagerSpec (TestCase):
             self.file_content.extend(["test\n", "line2\n"])
             mock_writelines.assert_called_once_with(self.file_content)
 
-        # .readlines() counts as a mock_open call for some reason
         assert mock_open.call_count == 2
 
     # Overwriting write is super annoying...
@@ -113,7 +112,6 @@ class SingleInjectionManagerSpec (TestCase):
             self.single_injection_manager.inject([], 1)
             mock_writelines.assert_called_once_with(self.file_content)
 
-        # .readlines() counts as a mock_open call for some reason
         assert mock_open.call_count == 2
 
     # Overwriting write is super annoying...
@@ -130,7 +128,7 @@ class SingleInjectionManagerSpec (TestCase):
 
         self.single_injection_manager.inject(["test\n"], 1)
 
-        mock_open.assert_called_once_with()
+        assert mock_open.call_count == 2
 
     def test_inject_failure_invalid_command(
         self: SingleInjectionManagerSpec,

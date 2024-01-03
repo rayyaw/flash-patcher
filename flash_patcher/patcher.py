@@ -12,7 +12,7 @@ from flash_patcher.util.file_copy import clean_scripts, copy_file
 """
 Riley's SWF patcher - a tool to patch content into SWF files.
 
-Development: RileyTech, qtkito, GTcreyon
+Development: rayyaw, qtkito, GTcreyon
 Windows path fix: Jhynjhiruu
 
 Download and updates: https://github.com/rayyaw/flash-patcher
