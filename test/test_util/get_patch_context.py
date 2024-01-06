@@ -15,6 +15,16 @@ def get_add_patch_context(
 
     return root.addBlockHeader(offset).locationToken()
 
+def get_replace_patch_context(
+    file: Path,
+    offset: int,
+) -> PatchfileParser.LocationTokenContext:
+    root = CommonParseManager(PatchfileLexer, PatchfileParser).get_root(
+        file
+    ).replaceNthBlock(0)
+
+    return root.replaceNthBlockHeader(offset).locationToken()
+
 def get_remove_patch_context(
     file: Path,
     offset: int,

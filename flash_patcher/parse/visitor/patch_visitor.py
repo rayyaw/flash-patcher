@@ -10,7 +10,7 @@ from flash_patcher.inject.bulk_injection import BulkInjectionManager
 from flash_patcher.inject.location.parser_injection_location import ParserInjectionLocation
 from flash_patcher.inject.find_content import FindContentManager
 from flash_patcher.inject.single_injection import SingleInjectionManager
-from flash_patcher.util.file_io import FileWritebackManager
+from flash_patcher.util.file_io import FileWritebackManager, read_safe
 
 class PatchfileProcessor (PatchfileParserVisitor):
     """This class inherits from the ANTLR visitor to process patch files.
@@ -102,23 +102,23 @@ class PatchfileProcessor (PatchfileParserVisitor):
         Find its location as an InjectionLocation, 
         then remove it and perform a standard add-injection at that location.
         """
-        # FIXME - the search content may need to be preprocessed (stripping)
-        full_path = self.decomp_location_with_scripts / ctx.FILENAME().getText()
-        error_manager = ErrorManager(self.patch_file_name, ctx.start.line)
+        for i in ctx.replaceNthBlockHeader():
+            full_path = self.decomp_location_with_scripts / i.FILENAME().getText()
+            error_manager = ErrorManager(self.patch_file_name, i.start.line)
 
-        with FileWritebackManager(full_path, error_manager) as current_file:
+            current_file = read_safe(full_path, error_manager)
             updated_file, replace_location = FindContentManager(
-                ctx.locationToken(), ctx.replaceBlockText().getText()
+                i.locationToken(), ctx.replaceBlockText().getText().strip()
             ).resolve(current_file, error_manager)
 
             injector = SingleInjectionManager(
-                Path(ctx.FILENAME().getText()), replace_location, full_path, ctx.start.line
+                full_path, replace_location, full_path, i.start.line
             )
 
             injector.file_content = updated_file
-            injector.inject(ctx.addBlockText().getText(), ctx.start.line)
+            injector.inject(ctx.addBlockText().getText().strip(), i.start.line)
 
-        self.modified_scripts.add(full_path)
+            self.modified_scripts.add(full_path)
 
     def visitRoot(self: PatchfileProcessor, ctx: PatchfileParser.RootContext) -> set:
         """Root function. Call this when running the visitor."""

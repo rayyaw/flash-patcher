@@ -43,11 +43,9 @@ class SingleInjectionManager:
     def inject(self: SingleInjectionManager, content: list[str], patch_file_line: int) -> None:
         """Inject the content into the file."""
         patch_line_no = patch_file_line
-            
-        must_close_file = False
+
         if self.file_content is None:
             self.file_content = readlines_safe(self.file_name, self.error_manager)
-            must_close_file = True
 
         file_line_no = self.file_location.resolve(self.file_content, True, self.error_manager)
 
@@ -73,9 +71,8 @@ class SingleInjectionManager:
                 file_line_no += 1
 
             patch_line_no += 1
-        
-        if must_close_file:
-            writelines_safe(self.file_name, self.file_content)
+
+        writelines_safe(self.file_name, self.file_content)
 
     def handle_secondary_command(
         self: SingleInjectionManager,

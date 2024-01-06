@@ -9,10 +9,12 @@ from pytest import raises
 from flash_patcher.antlr_source.PatchfileLexer import PatchfileLexer
 from flash_patcher.antlr_source.PatchfileParser import PatchfileParser
 
+from flash_patcher.exception.error_manager import ErrorManager
 from flash_patcher.exception.injection import InjectionError
 from flash_patcher.inject.bulk_injection import BulkInjectionManager
 from flash_patcher.parse.common import CommonParseManager
 from flash_patcher.parse.visitor.patch_visitor import PatchfileProcessor
+from flash_patcher.util.file_io import read_safe
 
 # pylint: disable=wrong-import-order
 from test.test_util.get_patch_context import get_remove_patch_context
@@ -21,6 +23,7 @@ class PatchfileProcessorSpec (TestCase):
 
     add_context: PatchfileParser.AddBlockContext
     remove_context: PatchfileParser.RemoveBlockContext
+    replace_nth_context: PatchfileParser.ReplaceNthBlockContext
     root_context: PatchfileParser.RootContext
 
     mock_injector: MagicMock[BulkInjectionManager]
@@ -43,6 +46,7 @@ class PatchfileProcessorSpec (TestCase):
 
         self.add_context = self.root_context.addBlock()[0]
         self.remove_context = self.root_context.removeBlock()[0]
+        self.replace_nth_context = self.root_context.replaceNthBlock()[0]
 
     def test_visit_add_block_success(self: PatchfileProcessorSpec) -> None:
         self.patch_visitor.visitAddBlock(self.add_context)
@@ -73,6 +77,19 @@ class PatchfileProcessorSpec (TestCase):
             self.patch_visitor.visitRemoveBlock(self.remove_context)
 
             mock_writelines.assert_called_once()
+
+        assert len(self.patch_visitor.modified_scripts) == 1
+
+    # Overwriting write is super annoying...
+    # (For some reason patching writelines_safe doesn't work)
+    @patch('flash_patcher.inject.single_injection.SingleInjectionManager.inject')
+    def test_visit_replace_nth_block_success(
+        self: PatchfileProcessorSpec,
+        mock_single_injector: MagicMock,
+    ) -> None:
+        self.patch_visitor.visitReplaceNthBlock(self.replace_nth_context)
+
+        assert mock_single_injector.call_count == 3
 
         assert len(self.patch_visitor.modified_scripts) == 1
 

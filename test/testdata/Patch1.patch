@@ -13,3 +13,12 @@ remove frame_169/DoAction.as 17-23
 remove frame_1/DoAction1.as function Derppotato-23
 
 # comment
+replace frame_1/DoAction2.as ( function tile47.run )
+replace frame_1/DoAction2.as function tile47.run 2
+replace frame_1/DoAction2.as 2
+begin-content
+test
+end-content
+begin-patch
+test
+end-patch
