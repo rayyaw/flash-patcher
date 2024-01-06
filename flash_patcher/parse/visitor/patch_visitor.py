@@ -7,7 +7,8 @@ from flash_patcher.antlr_source.PatchfileParserVisitor import PatchfileParserVis
 
 from flash_patcher.exception.error_manager import ErrorManager
 from flash_patcher.inject.bulk_injection import BulkInjectionManager
-from flash_patcher.inject.injection_location import InjectionLocation
+from flash_patcher.inject.location.parser_injection_location import ParserInjectionLocation
+from flash_patcher.inject.find_content import FindContentManager
 from flash_patcher.inject.single_injection import SingleInjectionManager
 from flash_patcher.util.file_io import FileWritebackManager
 
@@ -40,7 +41,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         """Add the headers to the injector metadata"""
         full_path = self.decomp_location_with_scripts / ctx.FILENAME().getText()
 
-        inject_location = InjectionLocation(ctx.locationToken())
+        inject_location = ParserInjectionLocation(ctx.locationToken())
 
         self.injector.add_injection_target(
             SingleInjectionManager(full_path, inject_location, self.patch_file_name, ctx.start.line)
@@ -74,10 +75,10 @@ class PatchfileProcessor (PatchfileParserVisitor):
         error_manager = ErrorManager(self.patch_file_name, ctx.start.line)
 
         with FileWritebackManager(full_path, error_manager, readlines=True) as current_file:
-            line_start = InjectionLocation(ctx.locationToken(0)) \
+            line_start = ParserInjectionLocation(ctx.locationToken(0)) \
                 .resolve(current_file, False, error_manager)
 
-            line_end = InjectionLocation(ctx.locationToken(1)) \
+            line_end = ParserInjectionLocation(ctx.locationToken(1)) \
                 .resolve(current_file, False, error_manager)
 
             if line_start is None or line_end is None:
@@ -93,24 +94,31 @@ class PatchfileProcessor (PatchfileParserVisitor):
 
         self.modified_scripts.add(full_path)
 
-    # TODO
     def visitReplaceNthBlock(
         self: PatchfileProcessor,
-        ctx: PatchfileParser.ReplaceAllBlockContext
+        ctx: PatchfileParser.ReplaceNthBlockContext
     ) -> None:
         """Replace the nth block. 
         Find its location as an InjectionLocation, 
         then remove it and perform a standard add-injection at that location.
         """
-        pass
+        # FIXME - the search content may need to be preprocessed (stripping)
+        full_path = self.decomp_location_with_scripts / ctx.FILENAME().getText()
+        error_manager = ErrorManager(self.patch_file_name, ctx.start.line)
 
-    # TODO - call replace nth code a bunch of times
-    def visitReplaceAllBlock(
-        self: PatchfileProcessor,
-        ctx: PatchfileParser.ReplaceAllBlockContext
-    ) -> None:
-        """Replace all blocks within the function, one at a time, from top to bottom."""
-        pass
+        with FileWritebackManager(full_path, error_manager) as current_file:
+            updated_file, replace_location = FindContentManager(
+                ctx.locationToken(), ctx.replaceBlockText().getText()
+            ).resolve(current_file, error_manager)
+
+            injector = SingleInjectionManager(
+                Path(ctx.FILENAME().getText()), replace_location, full_path, ctx.start.line
+            )
+
+            injector.file_content = updated_file
+            injector.inject(ctx.addBlockText().getText(), ctx.start.line)
+
+        self.modified_scripts.add(full_path)
 
     def visitRoot(self: PatchfileProcessor, ctx: PatchfileParser.RootContext) -> set:
         """Root function. Call this when running the visitor."""

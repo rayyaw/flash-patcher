@@ -8,7 +8,7 @@ addBlockText        : AS_TEXT+;
 
 removeBlock         : REMOVE FILENAME locationToken DASH locationToken;
 
-replaceNthBlock     : REPLACE FILENAME INTEGER BEGIN_CONTENT replaceBlockText END_CONTENT 
+replaceNthBlock     : REPLACE FILENAME locationToken BEGIN_CONTENT replaceBlockText END_CONTENT 
                         BEGIN_PATCH addBlockText END_PATCH;
 replaceAllBlock     : REPLACE_ALL FILENAME BEGIN_CONTENT replaceBlockText END_CONTENT 
                         BEGIN_PATCH addBlockText END_PATCH;

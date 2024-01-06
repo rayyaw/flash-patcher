@@ -1,4 +1,4 @@
-# Riley's SWF Patcher
+# rayyaw's SWF Patcher
 
 ### CI/CD
 [![Pylint](https://github.com/rayyaw/flash-patcher/actions/workflows/pylint.yml/badge.svg)](https://github.com/rayyaw/flash-patcher/actions/workflows/pylint.yml)

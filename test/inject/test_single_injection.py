@@ -7,7 +7,7 @@ from unittest.mock import patch, MagicMock
 from pytest import raises
 
 from flash_patcher.exception.injection import InjectionError
-from flash_patcher.inject.injection_location import InjectionLocation
+from flash_patcher.inject.location.parser_injection_location import ParserInjectionLocation
 from flash_patcher.inject.single_injection import SingleInjectionManager
 
 # pylint: disable=wrong-import-order
@@ -31,7 +31,7 @@ class SingleInjectionManagerSpec (TestCase):
         with open(self.as_path, encoding="utf-8") as file:
             self.file_content = file.readlines()
 
-        location = InjectionLocation(get_add_patch_context(
+        location = ParserInjectionLocation(get_add_patch_context(
             Path("../test/testdata/Patch1.patch"), 2,
         ))
 
@@ -128,7 +128,7 @@ class SingleInjectionManagerSpec (TestCase):
 
         self.single_injection_manager.inject(["test\n"], 1)
 
-        assert mock_open.call_count == 2
+        mock_open.assert_called_once_with()
 
     def test_inject_failure_invalid_command(
         self: SingleInjectionManagerSpec,

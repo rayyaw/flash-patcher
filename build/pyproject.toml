@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "flash-patcher"
-description = "Riley's SWF patcher"
+description = "rayyaw's SWF patcher"
 version = "5.1.0"
 readme = "../README.md"
 license = { file = "../LICENSE" }
