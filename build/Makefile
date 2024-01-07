@@ -73,7 +73,7 @@ test: antlr
 	@echo "Running tests..."
 	python -m coverage run -m pytest ..
 	python -m coverage report -m $(shell git ls-files "../flash_patcher/*.py")
-	python -m coverage xml -o coverage.xml
+	python -m coverage xml -o coverage.xml --omit="../flash_patcher/antlr_source/*"
 
 # Delete all temp files used for compilation.
 # We use find to delete all __init__.py and __pycache__ files and folders
