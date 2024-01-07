@@ -9,12 +9,10 @@ from pytest import raises
 from flash_patcher.antlr_source.PatchfileLexer import PatchfileLexer
 from flash_patcher.antlr_source.PatchfileParser import PatchfileParser
 
-from flash_patcher.exception.error_manager import ErrorManager
 from flash_patcher.exception.injection import InjectionError
 from flash_patcher.inject.bulk_injection import BulkInjectionManager
 from flash_patcher.parse.common import CommonParseManager
 from flash_patcher.parse.visitor.patch_visitor import PatchfileProcessor
-from flash_patcher.util.file_io import read_safe
 
 # pylint: disable=wrong-import-order
 from test.test_util.get_patch_context import get_remove_patch_context
