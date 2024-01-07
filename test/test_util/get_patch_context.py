@@ -9,9 +9,8 @@ def get_add_patch_context(
     file: Path,
     offset: int,
 ) -> PatchfileParser.LocationTokenContext:
-    root = CommonParseManager(PatchfileLexer, PatchfileParser).get_root(
-        file
-    ).addBlock(0)
+    parse_manager = CommonParseManager(PatchfileLexer, PatchfileParser)
+    root = parse_manager.get_root(file).addBlock(0)
 
     return root.addBlockHeader(offset).locationToken()
 
@@ -19,9 +18,8 @@ def get_replace_patch_context(
     file: Path,
     offset: int,
 ) -> PatchfileParser.LocationTokenContext:
-    root = CommonParseManager(PatchfileLexer, PatchfileParser).get_root(
-        file
-    ).replaceNthBlock(0)
+    parse_manager = CommonParseManager(PatchfileLexer, PatchfileParser)
+    root = parse_manager.get_root(file).replaceNthBlock(0)
 
     return root.replaceNthBlockHeader(offset).locationToken()
 
@@ -29,8 +27,7 @@ def get_remove_patch_context(
     file: Path,
     offset: int,
 ) -> PatchfileParser.LocationTokenContext:
-    root = CommonParseManager(PatchfileLexer, PatchfileParser).get_root(
-        file
-    )
+    parse_manager = CommonParseManager(PatchfileLexer, PatchfileParser)
+    root = parse_manager.get_root(file)
 
     return root.removeBlock(offset)
