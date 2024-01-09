@@ -1,4 +1,4 @@
-# Riley's SWF Patcher
+# rayyaw's SWF Patcher
 
 ### CI/CD
 [![Pylint](https://github.com/rayyaw/flash-patcher/actions/workflows/pylint.yml/badge.svg)](https://github.com/rayyaw/flash-patcher/actions/workflows/pylint.yml)
@@ -90,8 +90,9 @@ end-patch
 remove frame_1/DoAction.as 789-1111
 ```
 
-You can use \# to write comments. There are two types of commands, `add` and `remove`. The first parameter to any command is the file to modify (in this case, "DefineSprite_1058 boss2/DoAction.as" or "frame_1/DoAction.as"). To find the name of this, export all scripts using FFDec and make a note of the file name you want to modify.
+Every patch file consists of a set of commands, separated by newlines. You can use \# to write comments. The first parameter to any command is the file to modify (in this case, "DefineSprite_1058 boss2/DoAction.as" or "frame_1/DoAction.as"). To find the name of this, export all scripts using FFDec and make a note of the file name you want to modify.
 
+#### `add` command
 You are allowed to put multiple `add` statements before a code block you wish to inject.
 
 The first parameter to the add or remove command is always the name of the file to inject into.
@@ -102,7 +103,34 @@ The add and remove parameters can come in the following forms:
 - `add file.as function Mainfunc`. This will inject after the definition of `Mainfunc` in `file.as`.
 - `add file.as function Mainfunc 15`. This will inject after the definition of `Mainfunc` in `file.as`, with an offset of 15 lines from the start of `Mainfunc`.
 
+
+#### `remove` command
+
 Note that `remove` commands are inclusive of the final line.
+
+Here is an example `remove` command. Note that you can still use the `function` and `end` targets as shown above.
+
+- `remove file.as 567-568`. This will remove lines 567 to 568 of `file.as`.
+
+#### `replace` command
+
+Note that just like `add`, you can put multiple `replace` statements before a code block.
+
+Here is an example `replace` command. Note that you can still use the `function` and `end` targets as shown above, as well as any `// cmd: ` commands.
+
+```
+replace file.as 3
+begin-content
+A
+end-content
+begin-patch
+B
+end-patch
+```
+
+This will look for the 3rd instance of `A` in `file.as`, and replace it with `B`.
+
+Putting a function + offset of N instead of a raw number will find and replace the Nth instance of the content after the function header, and putting `end` will replace the last instance of the content.
 
 For the add command, all lines up to (but not including) the `end-patch` command will be inserted into the SWF, *on* the specified line. For the remove command, all lines between the two numbers specified will be removed (and this is inclusive).
 

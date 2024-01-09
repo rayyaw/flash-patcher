@@ -7,7 +7,7 @@ from unittest.mock import patch, MagicMock
 from pytest import raises
 
 from flash_patcher.exception.injection import InjectionError
-from flash_patcher.inject.injection_location import InjectionLocation
+from flash_patcher.inject.location.parser_injection_location import ParserInjectionLocation
 from flash_patcher.inject.single_injection import SingleInjectionManager
 
 # pylint: disable=wrong-import-order
@@ -31,7 +31,7 @@ class SingleInjectionManagerSpec (TestCase):
         with open(self.as_path, encoding="utf-8") as file:
             self.file_content = file.readlines()
 
-        location = InjectionLocation(get_add_patch_context(
+        location = ParserInjectionLocation(get_add_patch_context(
             Path("../test/testdata/Patch1.patch"), 2,
         ))
 
@@ -93,7 +93,6 @@ class SingleInjectionManagerSpec (TestCase):
             self.file_content.extend(["test\n", "line2\n"])
             mock_writelines.assert_called_once_with(self.file_content)
 
-        # .readlines() counts as a mock_open call for some reason
         assert mock_open.call_count == 2
 
     # Overwriting write is super annoying...
@@ -113,7 +112,6 @@ class SingleInjectionManagerSpec (TestCase):
             self.single_injection_manager.inject([], 1)
             mock_writelines.assert_called_once_with(self.file_content)
 
-        # .readlines() counts as a mock_open call for some reason
         assert mock_open.call_count == 2
 
     # Overwriting write is super annoying...

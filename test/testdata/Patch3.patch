@@ -1,0 +1,9 @@
+replace frame_1/DoAction1.as ( function tile47.run )
+replace frame_1/DoAction1.as function tile47.run 2
+replace frame_1/DoAction1.as 2
+begin-content
+test
+end-content
+begin-patch
+// some content
+end-patch

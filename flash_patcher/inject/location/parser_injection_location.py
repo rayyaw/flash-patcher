@@ -3,24 +3,27 @@ from __future__ import annotations
 from flash_patcher.antlr_source.PatchfileParser import PatchfileParser
 
 from flash_patcher.exception.error_manager import ErrorManager
+from flash_patcher.inject.location.injection_location import InjectionLocation
 
-class InjectionLocation:
+class ParserInjectionLocation (InjectionLocation):
     """Store the location within a file to inject at.
 
     This will resolve a symbolic location (like "end") into a line number,
     which can then be injected.
+
+    This uses the parser context to find the correct location.
     """
 
     context: PatchfileParser.LocationTokenContext = None
 
     def __init__(
-        self: InjectionLocation,
+        self: ParserInjectionLocation,
         symbolic_location: PatchfileParser.LocationTokenContext
     ) -> None:
         self.context = symbolic_location
 
     def resolve(
-        self: InjectionLocation,
+        self: ParserInjectionLocation,
         file_content: list[str],
         is_add: bool,
         exception: ErrorManager,
@@ -53,7 +56,7 @@ class InjectionLocation:
         return max(line_no, 0)
 
     def resolve_line_no(
-        self: InjectionLocation,
+        self: ParserInjectionLocation,
         file_content: list[str],
         is_add: bool,
         exception: ErrorManager
@@ -70,7 +73,7 @@ class InjectionLocation:
         return line_no
 
     def resolve_function(
-        self: InjectionLocation,
+        self: ParserInjectionLocation,
         file_content: list[str],
         exception: ErrorManager,
     ) -> int | None:
@@ -96,14 +99,14 @@ class InjectionLocation:
         return line_no
 
     def resolve_end(
-        self: InjectionLocation,
+        self: ParserInjectionLocation,
         file_content: list[str],
     ) -> int:
         """Resolve the injection location if it's the end of the file."""
         return len(file_content)
 
     def verify_line_no(
-        self: InjectionLocation,
+        self: ParserInjectionLocation,
         line_no: int,
         file_content: list[str],
         exception: ErrorManager,

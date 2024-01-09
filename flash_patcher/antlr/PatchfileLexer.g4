@@ -2,6 +2,8 @@ lexer grammar PatchfileLexer;
 
 ADD             : A D D;
 REMOVE          : R E M O V E;
+REPLACE         : R E P L A C E;
+REPLACE_ALL     : R E P L A C E '-' A L L;
 
 // file names should always start with DefineSprite or frame
 // XML files should be named swf.xml
@@ -9,6 +11,8 @@ REMOVE          : R E M O V E;
 FILENAME        : (D E F I N E S P R I T E | F R A M E) .+? '.as' | S W F '.xml';
 
 BEGIN_PATCH     : B E G I N '-' P A T C H -> mode(ADD_BLOCK_MODE);
+BEGIN_CONTENT   : B E G I N '-' C O N T E N T -> mode(CONTENT_MODE);
+
 FUNCTION        : F U N C T I O N;
 END             : E N D;
 
@@ -61,3 +65,7 @@ COMMENT     : '#' ~( '\r' | '\n')* -> skip;
 mode ADD_BLOCK_MODE;
 END_PATCH   : E N D '-' P A T C H -> mode(DEFAULT_MODE);
 AS_TEXT     : .+?;
+
+mode CONTENT_MODE;
+END_CONTENT : E N D '-' C O N T E N T -> mode(DEFAULT_MODE);
+CONTENT_TEXT: .+?;

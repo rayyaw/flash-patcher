@@ -10,9 +10,9 @@ from flash_patcher.util.file_copy import clean_scripts, copy_file
 
 # pylint: disable=pointless-string-statement
 """
-Riley's SWF patcher - a tool to patch content into SWF files.
+rayyaw's SWF patcher - a tool to patch content into SWF files.
 
-Development: RileyTech, qtkito, GTcreyon
+Development: rayyaw, qtkito, GTcreyon
 Windows path fix: Jhynjhiruu
 
 Download and updates: https://github.com/rayyaw/flash-patcher
@@ -42,7 +42,7 @@ def main(
     except PackageNotFoundError:
         __version__ = "Unit Tests"
 
-    info(f"Riley's SWF Patcher - v{__version__}")
+    info(f"rayyaw's SWF Patcher - v{__version__}")
 
     try:
         compiler = CompilationManager()

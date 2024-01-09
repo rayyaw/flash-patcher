@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from flash_patcher.exception.error_manager import ErrorManager
-from flash_patcher.inject.injection_location import InjectionLocation
+from flash_patcher.inject.location.injection_location import InjectionLocation
 from flash_patcher.util.file_io import readlines_safe, writelines_safe
 
 class SingleInjectionManager:
@@ -33,6 +33,7 @@ class SingleInjectionManager:
     ) -> None:
         self.file_name = file_name
         self.file_location = file_location
+        self.file_content = None
 
         self.patch_file = patch_file
         self.patch_line_no = patch_line_no
@@ -43,7 +44,9 @@ class SingleInjectionManager:
         """Inject the content into the file."""
         patch_line_no = patch_file_line
 
-        self.file_content = readlines_safe(self.file_name, self.error_manager)
+        if self.file_content is None:
+            self.file_content = readlines_safe(self.file_name, self.error_manager)
+
         file_line_no = self.file_location.resolve(self.file_content, True, self.error_manager)
 
         if file_line_no is None:
