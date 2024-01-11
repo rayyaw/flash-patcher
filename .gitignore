@@ -16,6 +16,7 @@ flash_patcher/antlr_source/*
 .pytest_cache/
 
 # Misc files and folders
+.vscode/
 .Patcher-Temp/
 venv/
 TODO.md

@@ -22,12 +22,16 @@ class ErrorManager:
         # extra info is usually the content of the offending line
         self.context = context
 
-    def raise_(self: ErrorManager, mesg: str) -> None:
-        """Raise an InjectionError with the requested information."""
-        error_mesg = f"""InjectionError at {self.patch_file}, line {self.line_no}
+    def raise_(
+        self: ErrorManager,
+        mesg: str,
+        exception_type: type[Exception] = InjectionError,
+    ) -> None:
+        """Raise an exception with the requested information."""
+        error_mesg = f"""{exception_type.__name__} at {self.patch_file}, line {self.line_no}
             Additional context: {self.context}
             {mesg}
             Aborting..."""
 
         error(error_mesg)
-        raise InjectionError(mesg)
+        raise exception_type(mesg)

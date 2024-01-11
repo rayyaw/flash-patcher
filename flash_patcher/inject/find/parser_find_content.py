@@ -3,10 +3,11 @@ from __future__ import annotations
 from flash_patcher.antlr_source.PatchfileParser import PatchfileParser
 
 from flash_patcher.exception.error_manager import ErrorManager
+from flash_patcher.inject.find.find_content import FindContentManager
 from flash_patcher.inject.location.constant_injection_location import ConstantInjectionLocation
 from flash_patcher.inject.location.injection_location import InjectionLocation
 
-class FindContentManager:
+class ParserFindContentManager (FindContentManager):
     """A class designed to find specified content within a file,
     and replace it with placeholder text.
     """
@@ -15,7 +16,7 @@ class FindContentManager:
     search_content: str
 
     def __init__(
-        self: FindContentManager,
+        self: ParserFindContentManager,
         symbolic_location: PatchfileParser.LocationTokenContext,
         search_content: str,
     ) -> None:
@@ -23,7 +24,7 @@ class FindContentManager:
         self.search_content = search_content
 
     def resolve(
-        self: FindContentManager,
+        self: ParserFindContentManager,
         file_content: str,
         exception: ErrorManager,
     ) -> tuple[list[str], InjectionLocation]:
@@ -101,7 +102,7 @@ class FindContentManager:
         return first_section, location
 
     def find_nth_instance_after(
-        self: FindContentManager,
+        self: ParserFindContentManager,
         file_content: str,
         start_index: int,
         instance_number: int,
