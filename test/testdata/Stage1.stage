@@ -2,3 +2,5 @@
 ../../test/testdata/Pack1.assets
 
 # comment
+../test/testdata/sample.py
+../test/testdata/empty.py

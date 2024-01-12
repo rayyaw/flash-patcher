@@ -17,6 +17,7 @@ flash_patcher/antlr_source/*
 
 # Misc files and folders
 .Patcher-Temp/
+.vscode/
 venv/
 TODO.md
 antlr-*-complete.jar

@@ -27,6 +27,14 @@ See the README for documentation and license.
 
 basicConfig(level=1, format="%(levelname)s: %(message)s")
 
+def print_version() -> None:
+    try:
+        __version__ = version("flash_patcher")
+    except PackageNotFoundError:
+        __version__ = "Unit Tests"
+
+    info(f"rayyaw's SWF Patcher - v{__version__}")
+
 def main(
     inputfile: Path,
     folder: Path,
@@ -37,12 +45,7 @@ def main(
     xml_mode: bool = False,
 ) -> None:
     """Run the patcher."""
-    try:
-        __version__ = version("flash_patcher")
-    except PackageNotFoundError:
-        __version__ = "Unit Tests"
-
-    info(f"rayyaw's SWF Patcher - v{__version__}")
+    print_version()
 
     try:
         compiler = CompilationManager()
