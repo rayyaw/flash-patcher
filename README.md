@@ -70,6 +70,7 @@ A patch stage file (usually ending in .stage), may look something like this:
 patch1.patch
 subfolder/patch2.patch
 subfolder/pack.assets
+script.py
 ```
 
 You can use \# to comment out certain lines. Each line contains a patch file to run, and each injected file must be in the same top-level patch folder as the stage file. When the patcher runs, it will apply each patch file in order.
@@ -162,6 +163,16 @@ add-asset localfolder/derp.png images/8.png
 ```
 
 This asset pack file takes the local file at `localfolder/derp.png` and copies it to `images/8.png` within the SWF. If there was already a file named `images/8.png`, it will be overwritten with the new file.
+
+### Python Files
+
+You can also call arbitrary python files to execute inside of a stage file, with the following API:
+
+- Only Python 3 is supported.
+- The name of the Python file must not contain spaces.
+- You must print a list of files that are modified. This list must be comma-separated and formatted in UTF-8.
+
+An example of such a list: `DoAction1.as, DoAction2.as`. Trailing whitespace or newlines are fine, as those will be stripped off.
 
 ### Injection Order
 

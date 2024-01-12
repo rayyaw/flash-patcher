@@ -3,9 +3,9 @@
 import argparse
 from pathlib import Path
 
-from flash_patcher.patcher import main
+from flash_patcher.patcher import main, print_version
 
-def cli():
+def cli() -> None:
     """Run Flash Patcher from the CLI."""
     parser = argparse.ArgumentParser()
 
@@ -13,7 +13,6 @@ def cli():
         "--inputswf",
         dest="input_swf",
         type=str,
-        required=True,
         help="Input SWF file",
     )
 
@@ -21,7 +20,6 @@ def cli():
         "--folder",
         dest="folder",
         type=str,
-        required=True,
         help="Folder with patch files",
     )
 
@@ -29,7 +27,6 @@ def cli():
         "--stagefile",
         dest="stage_file",
         type=str,
-        required=True,
         help="Stage file name",
     )
 
@@ -37,7 +34,6 @@ def cli():
         "--outputswf",
         dest="output_swf",
         type=str,
-        required=True,
         help="Output SWF file",
     )
 
@@ -65,7 +61,25 @@ def cli():
         help="Inject into an XML decompilation instead of standard syntax",
     )
 
+    parser.add_argument(
+        "--version",
+        dest="version",
+        default=False,
+        action="store_true",
+        help="Print the current version of Flash Patcher and exit",
+    )
+
     args = parser.parse_args()
+
+    if args.version:
+        print_version()
+        return
+
+    if (not args.input_swf) or (not args.folder) or (not args.stage_file) or (not args.output_swf):
+        parser.print_usage()
+        print("flash-patcher: error: the following arguments are required:\n \
+              --inputswf, --folder, --stagefile, --outputswf")
+        return
 
     main(
         Path(args.input_swf),

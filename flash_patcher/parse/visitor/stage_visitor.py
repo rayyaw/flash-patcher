@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import subprocess
 
 from flash_patcher.antlr_source.StagefileParser import StagefileParser
 from flash_patcher.antlr_source.StagefileVisitor import StagefileVisitor
@@ -48,6 +49,30 @@ class StagefileProcessor (StagefileVisitor):
             self.decomp_location_with_scripts, self.folder / ctx.getText()
         ).parse()
 
+    def visitPythonFile(
+        self: StagefileProcessor,
+        ctx: StagefileParser.PythonFileContext
+    ) -> None:
+        """Visit any custom .py files the user would like to execute.
+        
+        The python script should print out the comma-separated filenames that it modified.
+        example output: "DoAction1.as,DoAction2.as"
+        Python script names may not include spaces.
+        """
+        output = subprocess.check_output(
+            ['python3', ctx.getText()]
+        )
+
+        output = output.decode('utf-8').strip()
+
+        if output == "":
+            return
+
+        output = output.split(",")
+
+        for item in output:
+            self.modified_scripts |= set([Path(item)])
+
     def visitAssetPackFile(
         self: StagefileProcessor,
         ctx: StagefileParser.AssetPackFileContext
@@ -57,7 +82,7 @@ class StagefileProcessor (StagefileVisitor):
             self.folder, self.decomp_location, self.folder / ctx.getText()
         ).parse()
 
-    def visitRoot(self: StagefileProcessor, ctx: StagefileParser.RootContext) -> set:
+    def visitRoot(self: StagefileProcessor, ctx: StagefileParser.RootContext) -> set[Path]:
         """Root function. Call this when running the visitor."""
         super().visitRoot(ctx)
         return self.modified_scripts
