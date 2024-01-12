@@ -74,10 +74,11 @@ def cli() -> None:
     if args.version:
         print_version()
         return
-    
+
     if (not args.input_swf) or (not args.folder) or (not args.stage_file) or (not args.output_swf):
         parser.print_usage()
-        print("flash-patcher: error: the following arguments are required: --inputswf, --folder, --stagefile, --outputswf")
+        print("flash-patcher: error: the following arguments are required:\n \
+              --inputswf, --folder, --stagefile, --outputswf")
         return
 
     main(

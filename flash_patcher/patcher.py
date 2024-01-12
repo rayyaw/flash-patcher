@@ -28,6 +28,7 @@ See the README for documentation and license.
 basicConfig(level=1, format="%(levelname)s: %(message)s")
 
 def print_version() -> None:
+    """Print the Flash Patcher version."""
     try:
         __version__ = version("flash_patcher")
     except PackageNotFoundError:
