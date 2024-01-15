@@ -35,9 +35,9 @@ class StagefileProcessor (StagefileVisitor):
         decomp_location: Path,
         decomp_location_with_scripts: Path
      ) -> None:
-        self.decomp_location = decomp_location
-        self.decomp_location_with_scripts = decomp_location_with_scripts
-        self.folder = folder
+        self.decomp_location = decomp_location.resolve()
+        self.decomp_location_with_scripts = decomp_location_with_scripts.resolve()
+        self.folder = folder.resolve()
 
         self.modified_scripts = set()
 
@@ -61,7 +61,7 @@ class StagefileProcessor (StagefileVisitor):
         Python script names may not include spaces.
         """
         cwd = Path.cwd()
-        script_path = cwd / self.folder / ctx.getText()
+        script_path = self.folder / ctx.getText()
         chdir(self.decomp_location)
         output = subprocess.check_output(
             ["python3", script_path],

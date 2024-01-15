@@ -1,6 +1,6 @@
-../../test/testdata/Patch1.patch
-../../test/testdata/Pack1.assets
+Patch1.patch
+Pack1.assets
 
 # comment
-../test/testdata/sample.py
-../test/testdata/empty.py
+sample.py
+empty.py

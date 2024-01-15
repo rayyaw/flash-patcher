@@ -31,8 +31,8 @@ class StagefileProcessorSpec (TestCase):
 
         self.stage_processor = StagefileProcessor(
             Path("../test/testdata/"),
-            Path("./.Patcher-Temp/mod"),
-            Path("./.Patcher-Temp/mod/scripts"),
+            Path("../test/testdata/mod"),
+            Path("../test/testdata/mod/scripts"),
         )
 
     @patch('flash_patcher.parse.visitor.stage_visitor.StagefileProcessor.visitPatchFile')
