@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from os import chdir
 from pathlib import Path
 import subprocess
 
@@ -59,9 +60,13 @@ class StagefileProcessor (StagefileVisitor):
         example output: "DoAction1.as,DoAction2.as"
         Python script names may not include spaces.
         """
+        cwd = Path.cwd()
+        script_path = cwd / self.folder / ctx.getText()
+        chdir(self.decomp_location)
         output = subprocess.check_output(
-            ['python3', ctx.getText()]
+            ["python3", script_path],
         )
+        chdir(cwd)
 
         output = output.decode('utf-8').strip()
 

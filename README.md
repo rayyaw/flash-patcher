@@ -166,7 +166,7 @@ This asset pack file takes the local file at `localfolder/derp.png` and copies i
 
 ### Python Files
 
-You can also call arbitrary python files to execute inside of a stage file, with the following API:
+Arbitrary Python scripts can be referenced in the stage file. They should be placed in the patch folder, and will be executed inside the decompiled directory, with the following API:
 
 - Only Python 3 is supported.
 - The name of the Python file must not contain spaces.
