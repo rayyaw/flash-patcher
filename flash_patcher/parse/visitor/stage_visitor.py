@@ -35,8 +35,8 @@ class StagefileProcessor (StagefileVisitor):
         decomp_location: Path,
         decomp_location_with_scripts: Path
      ) -> None:
-        self.decomp_location = decomp_location.resolve()
-        self.decomp_location_with_scripts = decomp_location_with_scripts.resolve()
+        self.decomp_location = decomp_location
+        self.decomp_location_with_scripts = decomp_location_with_scripts
         self.folder = folder.resolve()
 
         self.modified_scripts = set()
