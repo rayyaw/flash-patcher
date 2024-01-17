@@ -10,12 +10,9 @@ def run_in_dir(args: list, directory: Path) -> CompletedProcess:
     chdir(directory)
     output = run(args, check=True, stdout=PIPE)
     chdir(cwd)
-    print(output)
     return output
 
 
 def check_output_in_dir(args: list, directory: Path) -> bytes:
     """Run a command in the given directory, and return its output."""
-    output = run_in_dir(args, directory).stdout
-    print(output)
-    return output
+    return run_in_dir(args, directory).stdout
