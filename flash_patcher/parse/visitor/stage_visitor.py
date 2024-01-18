@@ -72,7 +72,7 @@ class StagefileProcessor (StagefileVisitor):
         output = output.split(",")
 
         for item in output:
-            self.modified_scripts |= set([Path(item)])
+            self.modified_scripts.add(Path(".Patcher-Temp/mod") / item)
 
     def visitAssetPackFile(
         self: StagefileProcessor,
