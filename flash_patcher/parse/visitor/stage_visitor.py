@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path
-import subprocess
 
 from flash_patcher.antlr_source.StagefileParser import StagefileParser
 from flash_patcher.antlr_source.StagefileVisitor import StagefileVisitor
 
 from flash_patcher.parse.asset import AssetPackManager
 from flash_patcher.parse.patch import PatchfileManager
+from flash_patcher.util.external_cmd import check_output_in_dir
 
 class StagefileProcessor (StagefileVisitor):
     """This class inherits from the ANTLR visitor to process stage files.
@@ -36,7 +36,7 @@ class StagefileProcessor (StagefileVisitor):
      ) -> None:
         self.decomp_location = decomp_location
         self.decomp_location_with_scripts = decomp_location_with_scripts
-        self.folder = folder
+        self.folder = folder.resolve()
 
         self.modified_scripts = set()
 
@@ -59,10 +59,11 @@ class StagefileProcessor (StagefileVisitor):
         example output: "DoAction1.as,DoAction2.as"
         Python script names may not include spaces.
         """
-        output = subprocess.check_output(
-            ['python3', ctx.getText()]
+        script_path = self.folder / ctx.getText()
+        output = check_output_in_dir(
+            ["python3", script_path],
+            self.decomp_location,
         )
-
         output = output.decode('utf-8').strip()
 
         if output == "":
