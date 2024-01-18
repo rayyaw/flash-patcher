@@ -68,8 +68,8 @@ class StagefileProcessorSpec (TestCase):
         self.stage_processor.visitPythonFile(self.python_file_context)
 
         assert self.stage_processor.modified_scripts == set([
-            Path("DoAction1.as"),
-            Path("DoAction2.as")
+            Path(".Patcher-Temp/mod/DoAction1.as"),
+            Path(".Patcher-Temp/mod/DoAction2.as")
         ])
 
     def test_visit_python_file_success_empty(
