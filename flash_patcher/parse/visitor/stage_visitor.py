@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 from pathlib import Path
-import subprocess
 
 from flash_patcher.antlr_source.StagefileParser import StagefileParser
 from flash_patcher.antlr_source.StagefileVisitor import StagefileVisitor
 
 from flash_patcher.parse.asset import AssetPackManager
 from flash_patcher.parse.patch import PatchfileManager
-
 from flash_patcher.util.external_cmd import check_output_in_dir
 
 class StagefileProcessor (StagefileVisitor):
