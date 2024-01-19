@@ -24,6 +24,8 @@ class PatchfileProcessorSpec (TestCase):
     replace_nth_context: PatchfileParser.ReplaceNthBlockContext
     root_context: PatchfileParser.RootContext
 
+    replace_all_root_context: PatchfileParser.RootContext
+
     mock_injector: MagicMock[BulkInjectionManager]
     patch_visitor: PatchfileProcessor
 
@@ -45,6 +47,9 @@ class PatchfileProcessorSpec (TestCase):
         self.add_context = self.root_context.addBlock()[0]
         self.remove_context = self.root_context.removeBlock()[0]
         self.replace_nth_context = self.root_context.replaceNthBlock()[0]
+
+        self.replace_all_root_context = CommonParseManager(PatchfileLexer, PatchfileParser) \
+            .get_root(Path("../test/testdata/Patch4.patch"))
 
     def test_visit_add_block_success(self: PatchfileProcessorSpec) -> None:
         self.patch_visitor.visitAddBlock(self.add_context)
@@ -78,8 +83,6 @@ class PatchfileProcessorSpec (TestCase):
 
         assert len(self.patch_visitor.modified_scripts) == 1
 
-    # Overwriting write is super annoying...
-    # (For some reason patching writelines_safe doesn't work)
     @patch('flash_patcher.inject.single_injection.SingleInjectionManager.inject')
     def test_visit_replace_nth_block_success(
         self: PatchfileProcessorSpec,
@@ -90,6 +93,42 @@ class PatchfileProcessorSpec (TestCase):
         assert mock_single_injector.call_count == 3
 
         assert len(self.patch_visitor.modified_scripts) == 1
+
+    @patch('pathlib.Path.open', create=True)
+    def test_visit_replace_all_block_multiple_replacement(
+        self: PatchfileProcessorSpec,
+        mock_open: MagicMock,
+    ) -> None:
+        mock_file = MagicMock()
+
+        mock_open.return_value.__enter__.return_value = mock_file
+        mock_file.read.return_value = "testtesttest"
+
+        with patch.object(mock_file, 'writelines') as mock_writelines:
+            self.patch_visitor.visitReplaceAllBlock(
+                self.replace_all_root_context.replaceAllBlock(1)
+            )
+
+            mock_writelines.assert_called_once_with([
+                "// some content// some content// some content"
+            ])
+
+    @patch('pathlib.Path.open', create=True)
+    def test_visit_replace_all_block_none(
+        self: PatchfileProcessorSpec,
+        mock_open: MagicMock,
+    ) -> None:
+        mock_file = MagicMock()
+
+        mock_open.return_value.__enter__.return_value = mock_file
+        mock_file.read.return_value = "testtesttest"
+
+        with patch.object(mock_file, 'writelines') as mock_writelines:
+            self.patch_visitor.visitReplaceAllBlock(
+                self.replace_all_root_context.replaceAllBlock(0)
+            )
+
+            mock_writelines.assert_called_once_with(["testtesttest"])
 
     # Overwriting write is super annoying...
     # (For some reason patching writelines_safe doesn't work)

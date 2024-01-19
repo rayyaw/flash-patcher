@@ -1,0 +1,15 @@
+replace-all frame_1/DoAction1.as
+begin-content
+nonexistent content
+end-content
+begin-patch
+// some content
+end-patch
+
+replace-all frame_1/DoAction1.as
+begin-content
+test
+end-content
+begin-patch
+// some content
+end-patch
