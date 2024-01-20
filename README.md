@@ -133,9 +133,30 @@ This will look for the 3rd instance of `A` in `file.as`, and replace it with `B`
 
 Putting a function + offset of N instead of a raw number will find and replace the Nth instance of the content after the function header, and putting `end` will replace the last instance of the content.
 
+#### `replace-all` command
+
+As with the other commands, you can have multiple `replace-all` headers before the blocks. The syntax is mostly the same as the replace command, with the `content` and `patch` blocks operating in the same way. However, the header is changed:
+
+```
+replace-all file.as
+```
+
+We only need to specify the filename, as nothing else is used.
+
+**Caveats**
+
+There are several limitations that come with the `replace-all` command:
+
+- You may not use both `replace` and `replace-all` headers for the same block, as this is invalid syntax.
+- `replace-all` blocks do not support secondary commands.
+
+#### Content Insertion
+
 For the add command, all lines up to (but not including) the `end-patch` command will be inserted into the SWF, *on* the specified line. For the remove command, all lines between the two numbers specified will be removed (and this is inclusive).
 
 After one or more add commands, add a newline, a `begin-patch\n` and then enter your code block. At the end of the block, add a newline and `end-patch` to tell the patcher the patch is finished.
+
+#### Secondary commands
 
 Within a code block, you can also use the following syntax to skip ahead within the file:
 ```

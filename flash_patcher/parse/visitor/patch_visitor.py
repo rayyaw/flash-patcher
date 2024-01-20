@@ -10,7 +10,7 @@ from flash_patcher.inject.bulk_injection import BulkInjectionManager
 from flash_patcher.inject.location.parser_injection_location import ParserInjectionLocation
 from flash_patcher.inject.find_content import FindContentManager
 from flash_patcher.inject.single_injection import SingleInjectionManager
-from flash_patcher.util.file_io import FileWritebackManager, read_safe
+from flash_patcher.util.file_io import FileWritebackManager, read_safe, writelines_safe
 
 class PatchfileProcessor (PatchfileParserVisitor):
     """This class inherits from the ANTLR visitor to process patch files.
@@ -117,6 +117,27 @@ class PatchfileProcessor (PatchfileParserVisitor):
 
             injector.file_content = updated_file
             injector.inject(ctx.addBlockText().getText().strip(), i.start.line)
+
+            self.modified_scripts.add(full_path)
+
+    def visitReplaceAllBlock(
+        self: PatchfileProcessor,
+        ctx: PatchfileParser.ReplaceAllBlockContext
+    ) -> None:
+        """Replace all instances of the specified content.
+        Does not support secondary commands, only direct text replacement.
+        """
+        find_content = ctx.replaceBlockText().getText().strip()
+        replace_content = ctx.addBlockText().getText().strip()
+
+        for i in ctx.replaceAllBlockHeader():
+
+            full_path = self.decomp_location_with_scripts / i.FILENAME().getText()
+            error_manager = ErrorManager(self.patch_file_name, i.start.line)
+
+            content = read_safe(full_path, error_manager)
+            content = content.replace(find_content, replace_content)
+            writelines_safe(full_path, [content])
 
             self.modified_scripts.add(full_path)
 
