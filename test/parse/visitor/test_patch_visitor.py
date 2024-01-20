@@ -54,7 +54,7 @@ class PatchfileProcessorSpec (TestCase):
     def test_visit_add_block_success(self: PatchfileProcessorSpec) -> None:
         self.patch_visitor.visitAddBlock(self.add_context)
 
-        assert self.mock_injector.add_injection_target.call_count == 5
+        assert self.mock_injector.add_injection_target.call_count == 7
 
         self.mock_injector.inject.assert_called_once_with(
             "// This is an actionscript command\n" \

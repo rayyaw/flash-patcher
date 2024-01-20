@@ -87,3 +87,10 @@ class FindContentManagerSpec (TestCase):
         with raises(InjectionError):
             FindContentManager(context, "derppotato1") \
                 .resolve(self.file_content, self.error_manager)
+
+    def test_resolve_content_failure(self: FindContentManagerSpec) -> None:
+        context = get_add_patch_context(Path("../test/testdata/Patch1.patch"), 5)
+
+        with raises(InjectionError):
+            FindContentManager(context, "test") \
+                .resolve(self.file_content, self.error_manager)
