@@ -104,12 +104,21 @@ The add and remove parameters can come in the following forms:
 - `add file.as function Mainfunc`. This will inject after the definition of `Mainfunc` in `file.as`.
 - `add file.as function Mainfunc 15`. This will inject after the definition of `Mainfunc` in `file.as`, with an offset of 15 lines from the start of `Mainfunc`.
 
+There is also an additional target:
+```
+add file.as
+begin-content
+    // content to match. may be multiline.
+end-content + 1
+```
+
+This will find the content in the `begin-content` block and inject on the line after the end of the content. The `+ 1` is optional, and specifies an additional offset (in lines) after the end of the content.
 
 #### `remove` command
 
 Note that `remove` commands are inclusive of the final line.
 
-Here is an example `remove` command. Note that you can still use the `function` and `end` targets as shown above.
+Here is an example `remove` command. Note that you can still use the `function`, `content`, and `end` targets as shown above.
 
 - `remove file.as 567-568`. This will remove lines 567 to 568 of `file.as`.
 
@@ -132,6 +141,8 @@ end-patch
 This will look for the 3rd instance of `A` in `file.as`, and replace it with `B`.
 
 Putting a function + offset of N instead of a raw number will find and replace the Nth instance of the content after the function header, and putting `end` will replace the last instance of the content.
+
+Putting a `content` block instead of a raw number is unsupported and will cause the patcher to error out.
 
 #### `replace-all` command
 

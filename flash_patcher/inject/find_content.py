@@ -76,6 +76,13 @@ class FindContentManager:
             instance_number = 0
             occurrences_found = -1 if current_index == -1 else 0
 
+        # Unsupported context type
+        else:
+            exception.raise_(
+                f"""The context {self.context.getText()} is not a valid context type
+                for the find command!!"""
+            )
+
         # If N occurrences are found, get the index of the Nth occurrence
         if occurrences_found == instance_number:
             split_content = [

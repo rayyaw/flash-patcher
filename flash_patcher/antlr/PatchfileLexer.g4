@@ -55,6 +55,7 @@ fragment SLASH      : '/'|'\\';
 
 INTEGER : NUMBER+;
 DASH    : '-';
+PLUS    : '+';
 
 FUNCTION_NAME : ~( '-' | ' ' | '\r' | '\n')+;
 
