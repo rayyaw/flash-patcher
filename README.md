@@ -106,13 +106,13 @@ The add and remove parameters can come in the following forms:
 
 There is also an additional target:
 ```
-add file.as
+add <filename>.as
 begin-content
     // content to match. may be multiline.
-end-content + 1
+end-content + <offset>
 ```
 
-This will find the content in the `begin-content` block and inject on the line after the end of the content. The `+ 1` is optional, and specifies an additional offset (in lines) after the end of the content.
+This will find the content in the `begin-content` block and inject on the line after the end of the content. The `+ <offset>` is optional, and specifies an integer offset (in lines) after the end of the content.
 
 #### `remove` command
 
