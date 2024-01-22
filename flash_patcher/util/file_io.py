@@ -55,11 +55,12 @@ def read_safe(file_location: Path, error_manager: ErrorManager) -> str:
     try:
         with file_location.open() as file:
             return file.read()
-    except (FileNotFoundError, IsADirectoryError):
+    except (FileNotFoundError, IsADirectoryError) as e:
         error_manager.context = file_location.as_posix()
         error_manager.raise_(
             """Invalid injection location.
-            Could not find or load SWF decompiled file."""
+            Could not find or load SWF decompiled file.""",
+            type(e)
         )
 
 def readlines_safe(file_location: Path, error_manager: ErrorManager) -> list:
@@ -70,11 +71,12 @@ def readlines_safe(file_location: Path, error_manager: ErrorManager) -> list:
     try:
         with file_location.open() as file:
             return file.readlines()
-    except (FileNotFoundError, IsADirectoryError):
+    except (FileNotFoundError, IsADirectoryError) as e:
         error_manager.context = file_location.as_posix()
         error_manager.raise_(
             """Invalid injection location.
-            Could not find or load SWF decompiled file."""
+            Could not find or load SWF decompiled file.""",
+            type(e)
         )
 
 def writelines_safe(path: Path, lines: list[str]) -> None:
