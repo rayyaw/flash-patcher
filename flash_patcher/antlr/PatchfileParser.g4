@@ -17,7 +17,8 @@ replaceBlockText        : CONTENT_TEXT+;
 
 root                    : (addBlock | removeBlock | replaceNthBlock | replaceAllBlock)*;
 
-locationToken           : OPEN_BLOCK? FUNCTION FUNCTION_NAME INTEGER? CLOSE_BLOCK?  # function
-                        | INTEGER                                                   # lineNumber
-                        | END                                                       # end
+locationToken           : OPEN_BLOCK? FUNCTION FUNCTION_NAME INTEGER? CLOSE_BLOCK?      # function
+                        | BEGIN_CONTENT replaceBlockText END_CONTENT (PLUS INTEGER)?    # text
+                        | INTEGER                                                       # lineNumber
+                        | END                                                           # end
                         ;

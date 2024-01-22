@@ -38,6 +38,8 @@ class ParserInjectionLocationSpec (TestCase):
             "end"               : 2,
             "function"          : 3,
             "function_offset"   : 4,
+            "content"           : 5,
+            "content_offset"    : 6,
         }
 
         return get_add_patch_context(
@@ -52,6 +54,7 @@ class ParserInjectionLocationSpec (TestCase):
         context_map = {
             "function"          : 0,
             "function_offset"   : 1,
+            "content"           : 4,
         }
 
         return get_add_patch_context(
@@ -66,6 +69,7 @@ class ParserInjectionLocationSpec (TestCase):
         context_map = {
             "line_no"           : 2,
             "function_offset"   : 3,
+            "content_offset"    : 5,
         }
 
         return get_add_patch_context(
@@ -109,6 +113,18 @@ class ParserInjectionLocationSpec (TestCase):
 
         assert line_no == 24
 
+    def test_resolve_success_content(self: ParserInjectionLocationSpec) -> None:
+        line_no = ParserInjectionLocation(self.get_valid_patch_context("content")) \
+            .resolve(self.file_content, True, self.error_manager)
+
+        assert line_no == 10
+
+    def test_resolve_success_content_offset(self: ParserInjectionLocationSpec) -> None:
+        line_no = ParserInjectionLocation(self.get_valid_patch_context("content_offset")) \
+            .resolve(self.file_content, True, self.error_manager)
+
+        assert line_no == 12
+
     def test_resolve_success_end_add(self: ParserInjectionLocationSpec) -> None:
         line_no = ParserInjectionLocation(self.get_valid_patch_context("end")) \
             .resolve(self.file_content, True, self.error_manager)
@@ -120,12 +136,6 @@ class ParserInjectionLocationSpec (TestCase):
             .resolve(self.file_content, False, self.error_manager)
 
         assert line_no == 69
-
-    def test_resolve_failure_invalid_command(self: ParserInjectionLocationSpec) -> None:
-        location = ParserInjectionLocation("aeiou")
-
-        with raises(InjectionError):
-            location.resolve(self.file_content, True, self.error_manager)
 
     def test_resolve_none_function_offset_add(self: ParserInjectionLocationSpec) -> None:
         line_no = ParserInjectionLocation(self.get_none_patch_context("function_offset")) \
@@ -139,6 +149,18 @@ class ParserInjectionLocationSpec (TestCase):
 
         assert line_no is None
 
+    def test_resolve_none_none(self: ParserInjectionLocationSpec) -> None:
+        line_no = ParserInjectionLocation(self.get_none_patch_context("content")) \
+            .resolve(self.file_content, True, self.error_manager)
+
+        assert line_no is None
+
+    def test_resolve_failure_invalid_command(self: ParserInjectionLocationSpec) -> None:
+        location = ParserInjectionLocation("aeiou")
+
+        with raises(InjectionError):
+            location.resolve(self.file_content, True, self.error_manager)
+
     def test_resolve_failure_line_no_beyond_eof(self: ParserInjectionLocationSpec) -> None:
         location = ParserInjectionLocation(self.get_error_eof_patch_context("line_no"))
 
@@ -147,6 +169,12 @@ class ParserInjectionLocationSpec (TestCase):
 
     def test_resolve_failure_function_offset_beyond_eof(self: ParserInjectionLocationSpec) -> None:
         location = ParserInjectionLocation(self.get_error_eof_patch_context("function_offset"))
+
+        with raises(InjectionError):
+            location.resolve(self.file_content, True, self.error_manager)
+
+    def test_resolve_failure_content_offset_beyond_eof(self: ParserInjectionLocationSpec) -> None:
+        location = ParserInjectionLocation(self.get_error_eof_patch_context("content_offset"))
 
         with raises(InjectionError):
             location.resolve(self.file_content, True, self.error_manager)

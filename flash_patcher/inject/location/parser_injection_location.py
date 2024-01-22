@@ -39,6 +39,9 @@ class ParserInjectionLocation (InjectionLocation):
         elif isinstance(self.context, PatchfileParser.FunctionContext):
             line_no = self.resolve_function(file_content, exception)
 
+        elif isinstance(self.context, PatchfileParser.TextContext):
+            line_no = self.resolve_text(file_content, exception)
+
         elif isinstance(self.context, PatchfileParser.EndContext):
             line_no = self.resolve_end(file_content)
 
@@ -98,6 +101,41 @@ class ParserInjectionLocation (InjectionLocation):
 
         return line_no
 
+    def resolve_text(
+        self: ParserInjectionLocation,
+        file_content: list[str],
+        exception: ErrorManager,
+    ) -> int | None:
+        """Resolve the injection location if it's content + offset.
+        Will return the line of the last character of the content being matched.
+        Will return None if there is no such content in the file.
+        """
+        matched_chars = 0
+        search_query = self.context.replaceBlockText().getText().strip()
+
+        # Since we need to match across multiple lines, we need to iterate through each character
+        for i, line in enumerate(file_content):
+            for char in line:
+                matched_chars = self.update_matched_chars(
+                    char, search_query[matched_chars], matched_chars
+                )
+
+                if matched_chars == len(search_query):
+                    line_no = i + 1
+                    if self.context.INTEGER():
+                        line_no += int(self.context.INTEGER().getText())
+
+                    self.verify_line_no(line_no, file_content, exception)
+                    return line_no
+
+            matched_chars = self.update_matched_chars(
+                '\n', search_query[matched_chars], matched_chars
+            )
+            # No check if we've reached the end of the search query.
+            # The strip() ensures the last character will never be a newline
+
+        return None
+
     def resolve_end(
         self: ParserInjectionLocation,
         file_content: list[str],
@@ -117,3 +155,17 @@ class ParserInjectionLocation (InjectionLocation):
                 f"""Out of bounds file location {line_no}.
                 The provided location is outside the maximum line number in the file."""
             )
+
+    def update_matched_chars(
+        self: ParserInjectionLocation,
+        first: str,
+        second: str,
+        num_matched: int,
+    ) -> int:
+        """Returns the new number of matched characters in a string,
+        after comparing the two provided characters.
+        """
+        if first == second:
+            return num_matched + 1
+
+        return 0
