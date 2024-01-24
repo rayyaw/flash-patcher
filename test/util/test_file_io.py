@@ -7,7 +7,6 @@ from unittest.mock import MagicMock, patch
 from pytest import raises
 
 from flash_patcher.exception.error_manager import ErrorManager
-from flash_patcher.exception.injection import InjectionError
 from flash_patcher.util.file_io import FileWritebackManager, \
     read_safe, readlines_safe, writelines_safe
 
@@ -75,7 +74,7 @@ def test_read_safe_success() -> None:
 def test_read_safe_failure_not_found(mock_open: MagicMock) -> None:
     mock_open.return_value.__enter__.side_effect = FileNotFoundError("file not found.")
 
-    with raises(InjectionError):
+    with raises(FileNotFoundError):
         read_safe(
             Path("../derppotato"),
             ErrorManager(".", 1),
@@ -87,7 +86,7 @@ def test_read_safe_failure_not_found(mock_open: MagicMock) -> None:
 def test_read_safe_failure_directory(mock_open: MagicMock) -> None:
     mock_open.return_value.__enter__.side_effect = IsADirectoryError("your file is invalid.")
 
-    with raises(InjectionError):
+    with raises(IsADirectoryError):
         read_safe(
             Path("../derppotato"),
             ErrorManager(".", 1),
@@ -110,7 +109,7 @@ def test_readlines_safe_success() -> None:
 def test_readlines_safe_failure_not_found(mock_open: MagicMock) -> None:
     mock_open.return_value.__enter__.side_effect = FileNotFoundError("file not found.")
 
-    with raises(InjectionError):
+    with raises(FileNotFoundError):
         readlines_safe(
             Path("../derppotato"),
             ErrorManager(".", 1),
@@ -122,7 +121,7 @@ def test_readlines_safe_failure_not_found(mock_open: MagicMock) -> None:
 def test_readlines_safe_failure_directory(mock_open: MagicMock) -> None:
     mock_open.return_value.__enter__.side_effect = IsADirectoryError("your file is invalid.")
 
-    with raises(InjectionError):
+    with raises(IsADirectoryError):
         readlines_safe(
             Path("../derppotato"),
             ErrorManager(".", 1),
