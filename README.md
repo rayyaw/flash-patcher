@@ -217,4 +217,3 @@ All versions of Flash Patcher up to and including 5.3.0 are made available under
 Flash Patcher v5.3.0 and onward are made available under AGPLv3.
 
 For v5.3.0, you may pick either the CC-BY SA 4.0 license, or the AGPLv3 license. You may not mix and match from both, and you should explicitly state which license you are using.
-This code is 
