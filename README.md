@@ -212,4 +212,9 @@ Patchfiles and asset packs will be applied in the order that they are specified 
 
 ## Licensing
 
-This code is made available under CC-BY SA 4.0. For more information, check https://creativecommons.org/licenses/by-sa/4.0 .
+All versions of Flash Patcher up to and including 5.3.0 are made available under CC-BY SA 4.0. For more information, check https://creativecommons.org/licenses/by-sa/4.0 .
+
+Flash Patcher v5.3.0 and onward are made available under AGPLv3.
+
+For v5.3.0, you may pick either the CC-BY SA 4.0 license, or the AGPLv3 license. You may not mix and match from both, and you should explicitly state which license you are using.
+This code is 
