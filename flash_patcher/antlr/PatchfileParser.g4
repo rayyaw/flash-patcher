@@ -25,10 +25,10 @@ root                    : (
                             addAssetBlock
                         )*;
 
-locationToken           : OPEN_BLOCK? FUNCTION FUNCTION_NAME INTEGER? CLOSE_BLOCK?      # function
+locationToken           : OPEN_BLOCK? FUNCTION TEXT_BLOCK INTEGER? CLOSE_BLOCK?      # function
                         | BEGIN_CONTENT replaceBlockText END_CONTENT (PLUS INTEGER)?    # text
                         | INTEGER                                                       # lineNumber
                         | END                                                           # end
                         ;
 
-file_name               : FUNCTION_NAME;
+file_name               : TEXT_BLOCK;

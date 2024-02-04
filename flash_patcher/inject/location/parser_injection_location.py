@@ -87,8 +87,8 @@ class ParserInjectionLocation (InjectionLocation):
             line = line.replace("(", " ")
             line = line.replace(")", " ")
 
-            if line.split()[:2] == ["function", self.context.FUNCTION_NAME().getText()] \
-                or line.split()[:3] == [self.context.FUNCTION_NAME().getText(), "=", "function"]:
+            if line.split()[:2] == ["function", self.context.TEXT_BLOCK().getText()] \
+                or line.split()[:3] == [self.context.TEXT_BLOCK().getText(), "=", "function"]:
                 # We need to add after the specified line
                 line_no = i + 1
                 break

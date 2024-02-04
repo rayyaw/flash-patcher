@@ -59,7 +59,7 @@ INTEGER : NUMBER+;
 DASH    : '-';
 PLUS    : '+';
 
-FUNCTION_NAME : ~( '-' | ' ' | '\r' | '\n')+;
+TEXT_BLOCK  : ~( '-' | ' ' | '\r' | '\n')+;
 
 // Stuff to ignore, like comments or whitespace
 WHITESPACE  : [ \t\r\n\f]+         -> skip;
