@@ -34,6 +34,8 @@ class PatchfileProcessorSpec (TestCase):
 
         self.patch_visitor = PatchfileProcessor(
             Path("../test/testdata/Patch1.patch"),
+            Path("../"),
+            Path(".Patcher-Temp/"),
             Path("../test/testdata/"),
         )
 
@@ -154,6 +156,71 @@ class PatchfileProcessorSpec (TestCase):
 
         with raises(InjectionError):
             self.patch_visitor.visitRemoveBlock(context)
+
+    @patch('shutil.copyfile')
+    @patch('pathlib.Path.mkdir')
+    @patch('pathlib.Path.exists')
+    def test_visit_add_asset_block_success_no_folder(
+        self: PatchfileProcessorSpec,
+        mock_path_exists: MagicMock,
+        mock_path_mkdir: MagicMock,
+        mock_shutil_copyfile: MagicMock,
+    ) -> None:
+        root_context = CommonParseManager(PatchfileLexer, PatchfileParser).get_root(
+            Path("../test/testdata/Pack1.assets")
+        )
+
+        mock_path_exists.side_effect = [True, False]
+
+        self.patch_visitor.visitRoot(root_context)
+
+        mock_path_mkdir.assert_called_once_with(
+            Path(".Patcher-Temp/images")
+        )
+        mock_shutil_copyfile.assert_called_once_with(
+            Path("../local.png"), Path(".Patcher-Temp/images/18.png")
+        )
+
+        assert self.patch_visitor.modified_scripts == set([
+            Path(".Patcher-Temp/images/18.png")
+        ])
+
+    @patch('shutil.copyfile')
+    @patch('pathlib.Path.exists')
+    def test_visit_add_asset_block_success_with_folder(
+        self: PatchfileProcessorSpec,
+        mock_path_exists: MagicMock,
+        mock_shutil_copyfile: MagicMock,
+    ) -> None:
+        root_context = CommonParseManager(PatchfileLexer, PatchfileParser).get_root(
+            Path("../test/testdata/Pack1.assets")
+        )
+
+        mock_path_exists.return_value = True
+
+        self.patch_visitor.visitRoot(root_context)
+
+        mock_shutil_copyfile.assert_called_once_with(
+            Path("../local.png"), Path(".Patcher-Temp/images/18.png")
+        )
+
+        assert self.patch_visitor.modified_scripts == set([
+            Path(".Patcher-Temp/images/18.png")
+        ])
+
+    @patch('pathlib.Path.exists')
+    def test_visit_add_asset_block_failure_not_exists(
+        self: PatchfileProcessorSpec,
+        mock_path_exists: MagicMock,
+    ) -> None:
+        root_context = CommonParseManager(PatchfileLexer, PatchfileParser).get_root(
+            Path("../test/testdata/Pack1.assets")
+        )
+
+        mock_path_exists.return_value = False
+
+        with raises(FileNotFoundError):
+            self.patch_visitor.visitRoot(root_context)
 
     @patch('flash_patcher.parse.visitor.patch_visitor.PatchfileProcessor.visitRemoveBlock')
     @patch('flash_patcher.parse.visitor.patch_visitor.PatchfileProcessor.visitAddBlock')

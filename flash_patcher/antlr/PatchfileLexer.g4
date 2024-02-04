@@ -1,6 +1,7 @@
 lexer grammar PatchfileLexer;
 
 ADD             : A D D;
+ADD_ASSET       : A D D '-' A S S E T;
 REMOVE          : R E M O V E;
 REPLACE         : R E P L A C E;
 REPLACE_ALL     : R E P L A C E '-' A L L;
@@ -8,7 +9,7 @@ REPLACE_ALL     : R E P L A C E '-' A L L;
 // file names should always start with DefineSprite or frame
 // XML files should be named swf.xml
 // (we need this to avoid ADD and REMOVE being matched in the filename)
-FILENAME        : (D E F I N E S P R I T E | F R A M E) .+? '.as' | S W F '.xml';
+FILENAME            : (D E F I N E S P R I T E | F R A M E) .+? '.as' | S W F '.xml';
 
 BEGIN_PATCH     : B E G I N '-' P A T C H -> mode(ADD_BLOCK_MODE);
 BEGIN_CONTENT   : B E G I N '-' C O N T E N T -> mode(CONTENT_MODE);
@@ -52,6 +53,7 @@ fragment LETTER     : [A-Za-z];
 fragment NUMBER     : [0-9];
 fragment SPACE      : ' ';
 fragment SLASH      : '/'|'\\';
+fragment DOT        : '.';
 
 INTEGER : NUMBER+;
 DASH    : '-';

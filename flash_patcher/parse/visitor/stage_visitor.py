@@ -5,7 +5,6 @@ from pathlib import Path
 from flash_patcher.antlr_source.StagefileParser import StagefileParser
 from flash_patcher.antlr_source.StagefileVisitor import StagefileVisitor
 
-from flash_patcher.parse.asset import AssetPackManager
 from flash_patcher.parse.patch import PatchfileManager
 from flash_patcher.util.external_cmd import check_output_in_dir
 
@@ -46,7 +45,10 @@ class StagefileProcessor (StagefileVisitor):
     ) -> None:
         """When we encounter a patch file, we should open and process it"""
         self.modified_scripts |= PatchfileManager(
-            self.decomp_location_with_scripts, self.folder / ctx.getText()
+            self.decomp_location,
+            self.decomp_location_with_scripts,
+            self.folder / ctx.getText(),
+            self.folder,
         ).parse()
 
     def visitPythonFile(
@@ -73,15 +75,6 @@ class StagefileProcessor (StagefileVisitor):
 
         for item in output:
             self.modified_scripts.add(Path(".Patcher-Temp/mod") / item)
-
-    def visitAssetPackFile(
-        self: StagefileProcessor,
-        ctx: StagefileParser.AssetPackFileContext
-    ) -> None:
-        """When we encounter an asset pack, we should open and process it"""
-        self.modified_scripts |= AssetPackManager(
-            self.folder, self.decomp_location, self.folder / ctx.getText()
-        ).parse()
 
     def visitRoot(self: StagefileProcessor, ctx: StagefileParser.RootContext) -> set[Path]:
         """Root function. Call this when running the visitor."""

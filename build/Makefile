@@ -32,7 +32,6 @@ uninstall:
 antlr-copy: $(wildcard ../flash_patcher/antlr/*.g4)
 	cp ../flash_patcher/antlr/*.g4 ../flash_patcher/antlr_source
 
-	cat ../flash_patcher/antlr/AssetPack.g4 ../flash_patcher/antlr/Common.g4 > ../flash_patcher/antlr_source/AssetPack.g4
 	cat ../flash_patcher/antlr/Stagefile.g4 ../flash_patcher/antlr/Common.g4 > ../flash_patcher/antlr_source/Stagefile.g4
 	touch antlr-copy
 
@@ -40,7 +39,6 @@ antlr-copy: $(wildcard ../flash_patcher/antlr/*.g4)
 antlr: antlr-copy
 	${ANTLR_CMD} -Dlanguage=Python3 -visitor ../flash_patcher/antlr_source/PatchfileLexer.g4
 	${ANTLR_CMD} -Dlanguage=Python3 -visitor ../flash_patcher/antlr_source/PatchfileParser.g4
-	${ANTLR_CMD} -Dlanguage=Python3 -visitor ../flash_patcher/antlr_source/AssetPack.g4
 	${ANTLR_CMD} -Dlanguage=Python3 -visitor ../flash_patcher/antlr_source/Stagefile.g4
 	touch antlr
 

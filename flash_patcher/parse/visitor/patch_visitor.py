@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import shutil
+from logging import exception
 from pathlib import Path
 
 from flash_patcher.antlr_source.PatchfileParser import PatchfileParser
@@ -21,14 +23,22 @@ class PatchfileProcessor (PatchfileParserVisitor):
     injector: BulkInjectionManager
     modified_scripts: set[Path]
     patch_file_name: Path
+
+    asset_folder: Path
+    decomp_location: Path
     decomp_location_with_scripts: Path
 
     def __init__(
         self: PatchfileProcessor,
         patch_file_name: Path,
-        decomp_location_with_scripts: Path
+        asset_folder: Path,
+        decomp_location: Path,
+        decomp_location_with_scripts: Path,
     ) -> None:
         self.patch_file_name = patch_file_name
+        self.asset_folder = asset_folder
+
+        self.decomp_location = decomp_location
         self.decomp_location_with_scripts = decomp_location_with_scripts
 
         self.injector = BulkInjectionManager()
@@ -140,6 +150,30 @@ class PatchfileProcessor (PatchfileParserVisitor):
             writelines_safe(full_path, [content])
 
             self.modified_scripts.add(full_path)
+
+    def visitAddAssetBlock(
+        self: PatchfileProcessor,
+        ctx: PatchfileParser.AddAssetBlockContext
+    ) -> None:
+        """In an Add Asset block, we should take the specified assets and copy them into the SWF"""
+        local_name = ctx.local.getText()
+        remote_name = ctx.swf.getText()
+
+        if not Path(self.asset_folder / local_name).exists():
+            error_mesg = f"""Could not find asset: {local_name}
+            Aborting..."""
+            exception(error_mesg)
+            raise FileNotFoundError(error_mesg)
+
+        # Create folder and copy things over
+        remote_folder = remote_name.split("/")[0]
+
+        if not (self.decomp_location / remote_folder).exists():
+            Path.mkdir(self.decomp_location / remote_folder)
+
+        shutil.copyfile(self.asset_folder / local_name, self.decomp_location / remote_name)
+
+        self.modified_scripts.add(self.decomp_location / remote_name)
 
     def visitRoot(self: PatchfileProcessor, ctx: PatchfileParser.RootContext) -> set:
         """Root function. Call this when running the visitor."""
