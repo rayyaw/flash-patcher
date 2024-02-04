@@ -51,8 +51,7 @@ pylint:
 	--disable=inconsistent-return-statements \
 	--disable=too-many-arguments \
 	--disable=unspecified-encoding \
-	--disable=import-error \
-	--disable=invalid-name
+	--disable=import-error
 
 	@echo "Running pylint on tests..."
 	pylint $(shell git ls-files '../test/*.py') \

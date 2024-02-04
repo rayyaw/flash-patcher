@@ -11,7 +11,6 @@ from flash_patcher.parse.visitor.stage_visitor import StagefileProcessor
 
 class StagefileProcessorSpec (TestCase):
 
-    asset_pack_context: StagefileParser.AssetPackFileContext
     python_file_context: StagefileParser.PythonFileContext
     patchfile_context: StagefileParser.PatchFileContext
     root_context: StagefileParser.RootContext

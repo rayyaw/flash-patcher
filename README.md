@@ -173,6 +173,8 @@ add-asset localfolder/derp.png images/8.png
 
 This command takes the local file at `localfolder/derp.png` and copies it to `images/8.png` within the SWF. If there was already a file named `images/8.png`, it will be overwritten with the new file.
 
+**Note:** Due to technical reasons, neither filepath in the `add-asset` command may contain spaces or dashes (`-`).
+
 #### Content Insertion
 
 For the add command, all lines up to (but not including) the `end-patch` command will be inserted into the SWF, *on* the specified line. For the remove command, all lines between the two numbers specified will be removed (and this is inclusive).
