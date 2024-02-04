@@ -49,6 +49,7 @@ pylint:
 	--disable=missing-module-docstring \
 	--disable=too-few-public-methods \
 	--disable=inconsistent-return-statements \
+	--disable=invalid-name \
 	--disable=too-many-arguments \
 	--disable=unspecified-encoding \
 	--disable=import-error
