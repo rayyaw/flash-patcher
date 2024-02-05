@@ -183,6 +183,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         """When we encounter a patch file, we should open and process it"""
 
         # This import needs to happen here, otherwise it would cause a circular dependency
+        # pylint: disable=import-outside-toplevel
         from flash_patcher.parse.patch import PatchfileManager
 
         self.modified_scripts |= PatchfileManager(
@@ -191,7 +192,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
             self.folder / ctx.getText(),
             self.folder,
         ).parse()
-    
+
     def visitExecPythonBlock(
         self: PatchfileProcessor,
         ctx: PatchfileParser.ExecPythonBlockContext

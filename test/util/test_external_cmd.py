@@ -38,9 +38,9 @@ def test_get_modified_scripts_of_command_success() -> None:
     )
 
     assert output == set([
-        Path("../a"), 
-        Path("../b"), 
-        Path("../c")
+        Path("../a"),
+        Path("../b"),
+        Path("../c"),
     ])
 
 def test_get_modified_scripts_of_command_empty() -> None:
