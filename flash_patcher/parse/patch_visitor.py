@@ -12,6 +12,7 @@ from flash_patcher.inject.bulk_injection import BulkInjectionManager
 from flash_patcher.inject.location.parser_injection_location import ParserInjectionLocation
 from flash_patcher.inject.find_content import FindContentManager
 from flash_patcher.inject.single_injection import SingleInjectionManager
+from flash_patcher.util.external_cmd import get_modified_scripts_of_command
 from flash_patcher.util.file_io import FileWritebackManager, read_safe, writelines_safe
 
 class PatchfileProcessor (PatchfileParserVisitor):
@@ -24,19 +25,19 @@ class PatchfileProcessor (PatchfileParserVisitor):
     modified_scripts: set[Path]
     patch_file_name: Path
 
-    asset_folder: Path
+    folder: Path
     decomp_location: Path
     decomp_location_with_scripts: Path
 
     def __init__(
         self: PatchfileProcessor,
         patch_file_name: Path,
-        asset_folder: Path,
+        folder: Path,
         decomp_location: Path,
         decomp_location_with_scripts: Path,
     ) -> None:
         self.patch_file_name = patch_file_name
-        self.asset_folder = asset_folder
+        self.folder = folder
 
         self.decomp_location = decomp_location
         self.decomp_location_with_scripts = decomp_location_with_scripts
@@ -159,7 +160,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         local_name = ctx.local.getText()
         remote_name = ctx.swf.getText()
 
-        if not Path(self.asset_folder / local_name).exists():
+        if not Path(self.folder / local_name).exists():
             error_mesg = f"""Could not find asset: {local_name}
             Aborting..."""
             exception(error_mesg)
@@ -171,9 +172,54 @@ class PatchfileProcessor (PatchfileParserVisitor):
         if not (self.decomp_location / remote_folder).exists():
             Path.mkdir(self.decomp_location / remote_folder)
 
-        shutil.copyfile(self.asset_folder / local_name, self.decomp_location / remote_name)
+        shutil.copyfile(self.folder / local_name, self.decomp_location / remote_name)
 
         self.modified_scripts.add(self.decomp_location / remote_name)
+
+    def visitExecPatcherBlock(
+        self: PatchfileProcessor,
+        ctx: PatchfileParser.ExecPatcherBlockContext
+    ) -> None:
+        """When we encounter a patch file, we should open and process it"""
+
+        # This import needs to happen here, otherwise it would cause a circular dependency
+        from flash_patcher.parse.patch import PatchfileManager
+
+        self.modified_scripts |= PatchfileManager(
+            self.decomp_location,
+            self.decomp_location_with_scripts,
+            self.folder / ctx.getText(),
+            self.folder,
+        ).parse()
+    
+    def visitExecPythonBlock(
+        self: PatchfileProcessor,
+        ctx: PatchfileParser.ExecPythonBlockContext
+    ) -> None:
+        """Visit any custom .py files the user would like to execute.
+        
+        The python script should print out the comma-separated filenames that it modified.
+        example output: "DoAction1.as,DoAction2.as"
+        Python script names may not include spaces.
+        """
+        script_path = self.folder / ctx.file_name().getText()
+        self.modified_scripts |= get_modified_scripts_of_command(
+            ["python3", script_path],
+            self.decomp_location,
+        )
+
+    def visitExecBinaryBlock(
+        self: PatchfileProcessor,
+        ctx: PatchfileParser.ExecBinaryBlockContext
+    ) -> None:
+        """Visit any custom binary the user would like to execute.
+        The format for i/o is the same as the Python file.
+        """
+        script_path = self.folder / ctx.file_name().getText()
+        self.modified_scripts |= get_modified_scripts_of_command(
+            [script_path],
+            self.decomp_location,
+        )
 
     def visitRoot(self: PatchfileProcessor, ctx: PatchfileParser.RootContext) -> set:
         """Root function. Call this when running the visitor."""

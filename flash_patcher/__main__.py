@@ -24,10 +24,10 @@ def cli() -> None:
     )
 
     parser.add_argument(
-        "--stagefile",
-        dest="stage_file",
+        "--mainfile",
+        dest="main_file",
         type=str,
-        help="Stage file name",
+        help="Main patcher file",
     )
 
     parser.add_argument(
@@ -75,16 +75,16 @@ def cli() -> None:
         print_version()
         return
 
-    if (not args.input_swf) or (not args.folder) or (not args.stage_file) or (not args.output_swf):
+    if (not args.input_swf) or (not args.folder) or (not args.main_file) or (not args.output_swf):
         parser.print_usage()
         print("flash-patcher: error: the following arguments are required:\n \
-              --inputswf, --folder, --stagefile, --outputswf")
+              --inputswf, --folder, --mainfile, --outputswf")
         return
 
     main(
         Path(args.input_swf),
         Path(args.folder),
-        Path(args.stage_file),
+        Path(args.main_file),
         Path(args.output_swf),
         drop_cache=args.drop_cache,
         recompile_all=args.recompile_all,

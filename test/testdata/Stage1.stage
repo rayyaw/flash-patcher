@@ -1,6 +1,8 @@
-Patch1.patch
-Pack1.assets
+exec-patcher Patch1.patch
+exec-patcher Pack1.assets
 
 # comment
-sample.py
-empty.py
+exec-python sample.py
+exec-python empty.py
+
+exec-binary /usr/bin/echo

@@ -5,6 +5,9 @@ ADD_ASSET       : A D D '-' A S S E T;
 REMOVE          : R E M O V E;
 REPLACE         : R E P L A C E;
 REPLACE_ALL     : R E P L A C E '-' A L L;
+EXEC_PATCHER    : E X E C '-' P A T C H E R;
+EXEC_PYTHON     : E X E C '-' P Y T H O N;
+EXEC_BINARY     : E X E C '-' B I N A R Y;
 
 // file names should always start with DefineSprite or frame
 // XML files should be named swf.xml

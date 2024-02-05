@@ -5,7 +5,7 @@ from pathlib import Path
 from flash_patcher.compile.compilation import CompilationManager
 from flash_patcher.compile.locate_decomp import get_decomp_locations
 from flash_patcher.exception.dependency import DependencyError
-from flash_patcher.parse.stage import StagefileManager
+from flash_patcher.parse.patch import PatchfileManager
 from flash_patcher.util.file_copy import clean_scripts, copy_file
 
 # pylint: disable=pointless-string-statement
@@ -39,7 +39,7 @@ def print_version() -> None:
 def main(
     inputfile: Path,
     folder: Path,
-    stagefile: Path,
+    mainfile: Path,
     output: Path,
     drop_cache: bool = False,
     recompile_all: bool = False,
@@ -68,11 +68,11 @@ def main(
 
     info("Decompilation finished. Beginning injection...")
 
-    modified_scripts = StagefileManager(
-        folder,
-        stagefile,
+    modified_scripts = PatchfileManager(
         decomp_location,
-        decomp_location_with_scripts
+        decomp_location_with_scripts,
+        folder,
+        mainfile,
     ).parse()
 
     info("Injection complete, cleaning up...")

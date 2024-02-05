@@ -31,7 +31,7 @@ To run unit tests, simply run `make test` from the `build` folder. You must have
 
 To apply a patch, run the `flash-patcher` command.
 
-The patcher will take the input SWF, apply the patches specified in the stage file (which must be located in the patch folder), and create the output SWF.
+The patcher will take the input SWF, apply the commands specified in the top-level patch file (which must be located in the patch folder), and create the output SWF.
 
 The recommended way to install Flash Patcher is through pip. You can do this with `pip install flash-patcher`.
 
@@ -41,11 +41,11 @@ The command line arguments are as follows:
 
 ### Required arguments
 - `--inputswf`: The input SWF to use. You should create a base hack to avoid issues with Flash deobfuscation.
-- `--folder`: The top-level folder where all your patch and stage files are located.
-- `--stagefile`: The stage file's path within the top level folder.
+- `--folder`: The top-level folder where all your patch files are located.
+- `--mainfile`: The main file's path within the top level folder.
 - `--outputswf`: The path to save the output swf (relative to the current path)
 
-Example: `$PATCHER --inputswf $SWF_FILE_PATH/SMF_Base_Hack.swf --folder . --stagefile fullgame.stage --outputswf SMF-Fullgame-Build-$1.swf`
+Example: `$PATCHER --inputswf $SWF_FILE_PATH/SMF_Base_Hack.swf --folder . --mainfile fullgame.patch --outputswf SMF-Fullgame-Build-$1.swf`
 
 ### Optional arguments
 - `--invalidateCache`: Force the patcher to decompile the SWF. If this flag is not set, Flash Patcher may use a cached version of the SWF decompilation to speed up the process.
@@ -57,26 +57,12 @@ Example: `$PATCHER --inputswf $SWF_FILE_PATH/SMF_Base_Hack.swf --folder . --stag
 You should create the following file structure for your patches:
 
 - Create a top-level patch folder. You will put all your files in this folder.
-- Create one or more patch stage files. These specify which patches to apply.
 - Create one or more patch files. These contain the code to inject into the SWF.
-
-### Patch Stage Files
-
-A patch stage file (usually ending in .stage), may look something like this:
-
-```
-# Comment
-
-patch1.patch
-subfolder/patch2.patch
-script.py
-```
-
-You can use \# to comment out certain lines. Each line contains a patch file to run, and each injected file must be in the same top-level patch folder as the stage file. When the patcher runs, it will apply each patch file in order.
+- Create a main patch file. This will be the top-level one that will start execution.
 
 ### Patch Files
 
-A patch file (which must end in .patch), may look something like this:
+A patch file (usually ending in .patch) may look something like this:
 
 ```
 # Comment
@@ -90,11 +76,9 @@ end-patch
 remove frame_1/DoAction.as 789-1111
 ```
 
-**Note:** A patch file may have a .assets file extension, but this is deprecated and should only be used for backwards compatibility.
-
 Every patch file consists of a set of commands, separated by newlines. You can use \# to write comments. The first parameter to any command is the file to modify (in this case, "DefineSprite_1058 boss2/DoAction.as" or "frame_1/DoAction.as"). To find the name of this, export all scripts using FFDec and make a note of the file name you want to modify.
 
-#### `add` command
+### `add` command
 You are allowed to put multiple `add` statements before a code block you wish to inject.
 
 The first parameter to the add or remove command is always the name of the file to inject into.
@@ -115,7 +99,7 @@ end-content + <offset>
 
 This will find the content in the `begin-content` block and inject on the line after the end of the content. The `+ <offset>` is optional, and specifies an integer offset (in lines) after the end of the content.
 
-#### `remove` command
+### `remove` command
 
 Note that `remove` commands are inclusive of the final line.
 
@@ -123,7 +107,7 @@ Here is an example `remove` command. Note that you can still use the `function`,
 
 - `remove file.as 567-568`. This will remove lines 567 to 568 of `file.as`.
 
-#### `replace` command
+### `replace` command
 
 Note that just like `add`, you can put multiple `replace` statements before a code block.
 
@@ -145,7 +129,7 @@ Putting a function + offset of N instead of a raw number will find and replace t
 
 Putting a `content` block instead of a raw number is unsupported and will cause the patcher to error out.
 
-#### `replace-all` command
+### `replace-all` command
 
 As with the other commands, you can have multiple `replace-all` headers before the blocks. The syntax is mostly the same as the replace command, with the `content` and `patch` blocks operating in the same way. However, the header is changed:
 
@@ -162,7 +146,7 @@ There are several limitations that come with the `replace-all` command:
 - You may not use both `replace` and `replace-all` headers for the same block, as this is invalid syntax.
 - `replace-all` blocks do not support secondary commands.
 
-#### `add-asset` Packs
+### `add-asset` command
 
 An `add-asset` command will look something like this:
 
@@ -175,13 +159,13 @@ This command takes the local file at `localfolder/derp.png` and copies it to `im
 
 **Note:** Due to technical reasons, neither filepath in the `add-asset` command may contain spaces or dashes (`-`).
 
-#### Content Insertion
+### Content Insertion
 
 For the add command, all lines up to (but not including) the `end-patch` command will be inserted into the SWF, *on* the specified line. For the remove command, all lines between the two numbers specified will be removed (and this is inclusive).
 
 After one or more add commands, add a newline, a `begin-patch\n` and then enter your code block. At the end of the block, add a newline and `end-patch` to tell the patcher the patch is finished.
 
-#### Secondary commands
+### Secondary commands
 
 Within a code block, you can also use the following syntax to skip ahead within the file:
 ```
@@ -192,9 +176,21 @@ Type `// cmd: skip ` (with spaces as shown), then the number of lines you wish t
 
 To inject while in XML mode, use normal `.patch` files, but the add location will be the hardcoded string `swf.xml`.
 
+### Nested Patch Files
+
+You can execute arbitrary patch files within the main file. These can be executed as follows:
+
+```
+exec-patch file.patch
+```
+
 ### Python Files
 
-Arbitrary Python scripts can be referenced in the stage file. They should be placed in the patch folder, and will be executed inside the decompiled directory, with the following API:
+Arbitrary Python scripts can be referenced in the patch file. They should be placed in the patch folder, and will be executed inside the decompiled directory.
+
+The command looks like this: `exec-python file.py`.
+
+You must respect the following API:
 
 - Only Python 3 is supported.
 - The name of the Python file must not contain spaces.
@@ -204,7 +200,7 @@ An example of such a list: `DoAction1.as, DoAction2.as`. Trailing whitespace or 
 
 ### Injection Order
 
-Patchfiles will be applied in the order that they are specified in the stage file. Within each patchfile, the patches will be processed one block at a time, with each `add` or `remove` being processed from the top of the file to the bottom. Note that if you are injecting multiple times into the same file, this means that you should inject bottom to top to avoid the line numbers changing as the file is being patched.
+Within each patchfile, the patches will be processed one block at a time, with each command being processed from the top of the file to the bottom. Note that if you are injecting multiple times into the same file, this means that you should inject bottom to top to avoid the line numbers changing as the file is being patched.
 
 ## Licensing
 
