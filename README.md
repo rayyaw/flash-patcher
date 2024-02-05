@@ -41,7 +41,7 @@ The command line arguments are as follows:
 
 ### Required arguments
 - `--inputswf`: The input SWF to use. You should create a base hack to avoid issues with Flash deobfuscation.
-- `--folder`: The top-level folder where all your patch, asset, and stage files are located.
+- `--folder`: The top-level folder where all your patch and stage files are located.
 - `--stagefile`: The stage file's path within the top level folder.
 - `--outputswf`: The path to save the output swf (relative to the current path)
 
@@ -49,7 +49,7 @@ Example: `$PATCHER --inputswf $SWF_FILE_PATH/SMF_Base_Hack.swf --folder . --stag
 
 ### Optional arguments
 - `--invalidateCache`: Force the patcher to decompile the SWF. If this flag is not set, Flash Patcher may use a cached version of the SWF decompilation to speed up the process.
-- `--all`: Recompile the full SWF. This is required when injecting asset packs but slows down recompilation.
+- `--all`: Recompile the full SWF. This is required when updating SWF content other than scripts, but slows down recompilation.
 - `--xml`: Inject in xml mode. This decompiles the .swf to .xml and allows you to modify the xml file.
 
 ## File Structure
@@ -69,7 +69,6 @@ A patch stage file (usually ending in .stage), may look something like this:
 
 patch1.patch
 subfolder/patch2.patch
-subfolder/pack.assets
 script.py
 ```
 
@@ -90,6 +89,8 @@ end-patch
 
 remove frame_1/DoAction.as 789-1111
 ```
+
+**Note:** A patch file may have a .assets file extension, but this is deprecated and should only be used for backwards compatibility.
 
 Every patch file consists of a set of commands, separated by newlines. You can use \# to write comments. The first parameter to any command is the file to modify (in this case, "DefineSprite_1058 boss2/DoAction.as" or "frame_1/DoAction.as"). To find the name of this, export all scripts using FFDec and make a note of the file name you want to modify.
 
@@ -161,6 +162,19 @@ There are several limitations that come with the `replace-all` command:
 - You may not use both `replace` and `replace-all` headers for the same block, as this is invalid syntax.
 - `replace-all` blocks do not support secondary commands.
 
+#### `add-asset` Packs
+
+An `add-asset` command will look something like this:
+
+```
+# Comment
+add-asset localfolder/derp.png images/8.png
+```
+
+This command takes the local file at `localfolder/derp.png` and copies it to `images/8.png` within the SWF. If there was already a file named `images/8.png`, it will be overwritten with the new file.
+
+**Note:** Due to technical reasons, neither filepath in the `add-asset` command may contain spaces or dashes (`-`).
+
 #### Content Insertion
 
 For the add command, all lines up to (but not including) the `end-patch` command will be inserted into the SWF, *on* the specified line. For the remove command, all lines between the two numbers specified will be removed (and this is inclusive).
@@ -178,24 +192,6 @@ Type `// cmd: skip ` (with spaces as shown), then the number of lines you wish t
 
 To inject while in XML mode, use normal `.patch` files, but the add location will be the hardcoded string `swf.xml`.
 
-### Asset Packs
-
-An asset pack file (which must end in .assets), contains instructions on assets to inject into the Flash file. Currently supported types include:
-
-- Images
-- Sounds
-- Shapes
-- Text
-
-The file will look something like this:
-
-```
-# Comment
-add-asset localfolder/derp.png images/8.png
-```
-
-This asset pack file takes the local file at `localfolder/derp.png` and copies it to `images/8.png` within the SWF. If there was already a file named `images/8.png`, it will be overwritten with the new file.
-
 ### Python Files
 
 Arbitrary Python scripts can be referenced in the stage file. They should be placed in the patch folder, and will be executed inside the decompiled directory, with the following API:
@@ -208,7 +204,7 @@ An example of such a list: `DoAction1.as, DoAction2.as`. Trailing whitespace or 
 
 ### Injection Order
 
-Patchfiles and asset packs will be applied in the order that they are specified in the stage file. Within each patchfile, the patches will be processed one block at a time, with each `add` or `remove` being processed from the top of the file to the bottom. Note that if you are injecting multiple times into the same file, this means that you should inject bottom to top to avoid the line numbers changing as the file is being patched.
+Patchfiles will be applied in the order that they are specified in the stage file. Within each patchfile, the patches will be processed one block at a time, with each `add` or `remove` being processed from the top of the file to the bottom. Note that if you are injecting multiple times into the same file, this means that you should inject bottom to top to avoid the line numbers changing as the file is being patched.
 
 ## Licensing
 

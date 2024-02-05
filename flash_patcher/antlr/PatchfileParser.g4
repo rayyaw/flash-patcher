@@ -15,10 +15,20 @@ replaceAllBlockHeader   : REPLACE_ALL FILENAME;
 replaceAllBlock         : replaceAllBlockHeader+ BEGIN_CONTENT replaceBlockText END_CONTENT BEGIN_PATCH addBlockText END_PATCH;
 replaceBlockText        : CONTENT_TEXT+;
 
-root                    : (addBlock | removeBlock | replaceNthBlock | replaceAllBlock)*;
+addAssetBlock           : ADD_ASSET local=file_name swf=file_name;
 
-locationToken           : OPEN_BLOCK? FUNCTION FUNCTION_NAME INTEGER? CLOSE_BLOCK?      # function
+root                    : (
+                            addBlock |
+                            removeBlock |
+                            replaceNthBlock |
+                            replaceAllBlock |
+                            addAssetBlock
+                        )*;
+
+locationToken           : OPEN_BLOCK? FUNCTION TEXT_BLOCK INTEGER? CLOSE_BLOCK?      # function
                         | BEGIN_CONTENT replaceBlockText END_CONTENT (PLUS INTEGER)?    # text
                         | INTEGER                                                       # lineNumber
                         | END                                                           # end
                         ;
+
+file_name               : TEXT_BLOCK;

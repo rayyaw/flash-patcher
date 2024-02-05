@@ -12,11 +12,21 @@ class PatchfileManager:
     """Manage patch files."""
 
     file: Path
+    folder: Path
     patchfile_processor: PatchfileProcessor
 
-    def __init__(self: PatchfileManager, decomp_location: Path, file: Path) -> None:
+    def __init__(
+            self: PatchfileManager,
+            decomp_location: Path,
+            decomp_location_with_scripts: Path,
+            file: Path,
+            folder: Path
+        ) -> None:
         self.file = file
-        self.patchfile_processor = PatchfileProcessor(self.file, decomp_location)
+        self.folder = folder
+        self.patchfile_processor = PatchfileProcessor(
+            self.file, self.folder, decomp_location, decomp_location_with_scripts
+        )
 
     def parse(self: PatchfileManager) -> set:
         """Parse a single patch file.

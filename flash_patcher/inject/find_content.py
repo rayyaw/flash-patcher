@@ -48,7 +48,7 @@ class FindContentManager:
         # Function context means Nth instance from the start of the function
         # We always take the first function with this name
         elif isinstance(self.context, PatchfileParser.FunctionContext):
-            function_name = self.context.FUNCTION_NAME().getText()
+            function_name = self.context.TEXT_BLOCK().getText()
 
             instance_number = 1
             if self.context.INTEGER():
