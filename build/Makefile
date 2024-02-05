@@ -31,15 +31,12 @@ uninstall:
 # Move stuff to antlr-source in preparation for compilation
 antlr-copy: $(wildcard ../flash_patcher/antlr/*.g4)
 	cp ../flash_patcher/antlr/*.g4 ../flash_patcher/antlr_source
-
-	cat ../flash_patcher/antlr/Stagefile.g4 ../flash_patcher/antlr/Common.g4 > ../flash_patcher/antlr_source/Stagefile.g4
 	touch antlr-copy
 
 # Create ANTLR parsers from the CLI tool or jar file
 antlr: antlr-copy
 	${ANTLR_CMD} -Dlanguage=Python3 -visitor ../flash_patcher/antlr_source/PatchfileLexer.g4
 	${ANTLR_CMD} -Dlanguage=Python3 -visitor ../flash_patcher/antlr_source/PatchfileParser.g4
-	${ANTLR_CMD} -Dlanguage=Python3 -visitor ../flash_patcher/antlr_source/Stagefile.g4
 	touch antlr
 
 # Run Pylint pull-request checks
