@@ -71,8 +71,8 @@ def main(
     modified_scripts = PatchfileManager(
         decomp_location,
         decomp_location_with_scripts,
+        folder / mainfile,
         folder,
-        mainfile,
     ).parse()
 
     info("Injection complete, cleaning up...")

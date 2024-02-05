@@ -189,7 +189,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         self.modified_scripts |= PatchfileManager(
             self.decomp_location,
             self.decomp_location_with_scripts,
-            self.folder / ctx.getText(),
+            self.folder / ctx.file_name().getText(),
             self.folder,
         ).parse()
 
