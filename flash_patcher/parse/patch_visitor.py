@@ -180,7 +180,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         self: PatchfileProcessor,
         ctx: PatchfileParser.ExecPatcherBlockContext
     ) -> None:
-        """When we encounter a patch file, we should open and process it"""
+        """Open and process a patch file when it is encountered."""
 
         # This import needs to happen here, otherwise it would cause a circular dependency
         # pylint: disable=import-outside-toplevel
@@ -206,19 +206,6 @@ class PatchfileProcessor (PatchfileParserVisitor):
         script_path = self.folder / ctx.file_name().getText()
         self.modified_scripts |= get_modified_scripts_of_command(
             ["python3", script_path],
-            self.decomp_location,
-        )
-
-    def visitExecBinaryBlock(
-        self: PatchfileProcessor,
-        ctx: PatchfileParser.ExecBinaryBlockContext
-    ) -> None:
-        """Visit any custom binary the user would like to execute.
-        The format for i/o is the same as the Python file.
-        """
-        script_path = self.folder / ctx.file_name().getText()
-        self.modified_scripts |= get_modified_scripts_of_command(
-            [script_path],
             self.decomp_location,
         )
 

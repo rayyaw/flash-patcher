@@ -42,10 +42,10 @@ The command line arguments are as follows:
 ### Required arguments
 - `--inputswf`: The input SWF to use. You should create a base hack to avoid issues with Flash deobfuscation.
 - `--folder`: The top-level folder where all your patch files are located.
-- `--mainfile`: The main file's path within the top level folder.
+- `--stagefile`: The top level patch file's path within the top level folder.
 - `--outputswf`: The path to save the output swf (relative to the current path)
 
-Example: `$PATCHER --inputswf $SWF_FILE_PATH/SMF_Base_Hack.swf --folder . --mainfile fullgame.patch --outputswf SMF-Fullgame-Build-$1.swf`
+Example: `$PATCHER --inputswf $SWF_FILE_PATH/SMF_Base_Hack.swf --folder . --stagefile fullgame.patch --outputswf SMF-Fullgame-Build-$1.swf`
 
 ### Optional arguments
 - `--invalidateCache`: Force the patcher to decompile the SWF. If this flag is not set, Flash Patcher may use a cached version of the SWF decompilation to speed up the process.
@@ -178,10 +178,10 @@ To inject while in XML mode, use normal `.patch` files, but the add location wil
 
 ### Nested Patch Files
 
-You can execute arbitrary patch files within the main file. These can be executed as follows:
+You can apply arbitrary patch files within the main file. These can be executed as follows:
 
 ```
-exec-patch file.patch
+apply-patch file.patch
 ```
 
 ### Python Files

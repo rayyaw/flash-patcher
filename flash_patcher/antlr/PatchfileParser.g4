@@ -19,7 +19,6 @@ addAssetBlock           : ADD_ASSET local=file_name swf=file_name;
 
 execPatcherBlock        : EXEC_PATCHER file_name;
 execPythonBlock         : EXEC_PYTHON file_name;
-execBinaryBlock         : EXEC_BINARY file_name;
 
 root                    : (
                             addBlock            |
@@ -28,8 +27,7 @@ root                    : (
                             replaceAllBlock     |
                             addAssetBlock       |
                             execPatcherBlock    |
-                            execPythonBlock     |
-                            execBinaryBlock     
+                            execPythonBlock     
                         )*;
 
 locationToken           : OPEN_BLOCK? FUNCTION TEXT_BLOCK INTEGER? CLOSE_BLOCK?      # function

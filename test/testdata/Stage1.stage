@@ -1,8 +1,6 @@
-exec-patcher Patch1.patch
-exec-patcher Pack1.assets
+apply-patch Patch1.patch
+apply-patch Pack1.assets
 
 # comment
 exec-python sample.py
 exec-python empty.py
-
-exec-binary /usr/bin/echo
