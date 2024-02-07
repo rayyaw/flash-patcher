@@ -4,9 +4,8 @@ from pathlib import Path
 from subprocess import PIPE, CompletedProcess, run
 import sys
 
-def run_with_confirmation(args: list) -> CompletedProcess:
-    """Run a subprocess, but prompt the user for confirmation before running."""
-
+def ask_confirmation() -> None:
+    """Prompt the user for confirmation before calling subprocess.run."""
     # ANSI escape code for red color
     red_color_code = "\033[91m"
 
@@ -26,22 +25,26 @@ def run_with_confirmation(args: list) -> CompletedProcess:
         print(f"{red_color_code}Aborting.")
         sys.exit(1)
 
-    output = run(args, check=True, stdout=PIPE)
-    return output
+    # implicitly, else continue execution
 
-def run_in_dir(args: list, directory: Path) -> CompletedProcess:
+def run_with_confirmation_in_dir(args: list, directory: Path) -> CompletedProcess:
     """Run a command in the given directory."""
+    ask_confirmation()
+
     cwd = Path.cwd()
     chdir(directory)
-    output = run_with_confirmation(args)
+    output = run(args, check=True, stdout=PIPE)
     chdir(cwd)
 
     return output
 
 
 def check_output_in_dir(args: list, directory: Path) -> bytes:
-    """Run a command in the given directory, and return its output."""
-    return run_in_dir(args, directory).stdout
+    """Run a command in the given directory, and return its output.
+    Prompt the user with a security warning first.
+    """
+
+    return run_with_confirmation_in_dir(args, directory).stdout
 
 def get_modified_scripts_of_command(args: list, directory: Path) -> set[Path]:
     """Run the specified command, and output a set of modified scripts."""
