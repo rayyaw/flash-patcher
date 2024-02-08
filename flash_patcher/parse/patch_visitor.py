@@ -203,7 +203,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         example output: "DoAction1.as,DoAction2.as"
         Python script names may not include spaces.
         """
-        script_path = self.folder / ctx.file_name().getText()
+        script_path = (self.folder / ctx.file_name().getText()).resolve()
         self.modified_scripts |= get_modified_scripts_of_command(
             ["python3", script_path],
             self.decomp_location,
