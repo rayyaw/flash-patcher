@@ -12,7 +12,7 @@ from flash_patcher.antlr_source.PatchfileParser import PatchfileParser
 from flash_patcher.exception.injection import InjectionError
 from flash_patcher.inject.bulk_injection import BulkInjectionManager
 from flash_patcher.parse.common import CommonParseManager
-from flash_patcher.parse.visitor.patch_visitor import PatchfileProcessor
+from flash_patcher.parse.patch_visitor import PatchfileProcessor
 
 # pylint: disable=wrong-import-order
 from test.test_util.get_patch_context import get_remove_patch_context
@@ -34,7 +34,7 @@ class PatchfileProcessorSpec (TestCase):
 
         self.patch_visitor = PatchfileProcessor(
             Path("../test/testdata/Patch1.patch"),
-            Path("../"),
+            Path("../test/testdata/"),
             Path(".Patcher-Temp/"),
             Path("../test/testdata/"),
         )
@@ -178,7 +178,7 @@ class PatchfileProcessorSpec (TestCase):
             Path(".Patcher-Temp/images")
         )
         mock_shutil_copyfile.assert_called_once_with(
-            Path("../local.png"), Path(".Patcher-Temp/images/18.png")
+            Path("../test/testdata/local.png"), Path(".Patcher-Temp/images/18.png")
         )
 
         assert self.patch_visitor.modified_scripts == set([
@@ -201,7 +201,7 @@ class PatchfileProcessorSpec (TestCase):
         self.patch_visitor.visitRoot(root_context)
 
         mock_shutil_copyfile.assert_called_once_with(
-            Path("../local.png"), Path(".Patcher-Temp/images/18.png")
+            Path("../test/testdata/local.png"), Path(".Patcher-Temp/images/18.png")
         )
 
         assert self.patch_visitor.modified_scripts == set([
@@ -222,8 +222,61 @@ class PatchfileProcessorSpec (TestCase):
         with raises(FileNotFoundError):
             self.patch_visitor.visitRoot(root_context)
 
-    @patch('flash_patcher.parse.visitor.patch_visitor.PatchfileProcessor.visitRemoveBlock')
-    @patch('flash_patcher.parse.visitor.patch_visitor.PatchfileProcessor.visitAddBlock')
+    @patch("builtins.input")
+    def test_visit_python_file_success(
+        self: PatchfileProcessorSpec,
+        mock_input: MagicMock,
+    ) -> None:
+        mock_input.return_value = "y"
+        self.patch_visitor.decomp_location = Path(".")
+
+        root_context = CommonParseManager(
+            PatchfileLexer, PatchfileParser
+        ).get_root(Path("../test/testdata/Stage1.stage"))
+
+        python_file_context = root_context.execPythonBlock(0)
+        self.patch_visitor.visitExecPythonBlock(python_file_context)
+
+        assert self.patch_visitor.modified_scripts == set([
+            Path("DoAction1.as"),
+            Path("DoAction2.as")
+        ])
+
+    @patch("builtins.input")
+    def test_visit_python_file_success_empty(
+        self: PatchfileProcessorSpec,
+        mock_input: MagicMock,
+    ) -> None:
+        mock_input.return_value = "y"
+        self.patch_visitor.decomp_location = Path(".")
+
+        root_context = CommonParseManager(
+            PatchfileLexer, PatchfileParser
+        ).get_root(Path("../test/testdata/Stage1.stage"))
+
+        self.patch_visitor.visitExecPythonBlock(root_context.execPythonBlock(1))
+
+        # implicit assert nothrows
+        assert self.patch_visitor.modified_scripts == set()
+
+    @patch('flash_patcher.parse.patch.PatchfileManager.parse')
+    def test_visit_patchfile_success(
+        self: PatchfileProcessorSpec,
+        mock_parse_patchfile: MagicMock,
+    ) -> None:
+        root_context = CommonParseManager(
+            PatchfileLexer, PatchfileParser
+        ).get_root(Path("../test/testdata/Stage1.stage"))
+
+        patchfile_context = root_context.execPatcherBlock(0)
+
+        self.patch_visitor.visitExecPatcherBlock(patchfile_context)
+
+        mock_parse_patchfile.assert_called_once_with()
+
+
+    @patch('flash_patcher.parse.patch_visitor.PatchfileProcessor.visitRemoveBlock')
+    @patch('flash_patcher.parse.patch_visitor.PatchfileProcessor.visitAddBlock')
     def test_visit_root(
         self: PatchfileProcessorSpec,
         mock_visit_add: MagicMock,

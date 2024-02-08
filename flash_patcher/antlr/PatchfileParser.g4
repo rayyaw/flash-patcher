@@ -17,12 +17,17 @@ replaceBlockText        : CONTENT_TEXT+;
 
 addAssetBlock           : ADD_ASSET local=file_name swf=file_name;
 
+execPatcherBlock        : EXEC_PATCHER file_name;
+execPythonBlock         : EXEC_PYTHON file_name;
+
 root                    : (
-                            addBlock |
-                            removeBlock |
-                            replaceNthBlock |
-                            replaceAllBlock |
-                            addAssetBlock
+                            addBlock            |
+                            removeBlock         |
+                            replaceNthBlock     |
+                            replaceAllBlock     |
+                            addAssetBlock       |
+                            execPatcherBlock    |
+                            execPythonBlock     
                         )*;
 
 locationToken           : OPEN_BLOCK? FUNCTION TEXT_BLOCK INTEGER? CLOSE_BLOCK?      # function

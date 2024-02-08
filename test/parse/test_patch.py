@@ -5,7 +5,7 @@ from unittest import TestCase
 from unittest.mock import MagicMock
 
 from flash_patcher.parse.patch import PatchfileManager
-from flash_patcher.parse.visitor.patch_visitor import PatchfileProcessor
+from flash_patcher.parse.patch_visitor import PatchfileProcessor
 
 class PatchfileManagerSpec (TestCase):
 

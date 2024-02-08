@@ -7,7 +7,7 @@ from flash_patcher.exception.dependency import DependencyError
 from flash_patcher.patcher import main
 
 @patch('shutil.copytree')
-@patch('flash_patcher.parse.stage.StagefileManager.parse')
+@patch('flash_patcher.parse.patch.PatchfileManager.parse')
 @patch('flash_patcher.compile.compilation.CompilationManager.recompile')
 @patch('flash_patcher.compile.compilation.CompilationManager.decompile')
 def test_main_success(
