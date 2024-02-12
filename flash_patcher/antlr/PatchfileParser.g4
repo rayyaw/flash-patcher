@@ -6,6 +6,8 @@ addBlockHeader          : ADD FILENAME locationToken;
 addBlock                : addBlockHeader+ BEGIN_PATCH addBlockText END_PATCH;
 addBlockText            : AS_TEXT+;
 
+addAssetBlock           : ADD_ASSET local=file_name swf=file_name;
+
 removeBlock             : REMOVE FILENAME locationToken DASH locationToken;
 
 replaceNthBlockHeader   : REPLACE FILENAME locationToken;
@@ -15,17 +17,22 @@ replaceAllBlockHeader   : REPLACE_ALL FILENAME;
 replaceAllBlock         : replaceAllBlockHeader+ BEGIN_CONTENT replaceBlockText END_CONTENT BEGIN_PATCH addBlockText END_PATCH;
 replaceBlockText        : CONTENT_TEXT+;
 
-addAssetBlock           : ADD_ASSET local=file_name swf=file_name;
+setVarBlock             : SET_VAR var_name=TEXT_BLOCK EQUALS var_value=TEXT_BLOCK;
+exportVarBlock          : EXPORT_VAR var_name=TEXT_BLOCK EQUALS var_value=TEXT_BLOCK;
 
 execPatcherBlock        : EXEC_PATCHER file_name;
 execPythonBlock         : EXEC_PYTHON file_name;
 
 root                    : (
                             addBlock            |
+                            addAssetBlock       |
                             removeBlock         |
                             replaceNthBlock     |
                             replaceAllBlock     |
-                            addAssetBlock       |
+
+                            setVarBlock         |
+                            exportVarBlock      |
+
                             execPatcherBlock    |
                             execPythonBlock     
                         )*;

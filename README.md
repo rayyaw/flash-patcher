@@ -157,7 +157,28 @@ add-asset localfolder/derp.png images/8.png
 
 This command takes the local file at `localfolder/derp.png` and copies it to `images/8.png` within the SWF. If there was already a file named `images/8.png`, it will be overwritten with the new file.
 
-**Note:** Due to technical reasons, neither filepath in the `add-asset` command may contain spaces or dashes (`-`).
+**Note:** Due to technical reasons, neither filepath in the `add-asset` command may contain spaces, dashes (`-`), or the equals sign (`=`).
+
+### Variables and scoping
+
+There are 2 ways of defining a variable to use later. Note that both the name and value of the variable are case sensitive.
+
+1. `set varName=varValue`. This will declare a variable that you can use in the current patch, as well as any patch that is called within the current patch. (This will still work if you are multiple levels deep.)
+
+2. `export varName=varValue`. This will declare a global variable that you can use in any patch.
+
+Note that declaring a local variable will overwrite any previous values in the current scope, and declaring a global variable will overwrite the previous value of that global variable (if it exists), AND any previously set values of this variable in the current scope.
+
+To call a named variable, simply use the following syntax:
+
+`add ${varName}/file.as`
+
+Note that all blocks where arbitrary text is allowed (ie, not specific formats like integers) support variables using simple string replacement, unless otherwise specified.
+
+Nested variable definitions are not allowed. For example, `set var1=${var2}` will set the value of `var1` to the **string literal** `${var2}` rather than the value of `var2`.
+
+**Note:** Due to technical reasons, variable names and values may not contain dashes (`-`) or the equals sign (`=`).
+
 
 ### Content Insertion
 
@@ -197,6 +218,8 @@ You must respect the following API:
 - You must print a list of files that are modified. This list must be comma-separated and formatted in UTF-8.
 
 An example of such a list: `DoAction1.as, DoAction2.as`. Trailing whitespace or newlines are fine, as those will be stripped off.
+
+**Note:** Python files don't support accessing or modifying scoped variables.
 
 ### Injection Order
 

@@ -12,6 +12,7 @@ from flash_patcher.inject.bulk_injection import BulkInjectionManager
 from flash_patcher.inject.location.parser_injection_location import ParserInjectionLocation
 from flash_patcher.inject.find_content import FindContentManager
 from flash_patcher.inject.single_injection import SingleInjectionManager
+from flash_patcher.parse.scope import Scope
 from flash_patcher.util.external_cmd import get_modified_scripts_of_command
 from flash_patcher.util.file_io import FileWritebackManager, read_safe, writelines_safe
 
@@ -24,6 +25,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
     injector: BulkInjectionManager
     modified_scripts: set[Path]
     patch_file_name: Path
+    scope: Scope
 
     folder: Path
     decomp_location: Path
@@ -35,12 +37,19 @@ class PatchfileProcessor (PatchfileParserVisitor):
         folder: Path,
         decomp_location: Path,
         decomp_location_with_scripts: Path,
+        scope: Scope = None,
     ) -> None:
         self.patch_file_name = patch_file_name
         self.folder = folder
 
         self.decomp_location = decomp_location
         self.decomp_location_with_scripts = decomp_location_with_scripts
+
+        if scope is None:
+            self.scope = Scope()
+
+        else:
+            self.scope = scope
 
         self.injector = BulkInjectionManager()
         self.modified_scripts = set()
@@ -74,6 +83,30 @@ class PatchfileProcessor (PatchfileParserVisitor):
 
         self.injector.inject(stripped_text)
         self.injector.clear()
+
+    def visitAddAssetBlock(
+        self: PatchfileProcessor,
+        ctx: PatchfileParser.AddAssetBlockContext
+    ) -> None:
+        """In an Add Asset block, we should take the specified assets and copy them into the SWF"""
+        local_name = ctx.local.getText()
+        remote_name = ctx.swf.getText()
+
+        if not Path(self.folder / local_name).exists():
+            error_mesg = f"""Could not find asset: {local_name}
+            Aborting..."""
+            exception(error_mesg)
+            raise FileNotFoundError(error_mesg)
+
+        # Create folder and copy things over
+        remote_folder = remote_name.split("/")[0]
+
+        if not (self.decomp_location / remote_folder).exists():
+            Path.mkdir(self.decomp_location / remote_folder)
+
+        shutil.copyfile(self.folder / local_name, self.decomp_location / remote_name)
+
+        self.modified_scripts.add(self.decomp_location / remote_name)
 
     def visitRemoveBlock(
         self: PatchfileProcessor,
@@ -152,29 +185,19 @@ class PatchfileProcessor (PatchfileParserVisitor):
 
             self.modified_scripts.add(full_path)
 
-    def visitAddAssetBlock(
+    def visitSetVarBlock(
         self: PatchfileProcessor,
-        ctx: PatchfileParser.AddAssetBlockContext
+        ctx: PatchfileParser.SetVarBlockContext
     ) -> None:
-        """In an Add Asset block, we should take the specified assets and copy them into the SWF"""
-        local_name = ctx.local.getText()
-        remote_name = ctx.swf.getText()
+        """Define a locally (downward-scoped only) variable."""
+        self.scope.define_local(ctx.var_name.text, ctx.var_value.text)
 
-        if not Path(self.folder / local_name).exists():
-            error_mesg = f"""Could not find asset: {local_name}
-            Aborting..."""
-            exception(error_mesg)
-            raise FileNotFoundError(error_mesg)
-
-        # Create folder and copy things over
-        remote_folder = remote_name.split("/")[0]
-
-        if not (self.decomp_location / remote_folder).exists():
-            Path.mkdir(self.decomp_location / remote_folder)
-
-        shutil.copyfile(self.folder / local_name, self.decomp_location / remote_name)
-
-        self.modified_scripts.add(self.decomp_location / remote_name)
+    def visitExportVarBlock(
+        self: PatchfileProcessor,
+        ctx: PatchfileParser.ExportVarBlockContext
+    ) -> None:
+        """Define a global variable."""
+        self.scope.define_global(ctx.var_name.text, ctx.var_value.text)
 
     def visitExecPatcherBlock(
         self: PatchfileProcessor,
@@ -191,6 +214,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
             self.decomp_location_with_scripts,
             self.folder / ctx.file_name().getText(),
             self.folder,
+            self.scope,
         ).parse()
 
     def visitExecPythonBlock(
