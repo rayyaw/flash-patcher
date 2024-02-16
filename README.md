@@ -173,7 +173,7 @@ To call a named variable, simply use the following syntax:
 
 `add ${varName}/file.as`
 
-Note that all blocks where arbitrary text is allowed (ie, not specific formats like integers) support variables using simple string replacement, unless otherwise specified.
+Note that all blocks where arbitrary text is allowed (ie, not specific formats like integers) support variables using simple string replacement, except location tokens (the line number or target specifying where inside of a file to inject). Arbitrary Python scripts also don't have access to variables.
 
 Nested variable definitions are not allowed. For example, `set var1=${var2}` will set the value of `var1` to the **string literal** `${var2}` rather than the value of `var2`.
 
