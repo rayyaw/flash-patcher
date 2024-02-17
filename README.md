@@ -163,9 +163,9 @@ This command takes the local file at `localfolder/derp.png` and copies it to `im
 
 There are 2 ways of defining a variable to use later. Note that both the name and value of the variable are case sensitive.
 
-1. `set varName=varValue`. This will declare a variable that you can use in the current patch, as well as any patch that is called within the current patch. (This will still work if you are multiple levels deep.)
+1. `set-var varName=varValue`. This will declare a variable that you can use in the current patch, as well as any patch that is called within the current patch. (This will still work if you are multiple levels deep.)
 
-2. `export varName=varValue`. This will declare a global variable that you can use in any patch.
+2. `export-var varName=varValue`. This will declare a global variable that you can use in any patch.
 
 Note that declaring a local variable will overwrite any previous values in the current scope, and declaring a global variable will overwrite the previous value of that global variable (if it exists), AND any previously set values of this variable in the current scope.
 

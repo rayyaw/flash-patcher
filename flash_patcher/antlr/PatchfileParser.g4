@@ -17,8 +17,8 @@ replaceAllBlockHeader   : REPLACE_ALL FILENAME;
 replaceAllBlock         : replaceAllBlockHeader+ BEGIN_CONTENT replaceBlockText END_CONTENT BEGIN_PATCH addBlockText END_PATCH;
 replaceBlockText        : CONTENT_TEXT+;
 
-setVarBlock             : SET_VAR var_name=TEXT_BLOCK EQUALS var_value=TEXT_BLOCK;
-exportVarBlock          : EXPORT_VAR var_name=TEXT_BLOCK EQUALS var_value=TEXT_BLOCK;
+setVarBlock             : SET_VAR var_name=TEXT_BLOCK EQUALS var_value=(TEXT_BLOCK | INTEGER);
+exportVarBlock          : EXPORT_VAR var_name=TEXT_BLOCK EQUALS var_value=(TEXT_BLOCK | INTEGER);
 
 execPatcherBlock        : EXEC_PATCHER file_name;
 execPythonBlock         : EXEC_PYTHON file_name;
