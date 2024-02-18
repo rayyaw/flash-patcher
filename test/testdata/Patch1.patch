@@ -30,3 +30,6 @@ end-content
 begin-patch
 test
 end-patch
+
+set-var key1=val1
+export-var key2=val2

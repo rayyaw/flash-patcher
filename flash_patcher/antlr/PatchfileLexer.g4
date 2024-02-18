@@ -5,6 +5,8 @@ ADD_ASSET       : A D D '-' A S S E T;
 REMOVE          : R E M O V E;
 REPLACE         : R E P L A C E;
 REPLACE_ALL     : R E P L A C E '-' A L L;
+SET_VAR         : S E T '-' V A R;
+EXPORT_VAR      : E X P O R T '-' V A R;
 EXEC_PATCHER    : A P P L Y '-' P A T C H;
 EXEC_PYTHON     : E X E C '-' P Y T H O N;
 
@@ -60,8 +62,9 @@ fragment DOT        : '.';
 INTEGER : NUMBER+;
 DASH    : '-';
 PLUS    : '+';
+EQUALS  : '=';
 
-TEXT_BLOCK  : ~( '-' | ' ' | '\r' | '\n')+;
+TEXT_BLOCK  : ~( '-' | '=' | ' ' | '\r' | '\n')+;
 
 // Stuff to ignore, like comments or whitespace
 WHITESPACE  : [ \t\r\n\f]+         -> skip;

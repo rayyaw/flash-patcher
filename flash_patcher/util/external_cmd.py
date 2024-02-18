@@ -22,7 +22,7 @@ def ask_confirmation() -> None:
     confirmation = input()
 
     if confirmation.strip().lower() != "y":
-        print(f"{red_color_code}Aborting.")
+        print(f"{red_color_code}Aborting.{reset_color_code}")
         sys.exit(1)
 
     # implicitly, else continue execution

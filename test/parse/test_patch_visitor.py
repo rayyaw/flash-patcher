@@ -13,6 +13,7 @@ from flash_patcher.exception.injection import InjectionError
 from flash_patcher.inject.bulk_injection import BulkInjectionManager
 from flash_patcher.parse.common import CommonParseManager
 from flash_patcher.parse.patch_visitor import PatchfileProcessor
+from flash_patcher.parse.scope import Scope
 
 # pylint: disable=wrong-import-order
 from test.test_util.get_patch_context import get_remove_patch_context
@@ -221,6 +222,17 @@ class PatchfileProcessorSpec (TestCase):
 
         with raises(FileNotFoundError):
             self.patch_visitor.visitRoot(root_context)
+
+    def test_visit_set_var(self: PatchfileProcessorSpec) -> None:
+        self.patch_visitor.visitSetVarBlock(self.root_context.setVarBlock(0))
+
+        assert self.patch_visitor.scope.resolve("key1") == "val1"
+
+    def test_visit_export_var(self: PatchfileProcessorSpec) -> None:
+        self.patch_visitor.visitExportVarBlock(self.root_context.exportVarBlock(0))
+
+        assert self.patch_visitor.scope.resolve("key2") == "val2"
+        assert Scope().resolve("key2") == "val2"
 
     @patch("builtins.input")
     def test_visit_python_file_success(

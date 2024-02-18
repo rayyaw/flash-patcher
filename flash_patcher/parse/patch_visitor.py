@@ -12,6 +12,7 @@ from flash_patcher.inject.bulk_injection import BulkInjectionManager
 from flash_patcher.inject.location.parser_injection_location import ParserInjectionLocation
 from flash_patcher.inject.find_content import FindContentManager
 from flash_patcher.inject.single_injection import SingleInjectionManager
+from flash_patcher.parse.scope import Scope
 from flash_patcher.util.external_cmd import get_modified_scripts_of_command
 from flash_patcher.util.file_io import FileWritebackManager, read_safe, writelines_safe
 
@@ -24,6 +25,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
     injector: BulkInjectionManager
     modified_scripts: set[Path]
     patch_file_name: Path
+    scope: Scope
 
     folder: Path
     decomp_location: Path
@@ -35,12 +37,19 @@ class PatchfileProcessor (PatchfileParserVisitor):
         folder: Path,
         decomp_location: Path,
         decomp_location_with_scripts: Path,
+        scope: Scope = None,
     ) -> None:
         self.patch_file_name = patch_file_name
         self.folder = folder
 
         self.decomp_location = decomp_location
         self.decomp_location_with_scripts = decomp_location_with_scripts
+
+        if scope is None:
+            self.scope = Scope()
+
+        else:
+            self.scope = scope
 
         self.injector = BulkInjectionManager()
         self.modified_scripts = set()
@@ -50,7 +59,10 @@ class PatchfileProcessor (PatchfileParserVisitor):
         ctx: PatchfileParser.AddBlockHeaderContext
     ) -> None:
         """Add the headers to the injector metadata"""
-        full_path = self.decomp_location_with_scripts / ctx.FILENAME().getText()
+        error_manager = ErrorManager(self.patch_file_name, ctx.start.line)
+        ctx_filename = self.scope.resolve_all(ctx.FILENAME().getText(), error_manager)
+
+        full_path = self.decomp_location_with_scripts / ctx_filename
 
         inject_location = ParserInjectionLocation(ctx.locationToken())
 
@@ -64,10 +76,12 @@ class PatchfileProcessor (PatchfileParserVisitor):
         ctx: PatchfileParser.AddBlockContext
     ) -> None:
         """When we visit an add block, use an injector to manage injection"""
+        error_manager = ErrorManager(self.patch_file_name, ctx.start.line)
+
         for header in ctx.addBlockHeader():
             self.visitAddBlockHeader(header)
 
-        stripped_text = ctx.addBlockText().getText()
+        stripped_text = self.scope.resolve_all(ctx.addBlockText().getText(), error_manager)
 
         if stripped_text[0] == "\n":
             stripped_text = stripped_text[1:]
@@ -75,15 +89,43 @@ class PatchfileProcessor (PatchfileParserVisitor):
         self.injector.inject(stripped_text)
         self.injector.clear()
 
+    def visitAddAssetBlock(
+        self: PatchfileProcessor,
+        ctx: PatchfileParser.AddAssetBlockContext
+    ) -> None:
+        """In an Add Asset block, we should take the specified assets and copy them into the SWF"""
+        error_manager = ErrorManager(self.patch_file_name, ctx.start.line)
+
+        local_name = self.scope.resolve_all(ctx.local.getText(), error_manager)
+        remote_name = self.scope.resolve_all(ctx.swf.getText(), error_manager)
+
+        if not Path(self.folder / local_name).exists():
+            error_mesg = f"""Could not find asset: {local_name}
+            Aborting..."""
+            exception(error_mesg)
+            raise FileNotFoundError(error_mesg)
+
+        # Create folder and copy things over
+        remote_folder = remote_name.split("/")[0]
+
+        if not (self.decomp_location / remote_folder).exists():
+            Path.mkdir(self.decomp_location / remote_folder)
+
+        shutil.copyfile(self.folder / local_name, self.decomp_location / remote_name)
+
+        self.modified_scripts.add(self.decomp_location / remote_name)
+
     def visitRemoveBlock(
         self: PatchfileProcessor,
         ctx: PatchfileParser.RemoveBlockContext
     ) -> None:
         """Remove is processed manually as the command is less complex than add."""
-        full_path = self.decomp_location_with_scripts / ctx.FILENAME().getText()
+        error_manager = ErrorManager(self.patch_file_name, ctx.start.line)
+
+        ctx_filename = self.scope.resolve_all(ctx.FILENAME().getText(), error_manager)
+        full_path = self.decomp_location_with_scripts / ctx_filename
 
         # Open file, delete lines, and close it
-        error_manager = ErrorManager(self.patch_file_name, ctx.start.line)
 
         with FileWritebackManager(full_path, error_manager, readlines=True) as current_file:
             line_start = ParserInjectionLocation(ctx.locationToken(0)) \
@@ -114,12 +156,23 @@ class PatchfileProcessor (PatchfileParserVisitor):
         then remove it and perform a standard add-injection at that location.
         """
         for i in ctx.replaceNthBlockHeader():
-            full_path = self.decomp_location_with_scripts / i.FILENAME().getText()
             error_manager = ErrorManager(self.patch_file_name, i.start.line)
+
+            ctx_filename = self.scope.resolve_all(i.FILENAME().getText(), error_manager)
+
+            ctx_replace = self.scope.resolve_all(
+                ctx.replaceBlockText().getText().strip(), error_manager
+            )
+
+            ctx_add = self.scope.resolve_all(
+                ctx.addBlockText().getText().strip(), error_manager
+            )
+
+            full_path = self.decomp_location_with_scripts / ctx_filename
 
             current_file = read_safe(full_path, error_manager)
             updated_file, replace_location = FindContentManager(
-                i.locationToken(), ctx.replaceBlockText().getText().strip()
+                i.locationToken(), ctx_replace
             ).resolve(current_file, error_manager)
 
             injector = SingleInjectionManager(
@@ -127,7 +180,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
             )
 
             injector.file_content = updated_file
-            injector.inject(ctx.addBlockText().getText().strip(), i.start.line)
+            injector.inject(ctx_add, i.start.line)
 
             self.modified_scripts.add(full_path)
 
@@ -138,12 +191,19 @@ class PatchfileProcessor (PatchfileParserVisitor):
         """Replace all instances of the specified content.
         Does not support secondary commands, only direct text replacement.
         """
-        find_content = ctx.replaceBlockText().getText().strip()
-        replace_content = ctx.addBlockText().getText().strip()
+        error_manager = ErrorManager(self.patch_file_name, ctx.start.line)
+
+        find_content = self.scope.resolve_all(
+            ctx.replaceBlockText().getText().strip(), error_manager
+        )
+
+        replace_content = self.scope.resolve_all(
+            ctx.addBlockText().getText().strip(), error_manager
+        )
 
         for i in ctx.replaceAllBlockHeader():
-
-            full_path = self.decomp_location_with_scripts / i.FILENAME().getText()
+            ctx_filename = self.scope.resolve_all(i.FILENAME().getText(), error_manager)
+            full_path = self.decomp_location_with_scripts / ctx_filename
             error_manager = ErrorManager(self.patch_file_name, i.start.line)
 
             content = read_safe(full_path, error_manager)
@@ -152,35 +212,27 @@ class PatchfileProcessor (PatchfileParserVisitor):
 
             self.modified_scripts.add(full_path)
 
-    def visitAddAssetBlock(
+    def visitSetVarBlock(
         self: PatchfileProcessor,
-        ctx: PatchfileParser.AddAssetBlockContext
+        ctx: PatchfileParser.SetVarBlockContext
     ) -> None:
-        """In an Add Asset block, we should take the specified assets and copy them into the SWF"""
-        local_name = ctx.local.getText()
-        remote_name = ctx.swf.getText()
+        """Define a locally (downward-scoped only) variable."""
+        self.scope.define_local(ctx.var_name.text, ctx.var_value.text)
 
-        if not Path(self.folder / local_name).exists():
-            error_mesg = f"""Could not find asset: {local_name}
-            Aborting..."""
-            exception(error_mesg)
-            raise FileNotFoundError(error_mesg)
-
-        # Create folder and copy things over
-        remote_folder = remote_name.split("/")[0]
-
-        if not (self.decomp_location / remote_folder).exists():
-            Path.mkdir(self.decomp_location / remote_folder)
-
-        shutil.copyfile(self.folder / local_name, self.decomp_location / remote_name)
-
-        self.modified_scripts.add(self.decomp_location / remote_name)
+    def visitExportVarBlock(
+        self: PatchfileProcessor,
+        ctx: PatchfileParser.ExportVarBlockContext
+    ) -> None:
+        """Define a global variable."""
+        self.scope.define_global(ctx.var_name.text, ctx.var_value.text)
 
     def visitExecPatcherBlock(
         self: PatchfileProcessor,
         ctx: PatchfileParser.ExecPatcherBlockContext
     ) -> None:
         """Open and process a patch file when it is encountered."""
+        error_manager = ErrorManager(self.patch_file_name, ctx.start.line)
+        ctx_filename = self.scope.resolve_all(ctx.file_name().getText(), error_manager)
 
         # This import needs to happen here, otherwise it would cause a circular dependency
         # pylint: disable=import-outside-toplevel
@@ -189,8 +241,9 @@ class PatchfileProcessor (PatchfileParserVisitor):
         self.modified_scripts |= PatchfileManager(
             self.decomp_location,
             self.decomp_location_with_scripts,
-            self.folder / ctx.file_name().getText(),
+            self.folder / ctx_filename,
             self.folder,
+            self.scope,
         ).parse()
 
     def visitExecPythonBlock(
@@ -203,7 +256,10 @@ class PatchfileProcessor (PatchfileParserVisitor):
         example output: "DoAction1.as,DoAction2.as"
         Python script names may not include spaces.
         """
-        script_path = (self.folder / ctx.file_name().getText()).resolve()
+        error_manager = ErrorManager(self.patch_file_name, ctx.start.line)
+        ctx_filename = self.scope.resolve_all(ctx.file_name().getText(), error_manager)
+
+        script_path = (self.folder / ctx_filename).resolve()
         self.modified_scripts |= get_modified_scripts_of_command(
             ["python3", script_path],
             self.decomp_location,
