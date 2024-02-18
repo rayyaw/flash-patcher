@@ -49,7 +49,7 @@ class Scope:
 
         resolved_content = content
 
-        # we can't use match as a variable name since it's a keyword
+        # We can't use match as a variable name since it's a keyword
         for matched in matches:
             matched_var_name = matched[2:-1]
             resolved_match = self.resolve(matched_var_name)
