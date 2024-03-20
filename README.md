@@ -35,7 +35,7 @@ The patcher will take the input SWF, apply the commands specified in the top-lev
 
 The recommended way to install Flash Patcher is through pip. You can do this with `pip install flash-patcher`.
 
-If you want to build the Flash Patcher .whl file locally, run `cd build && make`. The .whl will be generated in the dist/ folder. The `hatch` pip package is required to run the build. You can also run `make install` to install the package locally. **Note that this will run pip with `--break-system-packages` and `--force-reinstall` options, so use this at your own risk.**
+If you want to build the Flash Patcher .whl file locally, run `cd build && make`. The .whl will be generated in the `dist/` folder. The `hatch` pip package is required to run the build. You can also run `make install` to install the package locally. **Note that this will run pip with `--break-system-packages` and `--force-reinstall` options, so use this at your own risk.**
 
 The command line arguments are as follows:
 
