@@ -58,7 +58,8 @@ pylint:
 	--disable=missing-class-docstring \
 	--disable=import-error \
 	--disable=wrong-import-position \
-	--disable=no-name-in-module
+	--disable=no-name-in-module \
+	--disable=too-many-public-methods
 
 # Run unit tests
 # The find rule creates an __init__.py in all subdirectories, including nested subdirectories

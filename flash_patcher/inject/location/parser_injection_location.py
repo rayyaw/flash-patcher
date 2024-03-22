@@ -82,6 +82,9 @@ class ParserInjectionLocation (InjectionLocation):
     ) -> int | None:
         """Resolve the injection location if it's a function + offset."""
         line_no = None
+        curly_brace_line = None
+        found_fn = False
+
         for i, line in enumerate(file_content):
             # Do some replacement to ensure that function names are processed correctly
             line = line.replace("(", " ")
@@ -91,11 +94,20 @@ class ParserInjectionLocation (InjectionLocation):
                 or line.split()[:3] == [self.context.TEXT_BLOCK().getText(), "=", "function"]:
                 # We need to add after the specified line
                 line_no = i + 1
+                found_fn = True
+
+            # If there's no function offset, we want to inject after the {,
+            # not the function name line
+            if found_fn and '{' in line:
+                curly_brace_line = i + 1
                 break
 
         if line_no is not None:
             if self.context.INTEGER():
                 line_no += int(self.context.INTEGER().getText())
+
+            else:
+                line_no = curly_brace_line
 
             self.verify_line_no(line_no, file_content, exception)
 
