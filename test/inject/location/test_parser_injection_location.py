@@ -95,6 +95,15 @@ class ParserInjectionLocationSpec (TestCase):
 
         assert line_no == 9
 
+    def test_resolve_success_function_add_after_curly(self: ParserInjectionLocationSpec) -> None:
+        with open("../test/testdata/frame_1/DoAction3.as", encoding="utf-8") as file:
+            file_content = file.readlines()
+
+        line_no = ParserInjectionLocation(self.get_valid_patch_context("function")) \
+            .resolve(file_content, True, self.error_manager)
+
+        assert line_no == 11
+
     def test_resolve_success_function_remove(self: ParserInjectionLocationSpec) -> None:
         line_no = ParserInjectionLocation(self.get_valid_patch_context("function")) \
             .resolve(self.file_content, False, self.error_manager)
