@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import re
 
 from flash_patcher.exception.error_manager import ErrorManager
@@ -61,3 +62,27 @@ class Scope:
             resolved_content = resolved_content.replace(matched, resolved_match)
 
         return resolved_content
+
+    def get_config_map(self: Scope) -> map[str, str]:
+        """Get the configuration as a map.
+        This function is primarily used for subscript input.
+        """
+        config = copy.deepcopy(Scope.global_scope)
+
+        for key, val in self.local_scope.items():
+            config[key] = val
+
+        return config
+
+    def get_config(self: Scope) -> str:
+        """Get the configuration in CFG format.
+        This function is primarily used for subscript input.
+        """
+        config_map = self.get_config_map()
+
+        config = ""
+
+        for key, val in config_map.items():
+            config += key + "=" + val + "\n"
+
+        return config

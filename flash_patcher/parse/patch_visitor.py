@@ -263,6 +263,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         self.modified_scripts |= get_modified_scripts_of_command(
             ["python3", script_path],
             self.decomp_location,
+            self.scope,
         )
 
     def visitRoot(self: PatchfileProcessor, ctx: PatchfileParser.RootContext) -> set:

@@ -219,7 +219,17 @@ You must respect the following API:
 
 An example of such a list: `DoAction1.as, DoAction2.as`. Trailing whitespace or newlines are fine, as those will be stripped off.
 
-**Note:** Python files don't support accessing or modifying scoped variables.
+The input to your Python program will be a list of variables in CFG format, passed through stdin. Here is an example of the stdin:
+
+```
+key1=val1
+key2=val2
+
+```
+
+Note that a trailing newline may be present. Also note that both variable names and values may contain any character other than `-` or `=`, and you must handle all appropriate cases.
+
+**Note:** Python files don't support modifying variables.
 
 ### Injection Order
 

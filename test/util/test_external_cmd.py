@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 
 from pytest import raises
 
+from flash_patcher.parse.scope import Scope
 from flash_patcher.util.external_cmd import \
     ask_confirmation, run_with_confirmation_in_dir, check_output_in_dir, \
     get_modified_scripts_of_command
@@ -39,7 +40,7 @@ def test_run_in_dir_success(mock_input: MagicMock) -> None:
     )
 
     assert output.returncode == 0
-    assert output.stdout == b"README.md\n"
+    assert output.stdout == "README.md\n"
 
 @patch("builtins.input")
 def test_run_in_dir_failure(mock_input: MagicMock) -> None:
@@ -61,7 +62,7 @@ def test_check_output_in_dir_success(mock_input: MagicMock) -> None:
         Path("../")
     )
 
-    assert output == b"README.md\n"
+    assert output == "README.md\n"
 
 @patch("builtins.input")
 def test_get_modified_scripts_of_command_success(mock_input: MagicMock) -> None:
@@ -69,7 +70,8 @@ def test_get_modified_scripts_of_command_success(mock_input: MagicMock) -> None:
 
     output = get_modified_scripts_of_command(
         ["echo", "a,b,c"],
-        Path("../")
+        Path("../"),
+        Scope(),
     )
 
     assert output == set([
@@ -79,12 +81,29 @@ def test_get_modified_scripts_of_command_success(mock_input: MagicMock) -> None:
     ])
 
 @patch("builtins.input")
+def test_get_modified_scripts_of_command_with_scope(mock_input: MagicMock) -> None:
+    mock_input.return_value = "y"
+
+    scope = Scope()
+    scope.define_local("key1", "val1")
+    scope.define_local("key2", "val2")
+
+    output = get_modified_scripts_of_command(
+        ["python3", "test/testdata/subscript/assert.py"],
+        Path("../"),
+        scope,
+    )
+
+    assert output == set()
+
+@patch("builtins.input")
 def test_get_modified_scripts_of_command_empty(mock_input: MagicMock) -> None:
     mock_input.return_value = "y"
 
     output = get_modified_scripts_of_command(
         ["echo"],
-        Path("../")
+        Path("../"),
+        Scope(),
     )
 
     assert output == set()
