@@ -63,3 +63,33 @@ class ScopeSpec (TestCase):
 
         assert scope3.resolve("key1") == "val1"
         assert self.scope1.resolve("key1") == "val2"
+
+    def test_get_config_map(self: ScopeSpec) -> None:
+        self.scope1.define_global("key1", "val1")
+        self.scope1.define_local("key1", "val2")
+        self.scope1.define_global("key2", "val3")
+        self.scope1.define_local("key3", "val4")
+
+        config = self.scope1.get_config_map()
+
+        assert "key1" in config
+        assert "key2" in config
+        assert "key3" in config
+
+        assert config["key1"] == "val2"
+        assert config["key2"] == "val3"
+        assert config["key3"] == "val4"
+
+    def test_get_config(self: ScopeSpec) -> None:
+        self.scope1.define_global("key1", "val1")
+        self.scope1.define_local("key1", "val2")
+        self.scope1.define_global("key2", "val3")
+        self.scope1.define_local("key3", "val4")
+
+        config = self.scope1.get_config()
+
+        expected_config = "key2=val3\n"
+        expected_config += "key1=val2\n"
+        expected_config += "key3=val4\n"
+
+        assert config == expected_config
