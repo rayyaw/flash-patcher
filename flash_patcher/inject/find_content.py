@@ -84,6 +84,9 @@ class FindContentManager:
             )
 
         # If N occurrences are found, get the index of the Nth occurrence
+        # This is defined in all branches of the if/else
+        # except the else which throws an exception
+        #pylint: disable=possibly-used-before-assignment
         if occurrences_found == instance_number:
             split_content = [
                 file_content[:current_index],
@@ -98,6 +101,9 @@ class FindContentManager:
                 """
             )
 
+        # This is defined in the if branch
+        # The else branch throws an exception
+        #pylint: disable=possibly-used-before-assignment
         first_section = split_content[:instance_number]
         second_section = split_content[instance_number:]
 
