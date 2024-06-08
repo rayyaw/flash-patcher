@@ -237,12 +237,13 @@ class PatchfileProcessor (PatchfileParserVisitor):
         # This import needs to happen here, otherwise it would cause a circular dependency
         # pylint: disable=import-outside-toplevel
         from flash_patcher.parse.patch import PatchfileManager
-
+        patch_path = self.folder / ctx_filename
+        patch_folder = patch_path.parent
         self.modified_scripts |= PatchfileManager(
             self.decomp_location,
             self.decomp_location_with_scripts,
-            self.folder / ctx_filename,
-            self.folder,
+            patch_path,
+            patch_folder,
             self.scope,
         ).parse()
 
