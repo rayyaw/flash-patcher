@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 import subprocess
-from logging import info
+from logging import getLogger
 from pathlib import Path
 
 LOCATION_APT = Path("/usr/bin/ffdec")
@@ -17,6 +17,8 @@ ARGS_FLATPAK = [
     "--command=ffdec.sh",
     "com.jpexs.decompiler.flash",
 ]
+
+logger = getLogger(__name__)
 
 class FFDecInterface:
     """An interface to interact with FFDec via the shell.
@@ -42,7 +44,7 @@ class FFDecInterface:
             else:
                 self.args = args
 
-            info("Using FFDec at: %s", path)
+            logger.info("Using FFDec at: %s", path)
 
         else:
             # Auto-detect FFDec at any of the default locations
@@ -61,7 +63,7 @@ class FFDecInterface:
                     """
                 )
 
-            info("Using FFDec at: %s", self.path)
+            logger.info("Using FFDec at: %s", self.path)
 
     def install_ffdec(self: FFDecInterface, path: Path, args: list[str] | None = None) -> bool:
         """Install FFDec from a path. Return true if the installation was successful."""
@@ -131,7 +133,7 @@ class FFDecInterface:
         
         Returns True on success.
         """
-        info("Exporting scripts into %s...", output_dir)
+        logger.info("Exporting scripts into %s...", output_dir)
 
         # set check=False, we will verify the return code manually later
         process = subprocess.run(
@@ -160,7 +162,7 @@ class FFDecInterface:
         """Recompile data of a given type into the SWF file."""
 
         # Part types: SymbolClass, Movies, Sounds, Shapes, Images, Text, Script
-        info("Reimporting %s...", part)
+        logger.info("Reimporting %s...", part)
 
         # set check=False, we will verify the return code manually later
         process = subprocess.run(
