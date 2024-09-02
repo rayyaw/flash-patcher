@@ -39,7 +39,7 @@ def print_version() -> None:
     except PackageNotFoundError:
         __version__ = "Unit Tests"
 
-    logger.info(f"rayyaw's SWF Patcher - v{__version__}")
+    logger.info(f"rayyaw's SWF Patcher - v%s", __version__)
 
 def main(
     inputfile: Path,

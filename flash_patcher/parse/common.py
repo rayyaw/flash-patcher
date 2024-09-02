@@ -71,4 +71,3 @@ class CommonParseManager:
             raise DependencyError(error_mesg) from exc
 
         return tree
-        
