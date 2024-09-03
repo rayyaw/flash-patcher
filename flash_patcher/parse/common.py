@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from logging import getLogger
 from pathlib import Path
 from typing import Type
 
@@ -12,8 +11,7 @@ from flash_patcher.exception.dependency import DependencyError
 from flash_patcher.exception.error_suppression import run_without_antlr_errors
 from flash_patcher.exception.error_manager import ErrorManager
 from flash_patcher.util.file_io import read_safe
-
-logger = getLogger(__name__)
+from flash_patcher.util.logging import logger
 
 class CommonParseManager:
     """Common logic for parsing any file type."""

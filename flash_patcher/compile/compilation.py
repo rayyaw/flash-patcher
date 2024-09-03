@@ -1,13 +1,11 @@
 from __future__ import annotations
 
 import base64
-from logging import getLogger
 from pathlib import Path
 
 from flash_patcher.compile.ffdec import FFDecInterface
 from flash_patcher.exception.dependency import DependencyError
-
-logger = getLogger(__name__)
+from flash_patcher.util.logging import logger
 
 class CompilationManager:
     """Manage Flash compilation and decompilation, including caching.

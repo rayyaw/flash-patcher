@@ -1,4 +1,3 @@
-import logging
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
@@ -7,6 +6,7 @@ from flash_patcher.compile.locate_decomp import get_decomp_locations
 from flash_patcher.exception.dependency import DependencyError
 from flash_patcher.parse.patch import PatchfileManager
 from flash_patcher.util.file_copy import clean_scripts, copy_file
+from flash_patcher.util.logging import logger
 
 # pylint: disable=pointless-string-statement
 """
@@ -24,13 +24,6 @@ Dependencies: Python 3, JPEXS Decompiler (https://github.com/jindrapetrik/jpexs-
 Inject arbitrary code, images, and more into existing SWFs!
 See the README for documentation and license.
 """
-
-formatter = logging.Formatter("%(levelname)s: %(message)s")
-handler = logging.StreamHandler()
-handler.setFormatter(formatter)
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logger.addHandler(handler)
 
 def print_version() -> None:
     """Print the Flash Patcher version."""

@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import os
 import subprocess
-from logging import getLogger
 from pathlib import Path
+
+from flash_patcher.util.logging import logger
 
 LOCATION_APT = Path("/usr/bin/ffdec")
 LOCATION_FLATPAK = Path("/usr/bin/flatpak")
@@ -17,8 +18,6 @@ ARGS_FLATPAK = [
     "--command=ffdec.sh",
     "com.jpexs.decompiler.flash",
 ]
-
-logger = getLogger(__name__)
 
 class FFDecInterface:
     """An interface to interact with FFDec via the shell.
