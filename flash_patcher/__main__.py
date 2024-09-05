@@ -6,7 +6,9 @@ from pathlib import Path
 from flash_patcher.patcher import main, print_version
 
 def validate_args(args: Namespace) -> bool:
-    """Validate if all CLI arguments are provided correctly."""
+    """Validate if all CLI arguments are provided correctly.
+    Returns True if the provided set of arguments is valid.
+    """
     return args.input_swf and args.folder and args.stagefile and args.output_swf
 
 def cli() -> None:
