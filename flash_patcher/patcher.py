@@ -1,4 +1,5 @@
 from importlib.metadata import PackageNotFoundError, version
+# pylint: disable=no-name-in-module
 from logging import DEBUG
 from pathlib import Path
 
