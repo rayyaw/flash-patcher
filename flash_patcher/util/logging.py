@@ -1,10 +1,19 @@
-from logging import Formatter, StreamHandler, getLogger, INFO
+from logging import Formatter, StreamHandler, getLogger, INFO, Logger
 
-logger = getLogger(__name__)
+logger: Logger = None
 
-def logger_setup():
+def _logger_setup() -> Logger:
+    """Sets up the main logger for use."""
+    if logger is not None:
+        logger.warning("Logger is already initialized.")
+        return
+
     formatter = Formatter("%(levelname)s: %(message)s")
     handler = StreamHandler()
     handler.setFormatter(formatter)
-    logger.setLevel(INFO)
-    logger.addHandler(handler)
+    new_logger = getLogger(__name__)
+    new_logger.setLevel(INFO)
+    new_logger.addHandler(handler)
+    return new_logger
+
+logger = _logger_setup()

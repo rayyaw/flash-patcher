@@ -6,7 +6,7 @@ from flash_patcher.compile.locate_decomp import get_decomp_locations
 from flash_patcher.exception.dependency import DependencyError
 from flash_patcher.parse.patch import PatchfileManager
 from flash_patcher.util.file_copy import clean_scripts, copy_file
-from flash_patcher.util.logging import logger, logger_setup
+from flash_patcher.util.logging import logger
 
 # pylint: disable=pointless-string-statement
 """
@@ -44,7 +44,6 @@ def main(
     xml_mode: bool = False,
 ) -> None:
     """Run the patcher."""
-    logger_setup()
     print_version()
 
     try:
