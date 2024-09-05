@@ -1,4 +1,3 @@
-from logging import basicConfig, exception, info
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
@@ -7,6 +6,7 @@ from flash_patcher.compile.locate_decomp import get_decomp_locations
 from flash_patcher.exception.dependency import DependencyError
 from flash_patcher.parse.patch import PatchfileManager
 from flash_patcher.util.file_copy import clean_scripts, copy_file
+from flash_patcher.util.logging import logger
 
 # pylint: disable=pointless-string-statement
 """
@@ -25,8 +25,6 @@ Inject arbitrary code, images, and more into existing SWFs!
 See the README for documentation and license.
 """
 
-basicConfig(level=1, format="%(levelname)s: %(message)s")
-
 def print_version() -> None:
     """Print the Flash Patcher version."""
     try:
@@ -34,7 +32,7 @@ def print_version() -> None:
     except PackageNotFoundError:
         __version__ = "Unit Tests"
 
-    info(f"rayyaw's SWF Patcher - v{__version__}")
+    logger.info("rayyaw's SWF Patcher - v%s", __version__)
 
 def main(
     inputfile: Path,
@@ -52,7 +50,7 @@ def main(
         compiler = CompilationManager()
     except ModuleNotFoundError as exc:
         error_mesg = "Could not locate required dependency: JPEXS Flash Decompiler. Aborting..."
-        exception(error_mesg)
+        logger.exception(error_mesg)
         raise DependencyError(error_mesg) from exc
 
     decomp_location, decomp_location_with_scripts = get_decomp_locations(xml_mode)
@@ -66,7 +64,7 @@ def main(
     # Copy the cache to a different location so we can reuse it
     copy_file(cache_location, decomp_location)
 
-    info("Decompilation finished. Beginning injection...")
+    logger.info("Decompilation finished. Beginning injection...")
 
     modified_scripts = PatchfileManager(
         decomp_location,
@@ -75,11 +73,11 @@ def main(
         folder,
     ).parse()
 
-    info("Injection complete, cleaning up...")
+    logger.info("Injection complete, cleaning up...")
 
     clean_scripts(decomp_location, modified_scripts)
 
-    info("Recompiling...")
+    logger.info("Recompiling...")
 
     compiler.recompile(
         decomp_location,
@@ -89,4 +87,4 @@ def main(
         xml_mode=xml_mode,
     )
 
-    info("Done.")
+    logger.info("Done.")

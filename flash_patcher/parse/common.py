@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from logging import exception, info
 from pathlib import Path
 from typing import Type
 
@@ -12,6 +11,7 @@ from flash_patcher.exception.dependency import DependencyError
 from flash_patcher.exception.error_suppression import run_without_antlr_errors
 from flash_patcher.exception.error_manager import ErrorManager
 from flash_patcher.util.file_io import read_safe
+from flash_patcher.util.logging import logger
 
 class CommonParseManager:
     """Common logic for parsing any file type."""
@@ -47,7 +47,7 @@ class CommonParseManager:
         This will automatically process all errors.
         Note that the syntax tree root within your grammar MUST have the name `root`.
         """
-        info("Processing file: %s", file.as_posix())
+        logger.info("Processing file: %s", file.as_posix())
         error_manager = ErrorManager(file.as_posix(), 0)
         file_content = read_safe(file, error_manager)
 
@@ -65,8 +65,7 @@ class CommonParseManager:
             There is likely additional logging output above.
             """
 
-            exception(error_mesg)
+            logger.exception(error_mesg)
             raise DependencyError(error_mesg) from exc
 
         return tree
-        

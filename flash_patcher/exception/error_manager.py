@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from logging import error
-
 from flash_patcher.exception.injection import InjectionError
+from flash_patcher.util.logging import logger
 
 class ErrorManager:
     """Handle exceptions thrown by Flash Patcher during the injection stage."""
@@ -33,5 +32,5 @@ class ErrorManager:
             {mesg}
             Aborting..."""
 
-        error(error_mesg)
+        logger.error(error_mesg)
         raise exc_type(mesg)

@@ -1,9 +1,9 @@
 import io
 import sys
-from logging import error
 from typing import Callable
 
 from flash_patcher.exception.dependency import DependencyError
+from flash_patcher.util.logging import logger
 
 def run_without_antlr_errors(function: Callable[..., any]) -> any:
     """Run a command while suppressing ANTLR version mismatch warnings.
@@ -35,5 +35,5 @@ def process_captured_output(captured_output = str) -> None:
     if captured_output != "":
         error_mesg = f"""Processing halted due to lex and parse errors.
             More info:\n{captured_output}"""
-        error(error_mesg)
+        logger.error(error_mesg)
         raise DependencyError(error_mesg)

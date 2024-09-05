@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from logging import exception
 from pathlib import Path
 from typing import Any, Optional, Type
 
 from flash_patcher.exception.error_manager import ErrorManager
+from flash_patcher.util.logging import logger
 
 class FileWritebackManager:
     """Handle files. Will open and read the content, and writeback when the file is closed."""
@@ -87,5 +87,5 @@ def writelines_safe(path: Path, lines: list[str]) -> None:
     except (FileNotFoundError, IsADirectoryError) as exc:
         mesg = """The provided decompilation is not in a writable location.
             Please ensure you have write access in the current directory."""
-        exception(mesg)
+        logger.exception(mesg)
         raise exc

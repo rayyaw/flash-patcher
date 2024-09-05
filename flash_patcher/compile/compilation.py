@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import base64
-from logging import error, info
 from pathlib import Path
 
 from flash_patcher.compile.ffdec import FFDecInterface
 from flash_patcher.exception.dependency import DependencyError
+from flash_patcher.util.logging import logger
 
 class CompilationManager:
     """Manage Flash compilation and decompilation, including caching.
@@ -40,7 +40,7 @@ class CompilationManager:
             failure_mesg = f"""Could not locate the SWF file: {inputfile}.
             Aborting..."""
 
-            error(failure_mesg)
+            logger.error(failure_mesg)
             raise FileNotFoundError(failure_mesg)
 
         # Decompile swf into temp folder called ./.Patcher-Temp/[swf name, base32 encoded]
@@ -56,13 +56,13 @@ class CompilationManager:
             if not Path(cache_location).exists() and not xml_mode:
                 Path(cache_location).mkdir()
 
-            info("Beginning decompilation...")
+            logger.info("Beginning decompilation...")
 
             decomp = None
 
             if xml_mode:
                 decomp = self.decompiler.dump_xml(inputfile, cache_location)
-                info("XML decompilation mode.")
+                logger.info("XML decompilation mode.")
             else:
                 decomp = self.decompiler.export_scripts(inputfile, cache_location)
 
@@ -70,11 +70,11 @@ class CompilationManager:
                 failure_mesg = f"""FFDec couldn't decompile the SWF file: {inputfile}.
                     Aborting..."""
 
-                error(failure_mesg)
+                logger.error(failure_mesg)
                 raise DependencyError(failure_mesg)
 
         else:
-            info("Detected cached decompilation. Skipping...")
+            logger.info("Detected cached decompilation. Skipping...")
 
         return cache_location
 
@@ -92,7 +92,7 @@ class CompilationManager:
             failure_mesg = f"""FFDec couldn't recompile the SWF file: {swf}.
                 Aborting.."""
 
-            error(failure_mesg)
+            logger.error(failure_mesg)
             raise DependencyError(failure_mesg)
 
     def recompile(

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import shutil
-from logging import exception
 from pathlib import Path
 
 from flash_patcher.antlr_source.PatchfileParser import PatchfileParser
@@ -15,6 +14,7 @@ from flash_patcher.inject.single_injection import SingleInjectionManager
 from flash_patcher.parse.scope import Scope
 from flash_patcher.util.external_cmd import get_modified_scripts_of_command
 from flash_patcher.util.file_io import FileWritebackManager, read_safe, writelines_safe
+from flash_patcher.util.logging import logger
 
 class PatchfileProcessor (PatchfileParserVisitor):
     """This class inherits from the ANTLR visitor to process patch files.
@@ -102,7 +102,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         if not Path(self.folder / local_name).exists():
             error_mesg = f"""Could not find asset: {local_name}
             Aborting..."""
-            exception(error_mesg)
+            logger.exception(error_mesg)
             raise FileNotFoundError(error_mesg)
 
         # Create folder and copy things over
