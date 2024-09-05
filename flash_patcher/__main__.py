@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 
-import argparse
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
 from flash_patcher.patcher import main, print_version
 
+def validate_args(args: Namespace) -> bool:
+    """Validate if all CLI arguments are provided correctly."""
+    return args.input_swf and args.folder and args.stagefile and args.output_swf
+
 def cli() -> None:
     """Run Flash Patcher from the CLI."""
-    parser = argparse.ArgumentParser()
+    parser = ArgumentParser()
 
     parser.add_argument(
         "--inputswf",
@@ -69,16 +73,24 @@ def cli() -> None:
         help="Print the current version of Flash Patcher and exit",
     )
 
+    parser.add_argument(
+        "--verbose",
+        dest="verbose",
+        default=False,
+        action="store_true",
+        help="Show verbose logging output",
+    )
+
     args = parser.parse_args()
 
     if args.version:
         print_version()
         return
 
-    if (not args.input_swf) or (not args.folder) or (not args.stagefile) or (not args.output_swf):
+    if not validate_args(args):
         parser.print_usage()
         print("flash-patcher: error: the following arguments are required:\n \
-              --inputswf, --folder, --stagefile, --outputswf")
+            --inputswf, --folder, --stagefile, --outputswf")
         return
 
     main(
@@ -89,6 +101,7 @@ def cli() -> None:
         drop_cache=args.drop_cache,
         recompile_all=args.recompile_all,
         xml_mode=args.xml_mode,
+        verbose=args.verbose,
     )
 
 

@@ -1,4 +1,5 @@
 from importlib.metadata import PackageNotFoundError, version
+from logging import DEBUG
 from pathlib import Path
 
 from flash_patcher.compile.compilation import CompilationManager
@@ -42,8 +43,12 @@ def main(
     drop_cache: bool = False,
     recompile_all: bool = False,
     xml_mode: bool = False,
+    verbose: bool = False,
 ) -> None:
     """Run the patcher."""
+    if verbose:
+        logger.setLevel(DEBUG)
+
     print_version()
 
     try:

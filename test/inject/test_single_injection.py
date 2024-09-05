@@ -188,4 +188,3 @@ class SingleInjectionManagerSpec (TestCase):
             self.single_injection_manager.handle_secondary_skip_command(
                 1, "// cmd: skip 3.2"
             )
-    
