@@ -152,12 +152,10 @@ An `add-asset` command will look something like this:
 
 ```
 # Comment
-add-asset localfolder/derp.png images/8.png
+add-asset "localfolder/derp.png" "images/8.png"
 ```
 
 This command takes the local file at `localfolder/derp.png` and copies it to `images/8.png` within the SWF. If there was already a file named `images/8.png`, it will be overwritten with the new file.
-
-**Note:** Due to technical reasons, neither filepath in the `add-asset` command may contain spaces, dashes (`-`), or the equals sign (`=`).
 
 ### Variables and scoping
 
@@ -177,7 +175,7 @@ Note that all blocks where arbitrary text is allowed (ie, not specific formats l
 
 Nested variable definitions are not allowed. For example, `set var1=${var2}` will set the value of `var1` to the **string literal** `${var2}` rather than the value of `var2`.
 
-**Note:** Due to technical reasons, variable names and values may not contain dashes (`-`) or the equals sign (`=`).
+**Note:** Due to technical limitations, variable names and values may not contain dashes (`-`) or the equals sign (`=`).
 
 
 ### Content Insertion
@@ -202,14 +200,18 @@ To inject while in XML mode, use normal `.patch` files, but the add location wil
 You can apply arbitrary patch files within the main file. These can be executed as follows:
 
 ```
-apply-patch file.patch
+apply-patch "file.patch"
 ```
 
 ### Python Files
 
 Arbitrary Python scripts can be referenced in the patch file. They should be placed in the patch folder, and will be executed inside the decompiled directory.
 
-The command looks like this: `exec-python file.py`.
+The command looks like this:
+
+```
+exec-python "file.py"
+```
 
 You must respect the following API:
 

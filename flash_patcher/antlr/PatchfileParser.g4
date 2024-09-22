@@ -43,4 +43,4 @@ locationToken           : OPEN_BLOCK? FUNCTION TEXT_BLOCK INTEGER? CLOSE_BLOCK? 
                         | END                                                           # end
                         ;
 
-file_name               : TEXT_BLOCK;
+file_name               : TEXT_BLOCK | QUOTED_TEXT;
