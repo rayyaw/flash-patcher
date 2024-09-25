@@ -217,14 +217,14 @@ class PatchfileProcessor (PatchfileParserVisitor):
         ctx: PatchfileParser.SetVarBlockContext
     ) -> None:
         """Define a locally (downward-scoped only) variable."""
-        self.scope.define_local(ctx.var_name.text, ctx.var_value.text)
+        self.scope.define_local(ctx.var_name.text, ctx.varValue().getText())
 
     def visitExportVarBlock(
         self: PatchfileProcessor,
         ctx: PatchfileParser.ExportVarBlockContext
     ) -> None:
         """Define a global variable."""
-        self.scope.define_global(ctx.var_name.text, ctx.var_value.text)
+        self.scope.define_global(ctx.var_name.text, ctx.varValue().getText())
 
     def visitExecPatcherBlock(
         self: PatchfileProcessor,
