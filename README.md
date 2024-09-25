@@ -152,10 +152,12 @@ An `add-asset` command will look something like this:
 
 ```
 # Comment
-add-asset "localfolder/derp.png" "images/8.png"
+add-asset localfolder/derp.png images/8.png
 ```
 
 This command takes the local file at `localfolder/derp.png` and copies it to `images/8.png` within the SWF. If there was already a file named `images/8.png`, it will be overwritten with the new file.
+
+**Note:** Due to technical limitations, file paths that contain dashes (`-`) or spaces (` `) must be surrounded with quotes. See the section "Quoted Strings" for further info.
 
 ### Variables and scoping
 
@@ -200,7 +202,7 @@ To inject while in XML mode, use normal `.patch` files, but the add location wil
 You can apply arbitrary patch files within the main file. These can be executed as follows:
 
 ```
-apply-patch "file.patch"
+apply-patch file.patch
 ```
 
 ### Python Files
@@ -210,7 +212,7 @@ Arbitrary Python scripts can be referenced in the patch file. They should be pla
 The command looks like this:
 
 ```
-exec-python "file.py"
+exec-python file.py
 ```
 
 You must respect the following API:
@@ -236,6 +238,15 @@ Note that a trailing newline may be present. Also note that both variable names 
 ### Injection Order
 
 Within each patchfile, the patches will be processed one block at a time, with each command being processed from the top of the file to the bottom. Note that if you are injecting multiple times into the same file, this means that you should inject bottom to top to avoid the line numbers changing as the file is being patched.
+
+### Quoted Strings
+
+Ordinarily, file paths containing dashes (`-`) and spaces (` `) are not allowed in file paths, as they will cause parsing issues. However, if these characters are required, the issue can be solved by surrounding the file path in quote marks, like so:
+
+```
+apply-patch "illegal-file-name.patch"
+apply-patch "illegal file name.patch"
+```
 
 ## Licensing
 
