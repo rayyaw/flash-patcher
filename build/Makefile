@@ -50,7 +50,8 @@ pylint:
 	--disable=too-many-arguments \
 	--disable=unspecified-encoding \
 	--disable=import-error \
-	--disable=import-self
+	--disable=import-self \
+	--disable=too-many-positional-arguments
 
 	@echo "Running pylint on tests..."
 	pylint $(shell git ls-files '../test/*.py') \
