@@ -157,7 +157,7 @@ add-asset localfolder/derp.png images/8.png
 
 This command takes the local file at `localfolder/derp.png` and copies it to `images/8.png` within the SWF. If there was already a file named `images/8.png`, it will be overwritten with the new file.
 
-**Note:** Due to technical limitations, file paths that contain dashes (`-`) or spaces (` `) must be surrounded with quotes. See the section "Quoted Strings" for further info.
+**Note:** Due to technical limitations, file paths that contain dashes (`-`), spaces (` `), or equals signs ('=') must be surrounded with quotes. See the section "Quoted Strings" for further info.
 
 ### Variables and scoping
 
@@ -241,7 +241,7 @@ Within each patchfile, the patches will be processed one block at a time, with e
 
 ### Quoted Strings
 
-Ordinarily, file paths containing dashes (`-`) and spaces (` `) are not allowed in file paths, as they will cause parsing issues. However, if these characters are required, the issue can be solved by surrounding the file path in quote marks, like so:
+Ordinarily, file paths containing dashes (`-`), spaces (` `), or equals signs ('=') are not allowed in file paths, as they will cause parsing issues. However, if these characters are required, the issue can be solved by surrounding the file path in quote marks, like so:
 
 ```
 apply-patch "illegal-file-name.patch"
