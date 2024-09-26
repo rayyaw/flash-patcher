@@ -171,19 +171,25 @@ class PatchfileProcessorSpec (TestCase):
             Path("../test/testdata/Pack1.assets")
         )
 
-        mock_path_exists.side_effect = [True, False]
+        mock_path_exists.side_effect = [True, False, True, False]
 
         self.patch_visitor.visitRoot(root_context)
 
-        mock_path_mkdir.assert_called_once_with(
-            Path(".Patcher-Temp/images")
-        )
-        mock_shutil_copyfile.assert_called_once_with(
+        assert mock_path_mkdir.call_count == 2
+        assert mock_path_mkdir.call_args_list[0].args == (Path(".Patcher-Temp/images"),)
+        assert mock_path_mkdir.call_args_list[1].args == (Path(".Patcher-Temp/images"),)
+
+        assert mock_shutil_copyfile.call_count == 2
+        assert mock_shutil_copyfile.call_args_list[0].args == (
             Path("../test/testdata/local.png"), Path(".Patcher-Temp/images/18.png")
+        )
+        assert mock_shutil_copyfile.call_args_list[1].args == (
+            Path("../test/testdata/space -dash.png"), Path(".Patcher-Temp/images/space -dash.png")
         )
 
         assert self.patch_visitor.modified_scripts == set([
-            Path(".Patcher-Temp/images/18.png")
+            Path(".Patcher-Temp/images/18.png"),
+            Path(".Patcher-Temp/images/space -dash.png")
         ])
 
     @patch('shutil.copyfile')
@@ -201,12 +207,17 @@ class PatchfileProcessorSpec (TestCase):
 
         self.patch_visitor.visitRoot(root_context)
 
-        mock_shutil_copyfile.assert_called_once_with(
+        assert mock_shutil_copyfile.call_count == 2
+        assert mock_shutil_copyfile.call_args_list[0].args == (
             Path("../test/testdata/local.png"), Path(".Patcher-Temp/images/18.png")
+        )
+        assert mock_shutil_copyfile.call_args_list[1].args == (
+            Path("../test/testdata/space -dash.png"), Path(".Patcher-Temp/images/space -dash.png")
         )
 
         assert self.patch_visitor.modified_scripts == set([
-            Path(".Patcher-Temp/images/18.png")
+            Path(".Patcher-Temp/images/18.png"),
+            Path(".Patcher-Temp/images/space -dash.png")
         ])
 
     @patch('pathlib.Path.exists')
@@ -285,7 +296,6 @@ class PatchfileProcessorSpec (TestCase):
         self.patch_visitor.visitExecPatcherBlock(patchfile_context)
 
         mock_parse_patchfile.assert_called_once_with()
-
 
     @patch('flash_patcher.parse.patch_visitor.PatchfileProcessor.visitRemoveBlock')
     @patch('flash_patcher.parse.patch_visitor.PatchfileProcessor.visitAddBlock')
