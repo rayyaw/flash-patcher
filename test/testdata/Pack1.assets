@@ -1,3 +1,4 @@
 add-asset local.png images/18.png
+add-asset "space -dash.png" "images/space -dash.png"
 
 # comment

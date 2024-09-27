@@ -63,8 +63,9 @@ INTEGER : NUMBER+;
 DASH    : '-';
 PLUS    : '+';
 EQUALS  : '=';
+QUOTE   : '"' -> skip, mode(QUOTE_MODE);
 
-TEXT_BLOCK  : ~( '-' | '=' | ' ' | '\r' | '\n')+;
+TEXT_BLOCK  : ~( '"' | '-' | '=' | ' ' | '\r' | '\n')+;
 
 // Stuff to ignore, like comments or whitespace
 WHITESPACE  : [ \t\r\n\f]+         -> skip;
@@ -77,3 +78,7 @@ AS_TEXT     : .+?;
 mode CONTENT_MODE;
 END_CONTENT : E N D '-' C O N T E N T -> mode(DEFAULT_MODE);
 CONTENT_TEXT: .+?;
+
+mode QUOTE_MODE;
+END_QUOTE   : QUOTE -> skip, mode(DEFAULT_MODE);
+QUOTED_TEXT : ~( '"' | '\r' | '\n')+;

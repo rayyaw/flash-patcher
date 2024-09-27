@@ -157,7 +157,7 @@ add-asset localfolder/derp.png images/8.png
 
 This command takes the local file at `localfolder/derp.png` and copies it to `images/8.png` within the SWF. If there was already a file named `images/8.png`, it will be overwritten with the new file.
 
-**Note:** Due to technical reasons, neither filepath in the `add-asset` command may contain spaces, dashes (`-`), or the equals sign (`=`).
+**Note:** Due to technical limitations, file paths that contain dashes (`-`), spaces (` `), or equals signs ('=') must be surrounded with quotes. See the section "Quoted Strings" for further info.
 
 ### Variables and scoping
 
@@ -177,7 +177,7 @@ Note that all blocks where arbitrary text is allowed (ie, not specific formats l
 
 Nested variable definitions are not allowed. For example, `set var1=${var2}` will set the value of `var1` to the **string literal** `${var2}` rather than the value of `var2`.
 
-**Note:** Due to technical reasons, variable names and values may not contain dashes (`-`) or the equals sign (`=`).
+**Note:** Due to technical limitations, variable names and values may not contain dashes (`-`) or the equals sign (`=`).
 
 
 ### Content Insertion
@@ -209,7 +209,11 @@ apply-patch file.patch
 
 Arbitrary Python scripts can be referenced in the patch file. They should be placed in the patch folder, and will be executed inside the decompiled directory.
 
-The command looks like this: `exec-python file.py`.
+The command looks like this:
+
+```
+exec-python file.py
+```
 
 You must respect the following API:
 
@@ -234,6 +238,15 @@ Note that a trailing newline may be present. Also note that both variable names 
 ### Injection Order
 
 Within each patchfile, the patches will be processed one block at a time, with each command being processed from the top of the file to the bottom. Note that if you are injecting multiple times into the same file, this means that you should inject bottom to top to avoid the line numbers changing as the file is being patched.
+
+### Quoted Strings
+
+Ordinarily, file paths containing dashes (`-`), spaces (` `), or equals signs ('=') are not allowed in file paths, as they will cause parsing issues. However, if these characters are required, the issue can be solved by surrounding the file path in quote marks, like so:
+
+```
+apply-patch "illegal-file-name.patch"
+apply-patch "illegal file name.patch"
+```
 
 ## Licensing
 
