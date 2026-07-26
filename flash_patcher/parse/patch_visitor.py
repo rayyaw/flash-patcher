@@ -60,7 +60,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
     ) -> None:
         """Add the headers to the injector metadata"""
         error_manager = ErrorManager(self.patch_file_name, ctx.start.line)
-        ctx_filename = self.scope.resolve_all(ctx.FILENAME().getText(), error_manager)
+        ctx_filename = self.scope.resolve_all(ctx.source.getText(), error_manager)
 
         full_path = self.decomp_location_with_scripts / ctx_filename
 
@@ -122,7 +122,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         """Remove is processed manually as the command is less complex than add."""
         error_manager = ErrorManager(self.patch_file_name, ctx.start.line)
 
-        ctx_filename = self.scope.resolve_all(ctx.FILENAME().getText(), error_manager)
+        ctx_filename = self.scope.resolve_all(ctx.source.getText(), error_manager)
         full_path = self.decomp_location_with_scripts / ctx_filename
 
         # Open file, delete lines, and close it
@@ -158,7 +158,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         for i in ctx.replaceNthBlockHeader():
             error_manager = ErrorManager(self.patch_file_name, i.start.line)
 
-            ctx_filename = self.scope.resolve_all(i.FILENAME().getText(), error_manager)
+            ctx_filename = self.scope.resolve_all(i.source.getText(), error_manager)
 
             ctx_replace = self.scope.resolve_all(
                 ctx.replaceBlockText().getText().strip(), error_manager
@@ -202,7 +202,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         )
 
         for i in ctx.replaceAllBlockHeader():
-            ctx_filename = self.scope.resolve_all(i.FILENAME().getText(), error_manager)
+            ctx_filename = self.scope.resolve_all(i.source.getText(), error_manager)
             full_path = self.decomp_location_with_scripts / ctx_filename
             error_manager = ErrorManager(self.patch_file_name, i.start.line)
 

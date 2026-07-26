@@ -10,11 +10,6 @@ EXPORT_VAR      : E X P O R T '-' V A R;
 EXEC_PATCHER    : A P P L Y '-' P A T C H;
 EXEC_PYTHON     : E X E C '-' P Y T H O N;
 
-// file names should always start with DefineSprite or frame
-// XML files should be named swf.xml
-// (we need this to avoid ADD and REMOVE being matched in the filename)
-FILENAME            : (D E F I N E S P R I T E | F R A M E) .+? '.as' | S W F '.xml';
-
 BEGIN_PATCH     : B E G I N '-' P A T C H -> mode(ADD_BLOCK_MODE);
 BEGIN_CONTENT   : B E G I N '-' C O N T E N T -> mode(CONTENT_MODE);
 
