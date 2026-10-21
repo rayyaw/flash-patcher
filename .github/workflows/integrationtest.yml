@@ -36,4 +36,4 @@ jobs:
     - name: Run integration tests
       run: |
         cd flash-patcher-tests
-        ./run-all-tests.sh
+        python run-all-tests.py

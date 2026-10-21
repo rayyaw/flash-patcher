@@ -17,7 +17,7 @@ endif
 all: antlr
 	rm -rf flash_patcher
 	cp -r ../flash_patcher .
-    cp README.md build/README.md
+	cp ../README.md .
 	find . -type d -exec touch {}/__init__.py \;
 	hatch build
 	cp -r dist ..
