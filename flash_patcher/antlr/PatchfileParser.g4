@@ -2,18 +2,18 @@ parser grammar PatchfileParser;
 
 options {tokenVocab=PatchfileLexer;}
 
-addBlockHeader          : ADD FILENAME locationToken;
+addBlockHeader          : ADD source=file_name locationToken;
 addBlock                : addBlockHeader+ BEGIN_PATCH addBlockText END_PATCH;
 addBlockText            : AS_TEXT+;
 
 addAssetBlock           : ADD_ASSET local=file_name swf=file_name;
 
-removeBlock             : REMOVE FILENAME locationToken DASH locationToken;
+removeBlock             : REMOVE source=file_name locationToken DASH locationToken;
 
-replaceNthBlockHeader   : REPLACE FILENAME locationToken;
+replaceNthBlockHeader   : REPLACE source=file_name locationToken;
 replaceNthBlock         : replaceNthBlockHeader+ BEGIN_CONTENT replaceBlockText END_CONTENT BEGIN_PATCH addBlockText END_PATCH;
 
-replaceAllBlockHeader   : REPLACE_ALL FILENAME;
+replaceAllBlockHeader   : REPLACE_ALL source=file_name;
 replaceAllBlock         : replaceAllBlockHeader+ BEGIN_CONTENT replaceBlockText END_CONTENT BEGIN_PATCH addBlockText END_PATCH;
 replaceBlockText        : CONTENT_TEXT+;
 
