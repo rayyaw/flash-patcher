@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "flash-patcher"
 description = "rayyaw's SWF patcher"
 version = "6.3.1"
-readme = "../README.md"
+readme = "README.md"
 license = { file = "../LICENSE" }
 authors = [
     {name = "rayyaw", email = "rayyawspeedruns@gmail.com"},
