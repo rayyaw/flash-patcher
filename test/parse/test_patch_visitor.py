@@ -264,6 +264,27 @@ class PatchfileProcessorSpec (TestCase):
             Path("DoAction1.as"),
             Path("DoAction2.as")
         ])
+        mock_input.assert_called_once_with()
+
+    @patch("builtins.input")
+    def test_visit_python_file_xml_mode(
+        self: PatchfileProcessorSpec,
+        mock_input: MagicMock,
+    ) -> None:
+        mock_input.return_value = "y"
+        self.patch_visitor.decomp_location = Path("../test/testdata/swf.xml")
+
+        root_context = CommonParseManager(
+            PatchfileLexer, PatchfileParser
+        ).get_root(Path("../test/testdata/xml.stage"))
+
+        python_file_context = root_context.execPythonBlock(0)
+        self.patch_visitor.visitExecPythonBlock(python_file_context)
+
+        assert self.patch_visitor.modified_scripts == set([
+            Path("../test/testdata/swf.xml")
+        ])
+        mock_input.assert_called_once_with()
 
     @patch("builtins.input")
     def test_visit_python_file_success_empty(
@@ -281,6 +302,7 @@ class PatchfileProcessorSpec (TestCase):
 
         # implicit assert nothrows
         assert self.patch_visitor.modified_scripts == set()
+        mock_input.assert_called_once_with()
 
     @patch('flash_patcher.parse.patch.PatchfileManager.parse')
     def test_visit_patchfile_success(
