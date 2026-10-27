@@ -266,6 +266,25 @@ class PatchfileProcessorSpec (TestCase):
         ])
 
     @patch("builtins.input")
+    def test_visit_python_file_xml_mode(
+        self: PatchfileProcessorSpec,
+        mock_input: MagicMock,
+    ) -> None:
+        mock_input.return_value = "y"
+        self.patch_visitor.decomp_location = Path("../test/testdata/swf.xml")
+
+        root_context = CommonParseManager(
+            PatchfileLexer, PatchfileParser
+        ).get_root(Path("../test/testdata/xml.stage"))
+
+        python_file_context = root_context.execPythonBlock(0)
+        self.patch_visitor.visitExecPythonBlock(python_file_context)
+
+        assert self.patch_visitor.modified_scripts == set([
+            Path("../test/testdata/swf.xml")
+        ])
+
+    @patch("builtins.input")
     def test_visit_python_file_success_empty(
         self: PatchfileProcessorSpec,
         mock_input: MagicMock,

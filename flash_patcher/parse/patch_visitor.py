@@ -18,8 +18,8 @@ from flash_patcher.util.logging import logger
 
 class PatchfileProcessor (PatchfileParserVisitor):
     """This class inherits from the ANTLR visitor to process patch files.
-    
-    It will automatically take in the file syntax tree and perform the injections in it. 
+
+    It will automatically take in the file syntax tree and perform the injections in it.
     """
 
     injector: BulkInjectionManager
@@ -151,8 +151,8 @@ class PatchfileProcessor (PatchfileParserVisitor):
         self: PatchfileProcessor,
         ctx: PatchfileParser.ReplaceNthBlockContext
     ) -> None:
-        """Replace the nth block. 
-        Find its location as an InjectionLocation, 
+        """Replace the nth block.
+        Find its location as an InjectionLocation,
         then remove it and perform a standard add-injection at that location.
         """
         for i in ctx.replaceNthBlockHeader():
@@ -252,7 +252,7 @@ class PatchfileProcessor (PatchfileParserVisitor):
         ctx: PatchfileParser.ExecPythonBlockContext
     ) -> None:
         """Visit any custom .py files the user would like to execute.
-        
+
         The python script should print out the comma-separated filenames that it modified.
         example output: "DoAction1.as,DoAction2.as"
         Python script names may not include spaces.
@@ -261,9 +261,17 @@ class PatchfileProcessor (PatchfileParserVisitor):
         ctx_filename = self.scope.resolve_all(ctx.file_name().getText(), error_manager)
 
         script_path = (self.folder / ctx_filename).resolve()
+
+        # In XML mode, decomp_location is swf.xml rather than a directory.
+        working_directory = (
+            self.decomp_location.parent
+            if self.decomp_location.is_file()
+            else self.decomp_location
+        )
+
         self.modified_scripts |= get_modified_scripts_of_command(
             ["python3", script_path],
-            self.decomp_location,
+            working_directory,
             self.scope,
         )
 
