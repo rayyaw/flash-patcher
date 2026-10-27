@@ -1,0 +1,23 @@
+name: Common Setup
+description: Set up Python, Java, and shared dependencies
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version-file: build/pyproject.toml
+
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: adopt
+        java-version: '17'
+
+    - name: Install Common Dependencies
+      shell: bash
+      run: |
+        source .github/common-setup.sh

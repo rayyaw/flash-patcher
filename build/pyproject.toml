@@ -25,9 +25,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Software Development :: Build Tools",
     "Topic :: Software Development :: Compilers",
@@ -67,7 +64,7 @@ test = [
 ]
 with-coverage = "test"
 [[tool.hatch.envs.test.matrix]]
-python = ["3.10", "3.11", "3.12"]
+python = ["3.15"]
 type = ["default", "min-req"]
 
 [tool.hatch.envs.integration]
@@ -80,7 +77,7 @@ test = [
     "./run-all-tests.sh",
 ]
 [[tool.hatch.envs.integration.matrix]]
-python = ["3.10", "3.11", "3.12"]
+python = ["3.15"]
 type = ["default"]
 
 [tool.hatch.envs.style]
