@@ -1,0 +1,46 @@
+name: Common Setup
+description: Set up Python, Java, and shared dependencies
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version-file: build/pyproject.toml
+
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: adopt
+        java-version: '17'
+
+    - name: Install FFDec
+      shell: bash
+      run: |
+        echo "Installing FFDec..."
+        wget https://github.com/jindrapetrik/jpexs-decompiler/releases/download/version20.1.0/ffdec_20.1.0.deb
+        sudo apt-get update
+        sudo apt-get install -y ./ffdec_20.1.0.deb
+
+    - name: Install ANTLR
+      shell: bash
+      run: |
+        echo "Installing ANTLR..."
+        ANTLR_VERSION="4.13.1"
+        wget "https://www.antlr.org/download/antlr-4.13.1-complete.jar"
+        echo "ANTLR_PATH=$GITHUB_WORKSPACE/antlr-4.13.1-complete.jar" >> "$GITHUB_ENV"
+
+    - name: Install Python dependencies
+      shell: bash
+      run: |
+        echo "Installing pip dependencies..."
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade pytest
+        python -m pip install antlr4-python3-runtime pylint coverage hatch
+
+    - name: Build ANTLR files
+      shell: bash
+      run: |
+        echo "Building ANTLR files..."
+        make -C build antlr

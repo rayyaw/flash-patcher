@@ -5,23 +5,9 @@ on: [push, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.11"]
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Set up Java
-      uses: actions/setup-java@v4.0.0
-      with:
-        distribution: 'adopt'
-        java-version: '17'
-    - name: Install Common Dependencies
-      run: |
-        source .github/common-setup.sh
+    - uses: actions/checkout@v4
+    - uses: ./.github/actions/common-setup
     - name: Run unit tests and verify coverage
       env:
         ANTLR_TARGET: antlr-java
