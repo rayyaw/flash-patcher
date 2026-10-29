@@ -36,9 +36,3 @@ runs:
         python -m pip install --upgrade pip
         python -m pip install --upgrade pytest
         python -m pip install antlr4-python3-runtime pylint coverage hatch
-
-    - name: Build ANTLR files
-      shell: bash
-      run: |
-        echo "Building ANTLR files..."
-        make -C build antlr
