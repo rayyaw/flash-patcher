@@ -101,15 +101,20 @@ python = ["3.15"]
 type = ["default"]
 
 [tool.hatch.envs.integration]
+dependencies = [
+    "pytest",
+]
+
 [tool.hatch.envs.integration.scripts]
 test = [
-    "cd build",
-    "make",
-    "git clone https://github.com/rayyaw/flash-patcher-tests.git",
-    "cd flash-patcher-tests",
-    "./run-all-tests.sh",
+    "python -m pip install --force-reinstall --no-deps {args:dist/*.whl}",
+    "if [ ! -d flash-patcher-tests ]; then git clone --recurse-submodules https://github.com/rayyaw/flash-patcher-tests.git; fi",
+    "cd flash-patcher-tests && python run-all-tests.py",
 ]
+clean = [
+    "rm -rf flash-patcher-tests",
+]
+
 [[tool.hatch.envs.integration.matrix]]
 python = ["3.15"]
 type = ["default"]
-
