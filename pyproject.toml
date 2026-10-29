@@ -46,17 +46,21 @@ Issues = "https://github.com/rayyaw/flash-patcher/issues"
 [project.scripts]
 flash-patcher = "flash_patcher.__main__:cli"
 
-[tool.hatch.build.hooks.custom]
-path = "scripts/generate_grammar.py"
-
-[tool.hatch.build.targets.wheel]
-packages = ["flash_patcher"]
+[tool.hatch.build]
 artifacts = [
     "flash_patcher/antlr_source/**/*.g4",
     "flash_patcher/antlr_source/**/*.interp",
     "flash_patcher/antlr_source/**/*.tokens",
     "flash_patcher/antlr_source/**/*.py",
 ]
+
+# FIXME - this only seems to run on the whl, not the tgz
+# FIXME - need a way to clean antlr source
+[tool.hatch.build.hooks.custom]
+path = "scripts/generate_grammar.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["flash_patcher"]
 
 [tool.hatch.envs.test]
 dependencies = [
@@ -69,7 +73,7 @@ dependencies = [
 unit = [
     "python scripts/generate_grammar.py",
     "python -m coverage run -m pytest --import-mode=importlib test/",
-	"python -m coverage report -m --fail-under=95 $(git ls-files \"flash_patcher/*.py\")",
+	"python -m coverage report -m --fail-under=95",
 ]
 with-coverage = "test"
 lint = [
@@ -108,6 +112,16 @@ lint = [
 python = ["3.15"]
 type = ["default"]
 
+[tool.coverage.run]
+source = ["flash_patcher"]
+
+[tool.coverage.report]
+omit = [
+    "flash_patcher/antlr_source/*.py",
+]
+fail_under = 95
+show_missing = true
+
 [tool.hatch.envs.integration]
 dependencies = [
     "pytest",
@@ -115,12 +129,11 @@ dependencies = [
 
 [tool.hatch.envs.integration.scripts]
 test = [
-    "python -m pip install --force-reinstall --no-deps {args:dist/*.whl}",
-    "if [ ! -d flash-patcher-tests ]; then git clone --recurse-submodules https://github.com/rayyaw/flash-patcher-tests.git; fi",
+    "python scripts/integration_setup.py",
     "cd flash-patcher-tests && python run-all-tests.py",
 ]
 clean = [
-    "rm -rf flash-patcher-tests",
+    "python scripts/integration_clean.py",
 ]
 
 [[tool.hatch.envs.integration.matrix]]
