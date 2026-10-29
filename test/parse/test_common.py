@@ -20,7 +20,7 @@ class CommonParseManagerSpec (TestCase):
         super().__init__(methodName)
 
         self.common_parse_manager = CommonParseManager(PatchfileLexer, PatchfileParser)
-        self.patch_file = Path("../test/testdata/Patch1.patch")
+        self.patch_file = Path("test/testdata/Patch1.patch")
 
     def test_parse_input_sucess(
         self: CommonParseManagerSpec,

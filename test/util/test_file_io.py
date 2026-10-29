@@ -10,7 +10,7 @@ from flash_patcher.exception.error_manager import ErrorManager
 from flash_patcher.util.file_io import FileWritebackManager, \
     read_safe, readlines_safe, writelines_safe
 
-EXAMPLE_FILE = "../test/testdata/DoAction1.as"
+EXAMPLE_FILE = "test/testdata/DoAction1.as"
 
 class FileWritebackManagerSpec (TestCase):
     @patch('pathlib.Path.open', create=True)

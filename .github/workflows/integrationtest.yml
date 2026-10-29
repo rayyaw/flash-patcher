@@ -8,18 +8,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: ./.github/actions/common-setup
-    - name: Install Flash Patcher
-      env:
-        ANTLR_TARGET: antlr-java
-      run: |
-        cd build
-        make
-        pip install ../dist/*.whl
-        cd ..
-    - name: Install test library
-      run: |
-        git clone --recurse-submodules https://github.com/rayyaw/flash-patcher-tests.git
     - name: Run integration tests
       run: |
-        cd flash-patcher-tests
-        python run-all-tests.py
+        hatch build
+        hatch run integration:test

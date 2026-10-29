@@ -19,17 +19,17 @@ def test_main_success(
 
     inputfile = Path("input")
     outputfile = Path("test.swf")
-    cache = Path("../test/testdata/")
+    cache = Path("test/testdata/")
 
     mock_decompile.return_value = cache
     mock_stagefile_parse.return_value = set([
-        Path("../test/testdata/derppotato1")
+        Path("test/testdata/derppotato1")
     ])
 
 
     main(
         inputfile,
-        Path("../test/testdata"),
+        Path("test/testdata"),
         Path("Stage1.stage"),
         outputfile,
     )
@@ -53,7 +53,7 @@ def test_main_failure_no_ffdec(mock_compilation_manager: MagicMock) -> None:
     with raises(DependencyError):
         main(
             Path("input"),
-            Path("../test/testdata"),
+            Path("test/testdata"),
             Path("Stage1.stage"),
             Path("test.swf"),
         )

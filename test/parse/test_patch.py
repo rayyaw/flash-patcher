@@ -20,7 +20,7 @@ class PatchfileManagerSpec (TestCase):
         self.patchfile_manager = PatchfileManager(
             Path("../"),
             Path("../"),
-            Path("../test/testdata/Patch1.patch"),
+            Path("test/testdata/Patch1.patch"),
             Path("../"),
         )
 

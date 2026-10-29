@@ -17,12 +17,6 @@ jobs:
     - uses: actions/checkout@v4
     - uses: ./.github/actions/common-setup
     - name: Build Flash Patcher
-      env:
-        ANTLR_TARGET: antlr-java
-      run: |
-        export ANTLR_TARGET=antlr-java
-        cd build
-        make
-        cd ..
+      run: hatch build
     - name: Release to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1

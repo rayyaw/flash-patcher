@@ -9,7 +9,4 @@ jobs:
     - uses: actions/checkout@v4
     - uses: ./.github/actions/common-setup
     - name: Run unit tests and verify coverage
-      env:
-        ANTLR_TARGET: antlr-java
-      run: |
-        cd build && make test
+      run: hatch run test:unit

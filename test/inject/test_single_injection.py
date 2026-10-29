@@ -26,13 +26,13 @@ class SingleInjectionManagerSpec (TestCase):
     ) -> None:
         super().__init__(methodName)
 
-        self.as_path = Path("../test/testdata/DoAction1.as")
+        self.as_path = Path("test/testdata/DoAction1.as")
 
         with open(self.as_path, encoding="utf-8") as file:
             self.file_content = file.readlines()
 
         location = ParserInjectionLocation(get_add_patch_context(
-            Path("../test/testdata/Patch1.patch"), 2,
+            Path("test/testdata/Patch1.patch"), 2,
         ))
 
         self.single_injection_manager = SingleInjectionManager(
