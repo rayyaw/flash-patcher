@@ -1,5 +1,4 @@
 """Helper module for calling external commands."""
-from os import chdir
 from pathlib import Path
 from subprocess import PIPE, CompletedProcess, run
 import sys
