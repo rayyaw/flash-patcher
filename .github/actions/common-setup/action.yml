@@ -33,6 +33,5 @@ runs:
       shell: bash
       run: |
         echo "Installing pip dependencies..."
-        python -m pip install --upgrade pip
-        python -m pip install --upgrade pytest
-        python -m pip install antlr4-python3-runtime pylint coverage hatch
+        python -m pip install hatch
+        hatch env create test
