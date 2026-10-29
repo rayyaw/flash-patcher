@@ -23,12 +23,6 @@ runs:
         sudo apt-get update
         sudo apt-get install -y ./ffdec_20.1.0.deb
 
-    - name: Install ANTLR
-      shell: bash
-      run: |
-        echo "Installing ANTLR..."
-        sudo apt-get install -y antlr4
-
     - name: Install Python dependencies
       shell: bash
       run: |

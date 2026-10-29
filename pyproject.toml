@@ -1,5 +1,8 @@
 [build-system]
-requires = ["hatchling"]
+requires = [
+    "hatchling",
+    "antlr4-python3-runtime >= 4.9.2",
+]
 build-backend = "hatchling.build"
 
 [project]
@@ -92,6 +95,12 @@ lint = [
 	--disable=wrong-import-position \
 	--disable=no-name-in-module \
 	--disable=too-many-public-methods
+    """,
+
+	"echo 'Running pylint on buildscripts...'",
+	"""pylint $(git ls-files 'scripts/*.py') \
+    --disable=missing-module-docstring \
+	--disable=missing-class-docstring
     """,
 ]
 
