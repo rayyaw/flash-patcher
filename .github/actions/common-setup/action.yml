@@ -29,7 +29,14 @@ runs:
       shell: pwsh
       run: |
         Write-Output "Installing FFDec..."
-        winget install --id JPEXS.FFDec --exact --version 20.1.0
+        winget install `
+          --id JPEXS.FFDec `
+          --exact `
+          --version 20.1.0 `
+          --silent `
+          --accept-package-agreements `
+          --accept-source-agreements `
+          --disable-interactivity
 
     - name: Install Python dependencies
       shell: bash
