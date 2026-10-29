@@ -78,7 +78,8 @@ unit = [
 with-coverage = "test"
 lint = [
     "echo 'Running pylint on source code...'",
-	"""pylint $(git ls-files 'flash_patcher/*.py') \
+	"""pylint flash_patcher \
+    --ignore=antlr_source \
 	--disable=missing-module-docstring \
 	--disable=too-few-public-methods \
 	--disable=inconsistent-return-statements \
@@ -91,7 +92,7 @@ lint = [
     """,
 
 	"echo 'Running pylint on tests...'",
-	"""pylint $(git ls-files 'test/*.py') \
+	"""pylint test \
 	--disable=missing-module-docstring \
 	--disable=missing-function-docstring \
 	--disable=missing-class-docstring \
@@ -102,7 +103,7 @@ lint = [
     """,
 
 	"echo 'Running pylint on buildscripts...'",
-	"""pylint $(git ls-files 'scripts/*.py') \
+	"""pylint scripts \
     --disable=missing-module-docstring \
 	--disable=missing-class-docstring
     """,
