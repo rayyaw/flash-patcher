@@ -15,13 +15,21 @@ runs:
         distribution: adopt
         java-version: '17'
 
-    - name: Install FFDec
+    - name: Install FFDec (Linux)
+      if: runner.os == 'Linux'
       shell: bash
       run: |
         echo "Installing FFDec..."
         wget https://github.com/jindrapetrik/jpexs-decompiler/releases/download/version20.1.0/ffdec_20.1.0.deb
         sudo apt-get update
         sudo apt-get install -y ./ffdec_20.1.0.deb
+
+    - name: Install FFDec (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        Write-Output "Installing FFDec..."
+        winget install --id JPEXS.FFDec --exact --version 20.1.0
 
     - name: Install Python dependencies
       shell: bash
