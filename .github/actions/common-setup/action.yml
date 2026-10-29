@@ -28,3 +28,10 @@ runs:
       run: |
         echo "Installing ANTLR..."
         sudo apt-get install -y antlr4
+
+    - name: Install Python dependencies
+      shell: bash
+      run: |
+        echo "Installing pip dependencies..."
+        python -m pip install hatch
+        hatch env create test
