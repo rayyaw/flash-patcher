@@ -1,1 +1,1 @@
-raise Exception("something went wrong")
+raise FileNotFoundError("something went wrong")
