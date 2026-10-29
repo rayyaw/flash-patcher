@@ -12,10 +12,8 @@ jobs:
       env:
         ANTLR_TARGET: antlr-java
       run: |
-        cd build
-        make
-        pip install ../dist/*.whl
-        cd ..
+        hatch build
+        pip install dist/*.whl
     - name: Install test library
       run: |
         git clone --recurse-submodules https://github.com/rayyaw/flash-patcher-tests.git
