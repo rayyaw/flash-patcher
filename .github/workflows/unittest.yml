@@ -10,3 +10,5 @@ jobs:
     - uses: ./.github/actions/common-setup
     - name: Run unit tests and verify coverage
       run: hatch run test:unit
+      env:
+        PYTHONPATH: ${{ github.workspace }}
