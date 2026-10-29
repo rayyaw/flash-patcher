@@ -8,10 +8,10 @@ def test_clean_scripts_success(
     mock_path_unlink: MagicMock,
 ) -> None:
     clean_scripts(
-        Path("../test/testdata/clean_scripts_dir"),
+        Path("test/testdata/clean_scripts_dir"),
         set([
-            Path("../test/testdata/clean_scripts_dir/file1.as"),
-            Path("../test/testdata/clean_scripts_dir/__init__.py"),
+            Path("test/testdata/clean_scripts_dir/file1.as"),
+            Path("test/testdata/clean_scripts_dir/__init__.py"),
         ])
     )
 
@@ -30,8 +30,8 @@ def test_copy_file_exists_success(
     mock_path_isdir.return_value = False
     mock_path_exists.return_value = True
 
-    source = Path("../test/testdata/DoAction1.as")
-    dest = Path("../test/testdata/DoAction2.as")
+    source = Path("test/testdata/DoAction1.as")
+    dest = Path("test/testdata/DoAction2.as")
 
     copy_file(source, dest)
 
@@ -53,8 +53,8 @@ def test_copy_directory_exists_success(
     mock_path_isdir.return_value = True
     mock_path_exists.return_value = True
 
-    source = Path("../test/testdata/DoAction1.as")
-    dest = Path("../test/testdata/DoAction2.as")
+    source = Path("test/testdata/DoAction1.as")
+    dest = Path("test/testdata/DoAction2.as")
 
     copy_file(source, dest)
 
@@ -74,8 +74,8 @@ def test_copy_file_not_exists_success(
     mock_path_isdir.return_value = False
     mock_path_exists.return_value = False
 
-    source = Path("../test/testdata/DoAction1.as")
-    dest = Path("../test/testdata/DoAction2.as")
+    source = Path("test/testdata/DoAction1.as")
+    dest = Path("test/testdata/DoAction2.as")
 
     copy_file(source, dest)
 
@@ -94,8 +94,8 @@ def test_copy_directory_not_exists_success(
     mock_path_isdir.return_value = True
     mock_path_exists.return_value = False
 
-    source = Path("../test/testdata/DoAction1.as")
-    dest = Path("../test/testdata/DoAction2.as")
+    source = Path("test/testdata/DoAction1.as")
+    dest = Path("test/testdata/DoAction2.as")
 
     copy_file(source, dest)
 

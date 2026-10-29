@@ -35,12 +35,12 @@ def test_run_with_confirmation_exit(
 def test_run_in_dir_success(mock_input: MagicMock) -> None:
     mock_input.return_value = "y"
     output = run_with_confirmation_in_dir(
-        ["ls",  "README.md"],
-        Path("../")
+        ["ls",  "__main__.py"],
+        Path("flash_patcher")
     )
 
     assert output.returncode == 0
-    assert output.stdout == "README.md\n"
+    assert output.stdout == "__main__.py\n"
 
 @patch("builtins.input")
 def test_run_in_dir_failure(mock_input: MagicMock) -> None:
@@ -50,7 +50,7 @@ def test_run_in_dir_failure(mock_input: MagicMock) -> None:
         run_with_confirmation_in_dir(
             # ls [nonexistent file] will return a nonzero exit code
             ["ls", "README.md"],
-            Path("../test/")
+            Path("test/")
         )
 
 @patch("builtins.input")
@@ -59,7 +59,7 @@ def test_check_output_in_dir_success(mock_input: MagicMock) -> None:
 
     output = check_output_in_dir(
         ["ls",  "README.md"],
-        Path("../")
+        Path("./")
     )
 
     assert output == "README.md\n"
@@ -89,8 +89,8 @@ def test_get_modified_scripts_of_command_with_scope(mock_input: MagicMock) -> No
     scope.define_local("key2", "val2")
 
     output = get_modified_scripts_of_command(
-        ["python3", "test/testdata/subscript/assert.py"],
-        Path("../"),
+        ["python3", "testdata/subscript/assert.py"],
+        Path("test/"),
         scope,
     )
 

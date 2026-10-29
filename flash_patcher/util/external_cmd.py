@@ -33,10 +33,7 @@ def run_with_confirmation_in_dir(args: list, directory: Path, stdin: str = "") -
     """Run a command in the given directory."""
     ask_confirmation()
 
-    cwd = Path.cwd()
-    chdir(directory)
-    output = run(args, check=True, input=stdin, text=True, stdout=PIPE)
-    chdir(cwd)
+    output = run(args, cwd=directory, check=True, input=stdin, text=True, stdout=PIPE)
 
     return output
 

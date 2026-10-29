@@ -1,0 +1,115 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "flash-patcher"
+description = "rayyaw's SWF patcher"
+version = "7.0.1"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    {name = "rayyaw", email = "rayyawspeedruns@gmail.com"},
+    {name = "qtkito", email = "gtcreyon@gmail.com"},
+    {name = "GTcreyon", email = "gtcreyon@gmail.com"},
+]
+keywords = [
+    "flash",
+    "patcher",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: Free To Use But Restricted",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Compilers",
+]
+requires-python = ">=3.10"
+dependencies = [
+    # TODO: unpin
+    "antlr4-python3-runtime == 4.9.2",
+]
+
+[project.urls]
+Documentation = "https://github.com/rayyaw/flash-patcher"
+Source = "https://github.com/rayyaw/flash-patcher"
+History = "https://github.com/rayyaw/flash-patcher"
+Issues = "https://github.com/rayyaw/flash-patcher/issues"
+
+[project.scripts]
+flash-patcher = "flash_patcher.__main__:cli"
+
+[tool.hatch.build.hooks.custom]
+path = "scripts/generate_grammar.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["flash_patcher"]
+artifacts = [
+    "flash_patcher/antlr_source/**/*.g4",
+    "flash_patcher/antlr_source/**/*.interp",
+    "flash_patcher/antlr_source/**/*.tokens",
+    "flash_patcher/antlr_source/**/*.py",
+]
+
+[tool.hatch.envs.test]
+dependencies = [
+    "hatchling",
+    "pytest",
+    "coverage",
+    "pylint",
+]
+[tool.hatch.envs.test.scripts]
+unit = [
+    "python scripts/generate_grammar.py",
+    "python -m coverage run -m pytest test/",
+	"python -m coverage report -m --fail-under=95 $(git ls-files \"flash_patcher/*.py\")",
+]
+with-coverage = "test"
+lint = [
+    "echo 'Running pylint on source code...'",
+	"""pylint $(git ls-files 'flash_patcher/*.py') \
+	--disable=missing-module-docstring \
+	--disable=too-few-public-methods \
+	--disable=inconsistent-return-statements \
+	--disable=invalid-name \
+	--disable=too-many-arguments \
+	--disable=unspecified-encoding \
+	--disable=import-error \
+	--disable=import-self \
+	--disable=too-many-positional-arguments
+    """,
+
+	"echo 'Running pylint on tests...'",
+	"""pylint $(git ls-files 'test/*.py') \
+	--disable=missing-module-docstring \
+	--disable=missing-function-docstring \
+	--disable=missing-class-docstring \
+	--disable=import-error \
+	--disable=wrong-import-position \
+	--disable=no-name-in-module \
+	--disable=too-many-public-methods
+    """,
+]
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.15"]
+type = ["default"]
+
+[tool.hatch.envs.integration]
+[tool.hatch.envs.integration.scripts]
+test = [
+    "cd build",
+    "make",
+    "git clone https://github.com/rayyaw/flash-patcher-tests.git",
+    "cd flash-patcher-tests",
+    "./run-all-tests.sh",
+]
+[[tool.hatch.envs.integration.matrix]]
+python = ["3.15"]
+type = ["default"]
+

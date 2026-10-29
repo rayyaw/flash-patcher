@@ -34,17 +34,17 @@ class PatchfileProcessorSpec (TestCase):
         super().__init__(methodName)
 
         self.patch_visitor = PatchfileProcessor(
-            Path("../test/testdata/Patch1.patch"),
-            Path("../test/testdata/"),
+            Path("test/testdata/Patch1.patch"),
+            Path("test/testdata/"),
             Path(".Patcher-Temp/"),
-            Path("../test/testdata/"),
+            Path("test/testdata/"),
         )
 
         self.mock_injector = MagicMock()
         self.patch_visitor.injector = self.mock_injector
 
         self.root_context = CommonParseManager(PatchfileLexer, PatchfileParser).get_root(
-            Path("../test/testdata/Patch1.patch")
+            Path("test/testdata/Patch1.patch")
         )
 
         self.add_context = self.root_context.addBlock()[0]
@@ -52,7 +52,7 @@ class PatchfileProcessorSpec (TestCase):
         self.replace_nth_context = self.root_context.replaceNthBlock()[0]
 
         self.replace_all_root_context = CommonParseManager(PatchfileLexer, PatchfileParser) \
-            .get_root(Path("../test/testdata/Patch4.patch"))
+            .get_root(Path("test/testdata/Patch4.patch"))
 
     def test_visit_add_block_success(self: PatchfileProcessorSpec) -> None:
         self.patch_visitor.visitAddBlock(self.add_context)
@@ -152,7 +152,7 @@ class PatchfileProcessorSpec (TestCase):
         self: PatchfileProcessorSpec,
     ) -> None:
         context = get_remove_patch_context(
-            Path("../test/testdata/Patch1.patch"), 1,
+            Path("test/testdata/Patch1.patch"), 1,
         )
 
         with raises(InjectionError):
@@ -168,7 +168,7 @@ class PatchfileProcessorSpec (TestCase):
         mock_shutil_copyfile: MagicMock,
     ) -> None:
         root_context = CommonParseManager(PatchfileLexer, PatchfileParser).get_root(
-            Path("../test/testdata/Pack1.assets")
+            Path("test/testdata/Pack1.assets")
         )
 
         mock_path_exists.side_effect = [True, False, True, False]
@@ -181,10 +181,10 @@ class PatchfileProcessorSpec (TestCase):
 
         assert mock_shutil_copyfile.call_count == 2
         assert mock_shutil_copyfile.call_args_list[0].args == (
-            Path("../test/testdata/local.png"), Path(".Patcher-Temp/images/18.png")
+            Path("test/testdata/local.png"), Path(".Patcher-Temp/images/18.png")
         )
         assert mock_shutil_copyfile.call_args_list[1].args == (
-            Path("../test/testdata/space -dash.png"), Path(".Patcher-Temp/images/space -dash.png")
+            Path("test/testdata/space -dash.png"), Path(".Patcher-Temp/images/space -dash.png")
         )
 
         assert self.patch_visitor.modified_scripts == set([
@@ -200,7 +200,7 @@ class PatchfileProcessorSpec (TestCase):
         mock_shutil_copyfile: MagicMock,
     ) -> None:
         root_context = CommonParseManager(PatchfileLexer, PatchfileParser).get_root(
-            Path("../test/testdata/Pack1.assets")
+            Path("test/testdata/Pack1.assets")
         )
 
         mock_path_exists.return_value = True
@@ -209,10 +209,10 @@ class PatchfileProcessorSpec (TestCase):
 
         assert mock_shutil_copyfile.call_count == 2
         assert mock_shutil_copyfile.call_args_list[0].args == (
-            Path("../test/testdata/local.png"), Path(".Patcher-Temp/images/18.png")
+            Path("test/testdata/local.png"), Path(".Patcher-Temp/images/18.png")
         )
         assert mock_shutil_copyfile.call_args_list[1].args == (
-            Path("../test/testdata/space -dash.png"), Path(".Patcher-Temp/images/space -dash.png")
+            Path("test/testdata/space -dash.png"), Path(".Patcher-Temp/images/space -dash.png")
         )
 
         assert self.patch_visitor.modified_scripts == set([
@@ -226,7 +226,7 @@ class PatchfileProcessorSpec (TestCase):
         mock_path_exists: MagicMock,
     ) -> None:
         root_context = CommonParseManager(PatchfileLexer, PatchfileParser).get_root(
-            Path("../test/testdata/Pack1.assets")
+            Path("test/testdata/Pack1.assets")
         )
 
         mock_path_exists.return_value = False
@@ -255,7 +255,7 @@ class PatchfileProcessorSpec (TestCase):
 
         root_context = CommonParseManager(
             PatchfileLexer, PatchfileParser
-        ).get_root(Path("../test/testdata/Stage1.stage"))
+        ).get_root(Path("test/testdata/Stage1.stage"))
 
         python_file_context = root_context.execPythonBlock(0)
         self.patch_visitor.visitExecPythonBlock(python_file_context)
@@ -272,17 +272,17 @@ class PatchfileProcessorSpec (TestCase):
         mock_input: MagicMock,
     ) -> None:
         mock_input.return_value = "y"
-        self.patch_visitor.decomp_location = Path("../test/testdata/swf.xml")
+        self.patch_visitor.decomp_location = Path("test/testdata/swf.xml")
 
         root_context = CommonParseManager(
             PatchfileLexer, PatchfileParser
-        ).get_root(Path("../test/testdata/xml.stage"))
+        ).get_root(Path("test/testdata/xml.stage"))
 
         python_file_context = root_context.execPythonBlock(0)
         self.patch_visitor.visitExecPythonBlock(python_file_context)
 
         assert self.patch_visitor.modified_scripts == set([
-            Path("../test/testdata/swf.xml")
+            Path("test/testdata/swf.xml")
         ])
         mock_input.assert_called_once_with()
 
@@ -296,7 +296,7 @@ class PatchfileProcessorSpec (TestCase):
 
         root_context = CommonParseManager(
             PatchfileLexer, PatchfileParser
-        ).get_root(Path("../test/testdata/Stage1.stage"))
+        ).get_root(Path("test/testdata/Stage1.stage"))
 
         self.patch_visitor.visitExecPythonBlock(root_context.execPythonBlock(1))
 
@@ -311,7 +311,7 @@ class PatchfileProcessorSpec (TestCase):
     ) -> None:
         root_context = CommonParseManager(
             PatchfileLexer, PatchfileParser
-        ).get_root(Path("../test/testdata/Stage1.stage"))
+        ).get_root(Path("test/testdata/Stage1.stage"))
 
         patchfile_context = root_context.execPatcherBlock(0)
 

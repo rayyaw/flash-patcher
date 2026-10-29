@@ -26,7 +26,7 @@ class ParserInjectionLocationSpec (TestCase):
             -1,
         )
 
-        with open("../test/testdata/frame_1/DoAction1.as", encoding="utf-8") as file:
+        with open("test/testdata/frame_1/DoAction1.as", encoding="utf-8") as file:
             self.file_content = file.readlines()
 
     def get_valid_patch_context(
@@ -43,7 +43,7 @@ class ParserInjectionLocationSpec (TestCase):
         }
 
         return get_add_patch_context(
-            Path("../test/testdata/Patch1.patch"),
+            Path("test/testdata/Patch1.patch"),
             context_map[context_type],
         )
 
@@ -58,7 +58,7 @@ class ParserInjectionLocationSpec (TestCase):
         }
 
         return get_add_patch_context(
-            Path("../test/testdata/Patch2.patch"),
+            Path("test/testdata/Patch2.patch"),
             context_map[context_type],
         )
 
@@ -73,7 +73,7 @@ class ParserInjectionLocationSpec (TestCase):
         }
 
         return get_add_patch_context(
-            Path("../test/testdata/Patch2.patch"),
+            Path("test/testdata/Patch2.patch"),
             context_map[context_type],
         )
 
@@ -96,7 +96,7 @@ class ParserInjectionLocationSpec (TestCase):
         assert line_no == 9
 
     def test_resolve_success_function_add_after_curly(self: ParserInjectionLocationSpec) -> None:
-        with open("../test/testdata/frame_1/DoAction3.as", encoding="utf-8") as file:
+        with open("test/testdata/frame_1/DoAction3.as", encoding="utf-8") as file:
             file_content = file.readlines()
 
         line_no = ParserInjectionLocation(self.get_valid_patch_context("function")) \
