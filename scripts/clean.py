@@ -14,4 +14,3 @@ for item in ANTLR_SOURCE.iterdir():
 
 shutil.rmtree('flash-patcher-tests', ignore_errors=True)
 shutil.rmtree('dist', ignore_errors=True)
-
