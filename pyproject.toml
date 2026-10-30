@@ -54,7 +54,6 @@ artifacts = [
     "flash_patcher/antlr_source/**/*.py",
 ]
 
-# FIXME - this only seems to run on the whl, not the tgz
 # FIXME - need a way to clean antlr source
 [tool.hatch.build.hooks.custom]
 path = "scripts/generate_grammar.py"
