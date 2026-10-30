@@ -54,12 +54,15 @@ artifacts = [
     "flash_patcher/antlr_source/**/*.py",
 ]
 
-# FIXME - need a way to clean antlr source
+# FIXME - we should probably test the sdist too
 [tool.hatch.build.hooks.custom]
 path = "scripts/generate_grammar.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["flash_patcher"]
+
+[tool.hatch.envs.default.scripts]
+clean = "python scripts/clean.py"
 
 [tool.hatch.envs.test]
 dependencies = [
@@ -131,9 +134,6 @@ dependencies = [
 test = [
     "python scripts/integration_setup.py",
     "cd flash-patcher-tests && python run-all-tests.py",
-]
-clean = [
-    "python scripts/integration_clean.py",
 ]
 
 [[tool.hatch.envs.integration.matrix]]
