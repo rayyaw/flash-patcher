@@ -35,7 +35,7 @@ def test_run_with_confirmation_exit(
 def test_run_in_dir_success(mock_input: MagicMock) -> None:
     mock_input.return_value = "y"
     output = run_with_confirmation_in_dir(
-        ["ls",  "__main__.py"],
+        ["python",  "../test/testdata/python/ls_main.py"],
         Path("flash_patcher")
     )
 
@@ -48,8 +48,7 @@ def test_run_in_dir_failure(mock_input: MagicMock) -> None:
 
     with raises(CalledProcessError):
         run_with_confirmation_in_dir(
-            # ls [nonexistent file] will return a nonzero exit code
-            ["ls", "README.md"],
+            ["python", "testdata/python/exception.py"],
             Path("test/")
         )
 
@@ -58,26 +57,25 @@ def test_check_output_in_dir_success(mock_input: MagicMock) -> None:
     mock_input.return_value = "y"
 
     output = check_output_in_dir(
-        ["ls",  "README.md"],
-        Path("./")
+        ["python",  "../test/testdata/python/ls_main.py"],
+        Path("flash_patcher")
     )
 
-    assert output == "README.md\n"
+    assert output == "__main__.py\n"
 
 @patch("builtins.input")
 def test_get_modified_scripts_of_command_success(mock_input: MagicMock) -> None:
     mock_input.return_value = "y"
 
     output = get_modified_scripts_of_command(
-        ["echo", "a,b,c"],
-        Path("../"),
+        ["python3", "testdata/python/sample.py"],
+        Path("test/"),
         Scope(),
     )
 
     assert output == set([
-        Path("../a"),
-        Path("../b"),
-        Path("../c"),
+        Path("test/DoAction1.as"),
+        Path("test/DoAction2.as"),
     ])
 
 @patch("builtins.input")
@@ -89,7 +87,7 @@ def test_get_modified_scripts_of_command_with_scope(mock_input: MagicMock) -> No
     scope.define_local("key2", "val2")
 
     output = get_modified_scripts_of_command(
-        ["python3", "testdata/subscript/assert.py"],
+        ["python3", "testdata/python/assert.py"],
         Path("test/"),
         scope,
     )
@@ -101,8 +99,8 @@ def test_get_modified_scripts_of_command_empty(mock_input: MagicMock) -> None:
     mock_input.return_value = "y"
 
     output = get_modified_scripts_of_command(
-        ["echo"],
-        Path("../"),
+        ["python3", "testdata/python/empty.py"],
+        Path("test/"),
         Scope(),
     )
 

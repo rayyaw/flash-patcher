@@ -80,9 +80,6 @@ def generate_grammar(root: Path) -> None:
 class CustomBuildHook(BuildHookInterface):
     """Hatch custom build hook, so this can be run as part of the build."""
     def initialize(self, version, build_data):
-        if self.target_name != "wheel":
-            return
-
         generate_grammar(Path(self.root))
 
         # Include generated files, even if they are ignored by Git.

@@ -2,5 +2,5 @@ apply-patch Patch1.patch
 apply-patch Pack1.assets
 
 # comment
-exec-python sample.py
-exec-python empty.py
+exec-python python/sample.py
+exec-python python/empty.py
