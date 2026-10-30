@@ -54,7 +54,6 @@ artifacts = [
     "flash_patcher/antlr_source/**/*.py",
 ]
 
-# FIXME - we should probably test the sdist too
 [tool.hatch.build.hooks.custom]
 path = "scripts/generate_grammar.py"
 
@@ -132,7 +131,7 @@ dependencies = [
 
 [tool.hatch.envs.integration.scripts]
 test = [
-    "python scripts/integration_setup.py",
+    "python scripts/integration_setup.py {args:wheel}",
     "cd flash-patcher-tests && python run-all-tests.py",
 ]
 

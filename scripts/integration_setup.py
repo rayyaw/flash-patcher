@@ -2,36 +2,58 @@ import subprocess
 import sys
 from pathlib import Path
 
-# Install the built wheel.
-wheels = list(Path("dist").glob("*.whl"))
+DISTRIBUTIONS = {
+    "wheel": "*.whl",
+    "sdist": "*.tar.gz",
+}
 
-if len(wheels) != 1:
-    sys.exit(f"Expected exactly one wheel in dist/, found {len(wheels)}.")
 
-subprocess.run(
-    [
-        sys.executable,
-        "-m",
-        "pip",
-        "install",
-        "--force-reinstall",
-        "--no-deps",
-        str(wheels[0]),
-    ],
-    check=True,
-)
+def main():
+    distribution = sys.argv[1] if len(sys.argv) > 1 else "wheel"
 
-# Clone the integration tests if they don't already exist.
-tests_dir = Path("flash-patcher-tests")
+    if len(sys.argv) > 2 or distribution not in DISTRIBUTIONS:
+        sys.exit(
+            f"Usage: {sys.argv[0]} [{'|'.join(DISTRIBUTIONS)}]"
+        )
 
-if not tests_dir.is_dir():
+    packages = list(Path("dist").glob(DISTRIBUTIONS[distribution]))
+
+    if len(packages) != 1:
+        sys.exit(
+            f"Expected exactly one {distribution} in dist/, "
+            f"found {len(packages)}."
+        )
+
+    package = packages[0]
+
+    print(f"Installing {distribution}: {package}")
+
     subprocess.run(
         [
-            "git",
-            "clone",
-            "--recurse-submodules",
-            "https://github.com/rayyaw/flash-patcher-tests.git",
-            str(tests_dir),
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "--force-reinstall",
+            "--no-deps",
+            str(package),
         ],
         check=True,
     )
+
+    tests_dir = Path("flash-patcher-tests")
+
+    if not tests_dir.is_dir():
+        subprocess.run(
+            [
+                "git",
+                "clone",
+                "--recurse-submodules",
+                "https://github.com/rayyaw/flash-patcher-tests.git",
+                str(tests_dir),
+            ],
+            check=True,
+        )
+
+if __name__ == "__main__":
+    main()
