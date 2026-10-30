@@ -78,7 +78,7 @@ unit = [
 with-coverage = "test"
 lint = [
     "echo 'Running pylint on source code...'",
-	"""pylint flash_patcher \
+	"""pylint flash_patcher/ \
     --ignore=antlr_source \
 	--disable=missing-module-docstring \
 	--disable=too-few-public-methods \
@@ -92,7 +92,7 @@ lint = [
     """,
 
 	"echo 'Running pylint on tests...'",
-	"""pylint test \
+	"""pylint test/ \
 	--disable=missing-module-docstring \
 	--disable=missing-function-docstring \
 	--disable=missing-class-docstring \
@@ -103,7 +103,7 @@ lint = [
     """,
 
 	"echo 'Running pylint on buildscripts...'",
-	"""pylint scripts \
+	"""pylint scripts/ \
     --disable=missing-module-docstring \
 	--disable=missing-class-docstring
     """,
